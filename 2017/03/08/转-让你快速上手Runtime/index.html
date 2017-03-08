@@ -181,10 +181,9 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"> // 创建person对象</div><div class="line">Person *p = [[Person alloc] init];</div><div class="line"></div><div class="line">// 调用对象方法</div><div class="line">[p eat];</div><div class="line"></div><div class="line">// 本质：让对象发送消息</div><div class="line">objc_msgSend(p, @selector(eat));</div><div class="line"></div><div class="line">// 调用类方法的方式：两种</div><div class="line">// 第一种通过类名调用</div><div class="line">[Person eat];</div><div class="line">// 第二种通过类对象调用</div><div class="line">[[Person class] eat];</div><div class="line"></div><div class="line">// 用类名调用类方法，底层会自动把类名转换成类对象调用</div><div class="line">// 本质：让类对象发送消息</div><div class="line">objc_msgSend([Person class], @selector(eat));</div></pre></td></tr></table></figure>
 <ul>
-<li><p>消息机制原理：对象根据方法编号SEL去映射表查找对应的方法实现</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/304825-eced87b260a7c5d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-</li>
+<li>消息机制原理：对象根据方法编号SEL去映射表查找对应的方法实现</li>
 </ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/304825-eced87b260a7c5d4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <h4 id="2-交换方法"><a href="#2-交换方法" class="headerlink" title="2.交换方法"></a>2.交换方法</h4><ul>
 <li><code>开发使用场景</code>:系统自带的方法功能不够，给系统自带的方法扩展一些功能，并且保持原有的功能。</li>
 <li><code>方式一</code>:继承系统的类，重写方法.</li>
@@ -196,13 +195,11 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
 <ul>
 <li>交换之前：</li>
 </ul>
-<p><img src="http://upload-images.jianshu.io/upload_images/304825-f53a2ea56804ad60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-<ul>
-<li>交换之后：</li>
-</ul>
-<p><img src="http://upload-images.jianshu.io/upload_images/304825-c76afa4089255d93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 </li>
 </ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/304825-f53a2ea56804ad60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<pre><code>*   交换之后：
+</code></pre><p><img src="http://upload-images.jianshu.io/upload_images/304825-c76afa4089255d93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <h4 id="3-动态添加方法"><a href="#3-动态添加方法" class="headerlink" title="3.动态添加方法"></a>3.动态添加方法</h4><ul>
 <li><code>开发使用场景</code>：如果一个类方法非常多，加载类到内存的时候也比较耗费资源，需要给每个方法生成映射表，可以使用动态给某个类，添加方法解决。</li>
 <li><code>经典面试题</code>：有没有使用performSelector，其实主要想问你有没有动态添加过方法。</li>
