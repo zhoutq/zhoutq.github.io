@@ -16,10 +16,10 @@
   
   
   
-    <meta name="description" content="[转]让你快速上手Runtime原文：http://www.jianshu.com/p/e071206103a4
+    <meta name="description" content="原文：http://www.jianshu.com/p/e071206103a4
 前言本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:袁峥Seemygo,也可以来小码哥，了解下我们的iOS培训课程。后续还会更新更多内容。。。
 一、runtime简介
-RunTime简称运行时。OC...">
+RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
   
   <title>[转]让你快速上手Runtime [ ZhouTongqian's Blog ]</title>
   
@@ -161,7 +161,7 @@ RunTime简称运行时。OC...">
       
     </p>
     
-    <h1 id="转-让你快速上手Runtime"><a href="#转-让你快速上手Runtime" class="headerlink" title="[转]让你快速上手Runtime"></a>[转]让你快速上手Runtime</h1><p>原文：<a href="http://www.jianshu.com/p/e071206103a4" target="_blank" rel="external">http://www.jianshu.com/p/e071206103a4</a></p>
+    <p>原文：<a href="http://www.jianshu.com/p/e071206103a4" target="_blank" rel="external">http://www.jianshu.com/p/e071206103a4</a></p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:<a href="http://weibo.com/2034818060/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo" target="_blank" rel="external">袁峥Seemygo</a>,也可以来<a href="http://www.520it.com" target="_blank" rel="external">小码哥</a>，了解下我们的iOS培训课程。后续还会更新更多内容。。。</p>
 <h3 id="一、runtime简介"><a href="#一、runtime简介" class="headerlink" title="一、runtime简介"></a>一、runtime简介</h3><ul>
 <li>RunTime简称运行时。OC就是<code>运行时机制</code>，也就是在运行时候的一些机制，其中最主要的是消息机制。</li>
@@ -251,7 +251,7 @@ RunTime简称运行时。OC...">
   <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
   <div class="random-toc">
     <h2>Table of Content</h2>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#转-让你快速上手Runtime"><span class="toc-text">[转]让你快速上手Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、runtime简介"><span class="toc-text">一、runtime简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、runtime作用"><span class="toc-text">二、runtime作用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-发送消息"><span class="toc-text">1.发送消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-交换方法"><span class="toc-text">2.交换方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-动态添加方法"><span class="toc-text">3.动态添加方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-给分类添加属性"><span class="toc-text">4.给分类添加属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-字典转模型"><span class="toc-text">5.字典转模型</span></a></li></ol></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、runtime简介"><span class="toc-text">一、runtime简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、runtime作用"><span class="toc-text">二、runtime作用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-发送消息"><span class="toc-text">1.发送消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-交换方法"><span class="toc-text">2.交换方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-动态添加方法"><span class="toc-text">3.动态添加方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-给分类添加属性"><span class="toc-text">4.给分类添加属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-字典转模型"><span class="toc-text">5.字典转模型</span></a></li></ol></li></ol>
   </div>
 </div>
 
