@@ -1,189 +1,28 @@
-
-
-
-
-
-
-
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ZhouTongqian&#39;s Blog</title>
+  <subtitle>周统乾</subtitle>
+  <link href="/zhoutq.github.io/atom.xml" rel="self"/>
   
-  <meta name="author" content="zhoutq">
+  <link href="https://github.com/zhoutq/zhoutq.github.io/"/>
+  <updated>2017-03-09T10:33:46.000Z</updated>
+  <id>https://github.com/zhoutq/zhoutq.github.io/</id>
   
-  
-  
-  
-    <meta name="description" content="原文：http://www.jianshu.com/p/e071206103a4
-前言本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:袁峥Seemygo,也可以来小码哥，了解下我们的iOS培训课程。后续还会更新更多内容。。。
-一、runtime简介
-RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
-  
-  <title>[转]让你快速上手Runtime [ ZhouTongqian's Blog ]</title>
-  
-    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="ZhouTongqian's Blog">
-  
-  
-    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
-  
-  
-  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
-<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
-  
-</head>
-
-<body>
-<div class="side-navigate hide-area">
-  
-  
-    <div class="item next">
-      <a href="/zhoutq.github.io/2017/03/08/第一篇文章/">
-        <div class="item-icon"></div>
-      </a>
-      <div class="item-title">
-        第一篇文章
-      </div>
-    </div>
-  
-</div>
-<div id="outer-container" class="hide-area">
-<div id="container">
-  <div id="menu-outer" class="slide-down">
-    <div id="menu-inner">
-      <div id="brand">
-        
-        <a onClick="openUserCard()">
-          <img id="avatar" src="/images/default_avatar.jpg"/>
-          <div id="homelink">ZhouTongqian's Blog</div>
-        </a>
-      </div>
-      <div id="menu-list">
-        <ul>
-        
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/index.html">首页</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/archives">归档</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/categories">分类</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/tags">标签</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/about">关于</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/guestbook">留言板</a>
-            
-          </li>
-        
-          
-            <li>
-          
-            <a href="/zhoutq.github.io/search">搜索</a>
-            
-          </li>
-        
-        </ul>
-      </div>
-      <div id="show-menu">
-        <button>Menu</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="content-outer">
-    <div id="content-inner">
-      
-      
-  <article id="post">
-    <h1>[转]让你快速上手Runtime</h1>
-    <p class="page-title-sub">
-      <span id = "post-title-date">撰写于 2017-03-08</span>
-      
-        <span id = "post-title-updated">修改于 2017-03-09</span>
-      
-      
-      <span id = "post-title-categories">分类
-      
-      
-        
-        
-        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
-      
-        
-          /
-        
-        
-        <a href="/zhoutq.github.io/categories/iOS/runtime/">runtime</a>
-      
-      </span>
-      
-      
-      <span id = "post-title-tags">
-      标签
-      
-      
-        
-        
-        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
-      
-        
-          /
-        
-        
-        <a href="/zhoutq.github.io/tags/runtime/">runtime</a>
-      
-        
-          /
-        
-        
-        <a href="/zhoutq.github.io/tags/动态运行时/">动态运行时</a>
-      
-        
-          /
-        
-        
-        <a href="/zhoutq.github.io/tags/移动开发/">移动开发</a>
-      
-      </span>
-      
-    </p>
+  <author>
+    <name>zhoutq</name>
     
-    <p>原文：<a href="http://www.jianshu.com/p/e071206103a4" target="_blank" rel="external">http://www.jianshu.com/p/e071206103a4</a></p>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>[转]让你快速上手Runtime</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/03/08/%E8%BD%AC-%E8%AE%A9%E4%BD%A0%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BRuntime/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2017/03/08/转-让你快速上手Runtime/</id>
+    <published>2017-03-08T08:44:53.000Z</published>
+    <updated>2017-03-09T10:33:46.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.jianshu.com/p/e071206103a4" target="_blank" rel="external">http://www.jianshu.com/p/e071206103a4</a></p>
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:<a href="http://weibo.com/2034818060/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo" target="_blank" rel="external">袁峥Seemygo</a>,也可以来<a href="http://www.520it.com" target="_blank" rel="external">小码哥</a>，了解下我们的iOS培训课程。后续还会更新更多内容。。。</p>
 <h3 id="一、runtime简介"><a href="#一、runtime简介" class="headerlink" title="一、runtime简介"></a>一、runtime简介</h3><ul>
 <li>RunTime简称运行时。OC就是<code>运行时机制</code>，也就是在运行时候的一些机制，其中最主要的是消息机制。</li>
@@ -263,240 +102,68 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div></pre></td><td class="code"><pre><div class="line">@implementation ViewController</div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    // Do any additional setup after loading the view, typically from a nib.</div><div class="line"></div><div class="line">    // 解析Plist文件</div><div class="line">    NSString *filePath = [[NSBundle mainBundle] pathForResource:@<span class="string">"status.plist"</span> ofType:nil];</div><div class="line"></div><div class="line">    NSDictionary *statusDict = [NSDictionary dictionaryWithContentsOfFile:filePath];</div><div class="line"></div><div class="line">    // 获取字典数组</div><div class="line">    NSArray *dictArr = statusDict[@<span class="string">"statuses"</span>];</div><div class="line"></div><div class="line">    // 自动生成模型的属性字符串</div><div class="line">//    [NSObject resolveDict:dictArr[0][@<span class="string">"user"</span>]];</div><div class="line"></div><div class="line">    _statuses = [NSMutableArray array];</div><div class="line"></div><div class="line">    // 遍历字典数组</div><div class="line">    <span class="keyword">for</span> (NSDictionary *dict <span class="keyword">in</span> dictArr) &#123;</div><div class="line"></div><div class="line">        Status *status = [Status modelWithDict:dict];</div><div class="line"></div><div class="line">        [_statuses addObject:status];</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 测试数据</div><div class="line">    NSLog(@<span class="string">"%@ %@"</span>,_statuses,[_statuses[0] user]);</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation NSObject (Model)</div><div class="line"></div><div class="line">+ (instancetype)modelWithDict:(NSDictionary *)dict</div><div class="line">&#123;</div><div class="line">    // 思路：遍历模型中所有属性-》使用运行时</div><div class="line"></div><div class="line">    // 0.创建对应的对象</div><div class="line">    id objc = [[self alloc] init];</div><div class="line"></div><div class="line">    // 1.利用runtime给对象中的成员属性赋值</div><div class="line"></div><div class="line">    // class_copyIvarList:获取类中的所有成员属性</div><div class="line">    // Ivar：成员属性的意思</div><div class="line">    // 第一个参数：表示获取哪个类中的成员属性</div><div class="line">    // 第二个参数：表示这个类有多少成员属性，传入一个Int变量地址，会自动给这个变量赋值</div><div class="line">    // 返回值Ivar *：指的是一个ivar数组，会把所有成员属性放在一个数组中，通过返回的数组就能全部获取到。</div><div class="line">    /* 类似下面这种写法</div><div class="line"></div><div class="line">     Ivar ivar;</div><div class="line">     Ivar ivar1;</div><div class="line">     Ivar ivar2;</div><div class="line">     // 定义一个ivar的数组a</div><div class="line">     Ivar a[] = &#123;ivar,ivar1,ivar2&#125;;</div><div class="line"></div><div class="line">     // 用一个Ivar *指针指向数组第一个元素</div><div class="line">     Ivar *ivarList = a;</div><div class="line"></div><div class="line">     // 根据指针访问数组第一个元素</div><div class="line">     ivarList[0];</div><div class="line"></div><div class="line">     */</div><div class="line">    unsigned int count;</div><div class="line"></div><div class="line">    // 获取类中的所有成员属性</div><div class="line">    Ivar *ivarList = class_copyIvarList(self, &amp;count);</div><div class="line"></div><div class="line">    <span class="keyword">for</span> (int i = 0; i &lt; count; i++) &#123;</div><div class="line">        // 根据角标，从数组取出对应的成员属性</div><div class="line">        Ivar ivar = ivarList[i];</div><div class="line"></div><div class="line">        // 获取成员属性名</div><div class="line">        NSString *name = [NSString stringWithUTF8String:ivar_getName(ivar)];</div><div class="line"></div><div class="line">        // 处理成员属性名-&gt;字典中的key</div><div class="line">        // 从第一个角标开始截取</div><div class="line">        NSString *key = [name substringFromIndex:1];</div><div class="line"></div><div class="line">        // 根据成员属性名去字典中查找对应的value</div><div class="line">        id value = dict[key];</div><div class="line"></div><div class="line">        // 二级转换:如果字典中还有字典，也需要把对应的字典转换成模型</div><div class="line">        // 判断下value是否是字典</div><div class="line">        <span class="keyword">if</span> ([value isKindOfClass:[NSDictionary class]]) &#123;</div><div class="line">            // 字典转模型</div><div class="line">            // 获取模型的类对象，调用modelWithDict</div><div class="line">            // 模型的类名已知，就是成员属性的类型</div><div class="line"></div><div class="line">            // 获取成员属性类型</div><div class="line">           NSString *<span class="built_in">type</span> = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];</div><div class="line">          // 生成的是这种@<span class="string">"@\"User\""</span> 类型 -》 @<span class="string">"User"</span>  在OC字符串中 \<span class="string">" -&gt; "</span>，\是转义的意思，不占用字符</div><div class="line">            // 裁剪类型字符串</div><div class="line">            NSRange range = [<span class="built_in">type</span> rangeOfString:@<span class="string">"\""</span>];</div><div class="line"></div><div class="line">           <span class="built_in">type</span> = [<span class="built_in">type</span> substringFromIndex:range.location + range.length];</div><div class="line"></div><div class="line">            range = [<span class="built_in">type</span> rangeOfString:@<span class="string">"\""</span>];</div><div class="line"></div><div class="line">            // 裁剪到哪个角标，不包括当前角标</div><div class="line">          <span class="built_in">type</span> = [<span class="built_in">type</span> substringToIndex:range.location];</div><div class="line"></div><div class="line">            // 根据字符串类名生成类对象</div><div class="line">            Class modelClass = NSClassFromString(<span class="built_in">type</span>);</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (modelClass) &#123; // 有对应的模型才需要转</div><div class="line"></div><div class="line">                // 把字典转模型</div><div class="line">                value  =  [modelClass modelWithDict:value];</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // 三级转换：NSArray中也是字典，把数组中的字典转换成模型.</div><div class="line">        // 判断值是否是数组</div><div class="line">        <span class="keyword">if</span> ([value isKindOfClass:[NSArray class]]) &#123;</div><div class="line">            // 判断对应类有没有实现字典数组转模型数组的协议</div><div class="line">            <span class="keyword">if</span> ([self respondsToSelector:@selector(arrayContainModelClass)]) &#123;</div><div class="line"></div><div class="line">                // 转换成id类型，就能调用任何对象的方法</div><div class="line">                id idSelf = self;</div><div class="line"></div><div class="line">                // 获取数组中字典对应的模型</div><div class="line">                NSString *<span class="built_in">type</span> =  [idSelf arrayContainModelClass][key];</div><div class="line"></div><div class="line">                // 生成模型</div><div class="line">               Class classModel = NSClassFromString(<span class="built_in">type</span>);</div><div class="line">                NSMutableArray *arrM = [NSMutableArray array];</div><div class="line">                // 遍历字典数组，生成模型数组</div><div class="line">                <span class="keyword">for</span> (NSDictionary *dict <span class="keyword">in</span> value) &#123;</div><div class="line">                    // 字典转模型</div><div class="line">                  id model =  [classModel modelWithDict:dict];</div><div class="line">                    [arrM addObject:model];</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                // 把模型数组赋值给value</div><div class="line">                value = arrM;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (value) &#123; // 有值，才需要给模型的属性赋值</div><div class="line">            // 利用KVC给模型中的属性赋值</div><div class="line">            [objc <span class="built_in">set</span>Value:value <span class="keyword">for</span>Key:key];</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">return</span> objc;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-
-  </article>
-  <div class="random-toc-area">
-  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
-  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
-  <div class="random-toc">
-    <h2>目录</h2>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、runtime简介"><span class="toc-text">一、runtime简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、runtime作用"><span class="toc-text">二、runtime作用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-发送消息"><span class="toc-text">1.发送消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-交换方法"><span class="toc-text">2.交换方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-动态添加方法"><span class="toc-text">3.动态添加方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-给分类添加属性"><span class="toc-text">4.给分类添加属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-字典转模型"><span class="toc-text">5.字典转模型</span></a></li></ol></li></ol>
-  </div>
-</div>
-
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.jianshu.com/p/e071206103a4&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.jianshu.com/p/e071206103a4&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;前
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="runtime" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/runtime/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="runtime" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/runtime/"/>
+    
+      <category term="动态运行时" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%8A%A8%E6%80%81%E8%BF%90%E8%A1%8C%E6%97%B6/"/>
+    
+      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
+    
+  </entry>
   
-<nav id="pagination">
-  
-
-  
-
-  
-    <a href="/zhoutq.github.io/2017/03/08/第一篇文章/" class="next">下一篇 第一篇文章 &rarr;</a>
-  
-</nav>
-
-  <!-- JiaThis Button BEGIN -->
-
-<!-- JiaThis Button END -->
-
-
-      
-      <div class="ds-thread" data-thread-key="2017/03/08/转-让你快速上手Runtime/" data-title="[转]让你快速上手Runtime" data-url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2017/03/08/转-让你快速上手Runtime/"></div>
-      
-      
-      
-    </div>
-  </div>
-
-  <div id="bottom-outer">
-    <div id="bottom-inner">
-      Site by zhoutq using
-      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
-      <br>
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  <script type="text/javascript">
-var duoshuoQuery = {short_name:"zhoutq"};
-(function() {
-  var ds = document.createElement('script');
-  ds.type = 'text/javascript';ds.async = true;
-  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-  ds.charset = 'UTF-8';
-  (document.getElementsByTagName('head')[0] 
-   || document.getElementsByTagName('body')[0]).appendChild(ds);
-})();
-</script>
-
-
-
-<div id="user-card">
-  <div class="center-field">
-    <img class="avatar" src="/images/default_avatar.jpg">
-    <p id="description"></p>
-    <ul class="social-icon">
-  
-  
-    <li>
-      <a href="https://github.com/zhoutq">
-        
-          <i class="icon iconfont github">&#xe606;</i>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="https://coding.net/u/zhoutq">
-        
-          <i class="icon iconfont coding">&#xe607;</i>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
-        
-          <i class="icon iconfont weibo">&#xe602;</i>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="http://blog.csdn.net/zttqq">
-        
-          csdn
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="http://blog.cocoachina.com/334660">
-        
-          CocoaChina
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
-        
-          <i class="icon iconfont jian">&#xe614;</i>
-        
-      </a>
-    </li>
-  
-    <li>
-      <a href="/node_modules/hexo-generator-feed/atom.xml">
-        
-          <i class="icon iconfont rss">&#xe60e;</i>
-        
-      </a>
-    </li>
-  
+  <entry>
+    <title>第一篇文章</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/03/08/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2017/03/08/第一篇文章/</id>
+    <published>2017-03-07T17:37:40.000Z</published>
+    <updated>2017-03-11T16:04:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<pre><code>NSLog(@&quot;Hello World&quot;);
+</code></pre><ul>
+<li><p>捣腾了两天的终于出炉了，一路走来坑坑洼洼，实属不易！此时的心情犹如刚学OC时，控制台打印出“Hello World”一般。</p>
+</li>
+<li><p>后期会将珍藏已久的好文章陆续放上去，文章主要以技术分享为主，但时而也会有一些自己的小心情、小想法之类的！恭请敬阅。 </p>
+</li>
+<li><p>由于刚开始弄所以排版和功能肯定有不足之处，欢迎批评指正。</p>
+</li>
 </ul>
-  </div>
-</div>
-
-
-<div id="btn-view">Hide</div>
-
-<script>
-// is trigger analytics / tongji script
-var isIgnoreHost = false;
-
-if(window && window.location && window.location.host) {
-  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
-    return 0 === window.location.host.indexOf(address);
-  });
-}
-
-var isTriggerAnalytics = !( true && isIgnoreHost );
-
-</script>
-
-
-
-
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;pre&gt;&lt;code&gt;NSLog(@&amp;quot;Hello World&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;捣腾了两天的终于出炉了，一路走来坑坑洼洼，实属不易！此时的心情犹如刚学OC时，控制台打印出“Hello World”一般。&lt;/p&gt;
+&lt;/li&gt;
+    
+    </summary>
+    
+      <category term="杂记" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+    
+      <category term="生活" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="生活" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%94%9F%E6%B4%BB/"/>
+    
+      <category term="杂记" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+      <category term="博客" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%8D%9A%E5%AE%A2/"/>
+    
+  </entry>
   
-  
-    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
-  
-    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
-  
-    <script src="/zhoutq.github.io/js/random.js"></script>
-  
-    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
-  
-    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
-  
-    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
-  
-    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
-  
-    <script src="/zhoutq.github.io/js/plyr.js"></script>
-  
-
-<script>
-
-  // fancybox
-  var backgroundImages = [];
-  
-  $('#post').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
-      var alt = this.alt || this.title;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'post' + i);
-    });
-  });
-  $(".fancybox").fancybox();
-
-var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
-var unsplashConfig = {"gravity":"north"};
-// is show background images
-var turnoffBackgroundImage = false;
-
-
-
-  turnoffBackgroundImage = true;
-
-
-var backgroundColor = "34495E";
-
-$(".fancybox-thumb").fancybox({
-  prevEffect: 'none',
-  nextEffect: 'none',
-  helpers: {
-    title: {
-      type: 'outside'
-    },
-    thumbs: {
-      width: 50,
-      height: 50
-    }
-  }
-});
-
-// show video with plyr
-$(".video-container iframe").each(function(i){
-  var url = $(this).attr('src');
-  var id = url.split('/').pop();
-  var plyrContainer = document.createElement('div');
-  plyrContainer.className = 'plyr';
-  var plyrElement = document.createElement('div');
-  plyrElement.dataset.videoId = id;
-  switch(true) {
-    case url.search('youtube.com') >= 0:
-      plyrElement.dataset.type = 'youtube';
-      break;
-    case url.search('vimeo.com') >= 0:
-      plyrElement.dataset.type = 'vimeo';
-      break;
-    default:
-      return;
-  };
-  plyrContainer.appendChild(plyrElement);
-  $(this).parent().html(plyrContainer);
-});
-plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
-</script>
-</body>
-</html>
-
+</feed>
