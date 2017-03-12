@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/tags/index.html</loc>
+    
+    <lastmod>2017-03-12T12:46:59.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/guestbook/index.html</loc>
+    
+    <lastmod>2017-03-12T12:46:36.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://github.com/zhoutq/zhoutq.github.io/about/index.html</loc>
     
     <lastmod>2017-03-12T12:45:45.000Z</lastmod>
@@ -9,23 +23,9 @@
   </url>
   
   <url>
-    <loc>https://github.com/zhoutq/zhoutq.github.io/tags/index.html</loc>
-    
-    <lastmod>2017-03-12T10:11:43.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://github.com/zhoutq/zhoutq.github.io/categories/index.html</loc>
     
     <lastmod>2017-03-12T10:11:31.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://github.com/zhoutq/zhoutq.github.io/guestbook/index.html</loc>
-    
-    <lastmod>2017-03-12T10:10:24.000Z</lastmod>
     
   </url>
   
