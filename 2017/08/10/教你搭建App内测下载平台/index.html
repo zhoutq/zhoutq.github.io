@@ -1,0 +1,530 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="转自简书作者:zhao0
+前言App开发测试过程中，我们会把安装包传到各种第三方的内测分发平台方便下载。这些平台或多或少有这样那样的限制，比如下载量啊、付费啊、不能方便找到历史版本啊。还有一方面，我们经常会打Debug版本的包方便调试，又不希望Debug包流传到外部去，这样就很有必要自己搭一个下载平台，于是就有了这个项目(github地址)。
+
+
+技术调研怎么下载先说安卓，apk文件通过最简...">
+  
+  <title>[转]教你搭建App内测下载平台 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2017/03/08/转-让你快速上手Runtime/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]让你快速上手Runtime
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]教你搭建App内测下载平台</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-08-10</span>
+      
+        <span id = "post-title-updated">修改于 2017-09-10</span>
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/App内测下载平台/">App内测下载平台</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/移动开发/">移动开发</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/App内测下载平台/">App内测下载平台</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>转自简书作者:<a href="http://www.jianshu.com/p/48b38a2d0bbb" target="_blank" rel="external">zhao0</a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>App开发测试过程中，我们会把安装包传到各种第三方的内测分发平台方便下载。这些平台或多或少有这样那样的限制，比如下载量啊、付费啊、不能方便找到历史版本啊。还有一方面，我们经常会打Debug版本的包方便调试，又不希望Debug包流传到外部去，这样就很有必要自己搭一个下载平台，于是就有了这个项目(<a href="https://github.com/zhao0/ipapk-server">github地址</a>)。</p>
+<div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/2057602-ba63d6a985727af3.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><div class="image-caption"></div><br></div>
+
+<h2 id="技术调研"><a href="#技术调研" class="headerlink" title="技术调研"></a>技术调研</h2><h5 id="怎么下载"><a href="#怎么下载" class="headerlink" title="怎么下载"></a>怎么下载</h5><p>先说安卓，apk文件通过最简单的http/ftp下载就可以安装了，略过。<br>iOS稍微复杂一点，需要两步才能完成。<br>第一，下载链接必须是这样的格式</p>
+<p>itms-services://?action=download-manifest&amp;url=一个plist文件的地址`</p>
+<p>第二，plist内容如下</p>
+<pre>`&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+&lt;key&gt;items&lt;/key&gt;
+&lt;array&gt;
+&lt;dict&gt;
+&lt;key&gt;assets&lt;/key&gt;
+&lt;array&gt;
+&lt;dict&gt;
+&lt;key&gt;kind&lt;/key&gt;
+&lt;string&gt;software-package&lt;/string&gt;
+&lt;key&gt;url&lt;/key&gt;
+&lt;string&gt;ipa文件的地址&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/array&gt;
+&lt;key&gt;metadata&lt;/key&gt;
+&lt;dict&gt;
+&lt;key&gt;bundle-identifier&lt;/key&gt;
+&lt;string&gt;bundleID&lt;/string&gt;
+&lt;key&gt;bundle-version&lt;/key&gt;
+&lt;string&gt;1.0&lt;/string&gt;
+&lt;key&gt;kind&lt;/key&gt;
+&lt;string&gt;software&lt;/string&gt;
+&lt;key&gt;title&lt;/key&gt;
+&lt;string&gt;AppTitle&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/dict&gt;
+&lt;/array&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;`</pre>
+
+<p>其中，最重要的就是ipa文件的地址，要求必须是https协议，那就需要SSL证书，幸运的是我们可以信任自签名的证书。下载的过程就是这样，当然我们希望这个链接和plist的生成是自动完成的。</p>
+<h5 id="自签名证书"><a href="#自签名证书" class="headerlink" title="自签名证书"></a>自签名证书</h5><p>参考<a href="http://www.cnblogs.com/lihuang/articles/4205540.html" target="_blank" rel="external">如何创建一个自签名的SSL证书(X509)</a></p>
+<h5 id="包信息提取"><a href="#包信息提取" class="headerlink" title="包信息提取"></a>包信息提取</h5><p>单单只能下载还不够，我们希望看到更多的信息：App名字、版本号、build号、更新时间、图标等。这些信息虽然可以留给上传者在上传的时候一并带上，但是作为有追求的程序员，把方便留给别人的最基本的，因此我们要从ipa/apk中提取这些信息。<br>无论是ipa还是apk，本质都是zip压缩文件。<br>对于iOS的ipa，包信息都放在Info.plist中，主要有CFBundleVersion、CFBundleIdentifier、CFBundleShortVersionString、CFBundleName等。图标文件的名字也是固定的，只要解压就可以得到。不过，苹果对png图片进行了了自定义的<a href="http://pmt.sourceforge.net/pngcrush/" target="_blank" rel="external">pngcrush</a>压缩，有压缩自然就有还原工具<a href="http://www.jongware.com/pngdefry.html" target="_blank" rel="external">pngdefry</a>。<br>对于Android的apk，解压后还能看到AndroidManifest.xml，但是里面的内容经过编码显示为乱码，不方便查看，需要借助开发工具aapt(Android Asset Packaging Tool)，方法如下<br><code>aapt dump badging apkPath</code><br>输出的文本格式如下，不是标准的歌声，需要手动转换一下。</p>
+<pre>`package: name='com.jianshu.haruki' versionCode='16070101' versionName='1.11.2'
+sdkVersion:'14'
+targetSdkVersion:'22'
+...
+application: label='简书' icon='res/drawable-hdpi-v4/icon_jianshu_new.png'
+...`</pre>
+
+<h2 id="找轮子"><a href="#找轮子" class="headerlink" title="找轮子"></a>找轮子</h2><p>程序员有一个习惯，需要某个东西的时候会先一番搜索，直接用别人写好的，用着用着发现别人写的东西有这样那样的不足，然后撸起袖子自己造一个。这次也不例外，我在github上找到了一个<a href="https://github.com/bumaociyuan/ios-ipa-server">ios-ipa-server</a>，它的特点是简单，ipa文件存储在一个目录下，没有数据库，包信息只有上传时间(其实就是文件更新时间)，不能对app归类，只靠文件名区别，不支持上传，如下图：</p>
+<div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/2057602-31224eefc821b5a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><div class="image-caption"></div><br></div>
+
+<p>浏览器访问下载页面时，后端实时解析包信息、解压icon图片，这样做效率是非常低的。<br>这么多不足我们就有了造轮子的理由了。</p>
+<h2 id="自己造一个"><a href="#自己造一个" class="headerlink" title="自己造一个"></a>自己造一个</h2><p>既然<a href="https://github.com/bumaociyuan/ios-ipa-server">ios-ipa-server</a>是基于node-express写的，正好我<strong>没写过</strong>nodejs，那就在它的基础上继续写吧，借机学(zhuang)习(bi)一下。<br>整个项目的结构是这样的，提供四个API：包上传、获取所有App最新版本、获取某个App的所有版本、动态生成plist文件，数据存储使用sqlite3。</p>
+<h5 id="包上传"><a href="#包上传" class="headerlink" title="包上传"></a>包上传</h5><p>接口设计如下：</p>
+<pre>`path:
+POST /upload
+
+param: 
+package:安装包文件
+
+response:
+{
+id: 6,
+guid: "46269d71-9fda-76fc-3442-a118d6b08bf1",
+bundleID: "com.jianshu.Hugo",
+version: "2.11.4",
+build: "1608051045",
+icon: "https://10.20.30.233:1234/icon/46269d71-9fda-76fc-3442-a118d6b08bf1.png",
+name: "Hugo",
+uploadTime: "2016-12-01 20:50:05",
+platform: "ios",
+url: "itms-services://?action=download-manifest&amp;url=https://10.20.30.233:1234/plist/46269d71-9fda-76fc-3442-a118d6b08bf1"
+}`</pre>
+
+<p>后端需要拿到安装包，提取出包信息和png图标图片，然后插入到数据库中，最后存储安装包文件和png图片，这也是最关键、最复杂的一个API。</p>
+<pre>`  app.post('/upload', function(req, res) {
+var form = new multiparty.Form();
+form.parse(req, function(err, fields, files) {
+var obj = files.package[0];
+var tmp_path = obj.path;
+parseAppAndInsertToDb(tmp_path, info =&gt; {
+storeApp(tmp_path, info["guid"], error =&gt; {
+if (error) {
+errorHandler(error,res)
+}
+})
+console.log(info)
+res.send(info)
+}, error =&gt; {
+errorHandler(error,res)
+});
+});
+});`</pre>
+
+<p>接收表单信息用到了multiparty模块，<code>parseAppAndInsertToDb</code>内部完成了包信息的提取和存储，<code>storeApp</code>存储包文件。<br><code>parseAppAndInsertToDb</code>的实现如下，</p>
+<pre>`function parseAppAndInsertToDb(filePath, callback, errorCallback) {
+var guid = Guid.create().toString();
+var parse, extract
+if (path.extname(filePath) === ".ipa") {
+parse = parseIpa
+extract = extractIpaIcon
+} else if (path.extname(filePath) === ".apk") {
+parse = parseApk
+extract = extractApkIcon
+}
+Promise.all([parse(filePath),extract(filePath,guid)]).then(values =&gt; {
+var info = values[0]
+info["guid"] = guid
+excuteDB("INSERT INTO info (guid, platform, build, bundleID, version, name) VALUES (?, ?, ?, ?, ?, ?);",
+[info["guid"], info["platform"], info["build"], info["bundleID"], info["version"], info["name"]],function(error){
+if (!error){
+callback(info)
+} else {
+errorCallback(error)
+}
+});
+}, reason =&gt; {
+errorCallback(reason)
+})
+}`</pre>
+
+<p>首先根据文件后缀名判断安装包类型，因为ipa和apk的处理逻辑不一样，所以分别对应两个方法，包信息的提取和icon提取可以同时进行，所以这里用了<code>Promise.all</code>。<code>parseIpa</code>和<code>parseApk</code>就是包信息的提取。<code>extractApkIcon</code>和<code>extractIpaIcon</code>则是icon的提取，<code>extractIpaIcon</code>多了一步还原png图片的处理。<br><code>parseIpa</code>用到了<code>ipa-extract-info</code>模块，<code>parseApk</code>则使用了<code>apk-parser3</code>，代码都非常简单。详细可进入<a href="https://github.com/zhao0/ipapk-server">github地址</a>。</p>
+<h5 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h5><p>其他三个API则比较简单了，无非就是根据参数取数据，不再赘述。</p>
+<h2 id="集成和使用"><a href="#集成和使用" class="headerlink" title="集成和使用"></a>集成和使用</h2><p>安装步骤非常简单，首先需要安装node，有了node之后只要一行命令</p>
+<pre>`npm install -g ipapk-server`</pre>
+
+<p>安装完成之后输入命令</p>
+<p><pre>`ipapk-server</pre></p>
+<p>手机浏览器访问<a href="https://ip:port" target="_blank" rel="external">https://ip:port</a> 即可打开下载页面</p>
+<div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/2057602-778cdf6e0a5be67b.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><div class="image-caption"></div><br></div><div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/2057602-ba63d6a985727af3.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br><div class="image-caption"></div><br></div>
+
+<p>App的信息获取都设计成了API，提供给开发者更灵活的接入方式，可以做web页面，也可以做成App，我的好朋友mask(<a href="http://www.jianshu.com/users/98ca2b6009b9" target="_blank" rel="external">人格分裂术</a>)贡献了不少工作，完成默认的web下载页面。<br>更详细的内容请参考<a href="https://github.com/zhao0/ipapk-server">github</a>。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>简书作为一个优质原创内容社区，拥有大量优质原创内容，提供了极佳的阅读和书写体验，吸引了大量文字爱好者和程序员。<a href="http://www.jianshu.com/collection/5e84f0a4fbb0" target="_blank" rel="external">简书技术团队</a>在这里分享技术心得体会，是希望抛砖引玉，吸引更多的程序员大神来简书记录、分享、交流自己的心得体会。<a href="http://www.jianshu.com/collection/5e84f0a4fbb0" target="_blank" rel="external">这个专题</a>以后会不定期更新简书技术团队的文章，包括Android、iOS、前端、后端等等，欢迎大家关注。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#技术调研"><span class="toc-text">技术调研</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#怎么下载"><span class="toc-text">怎么下载</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#自签名证书"><span class="toc-text">自签名证书</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#包信息提取"><span class="toc-text">包信息提取</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#找轮子"><span class="toc-text">找轮子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己造一个"><span class="toc-text">自己造一个</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#包上传"><span class="toc-text">包上传</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成和使用"><span class="toc-text">集成和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写在最后"><span class="toc-text">写在最后</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2017/03/08/转-让你快速上手Runtime/" class="next">下一篇 [转]让你快速上手Runtime &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2017/08/10/教你搭建App内测下载平台/" data-title="[转]教你搭建App内测下载平台" data-url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2017/08/10/教你搭建App内测下载平台/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+
