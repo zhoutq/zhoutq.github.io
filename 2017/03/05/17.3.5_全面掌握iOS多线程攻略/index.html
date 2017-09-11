@@ -1,0 +1,509 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://mobile.51cto.com/iphone-403490.htm
+
+###多线程是一个比较轻量级的方法来实现单个应用程序内多个代码执行路径。在系统级别内，程序并排执行，系统分配到每个程序的执行时间是基于该程序的所需时间和其他程序的所需时间来决定的。然而在每个应程序的内部，存在一个或多个执行线程，它同时或在一个几乎同时发生的方式里执行不同的任务。### 头条推荐####...">
+  
+  <title>[转]掌握iOS多线程攻略 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/04/10/17.4.10_AFNetworking3.0如何取消单个网络请求/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        AFNetworking3.0 如何取消网络请求
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2017/02/16/17.2.16_禅与 Objective-C编程艺术/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]禅与 Objective-C 编程艺术
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]掌握iOS多线程攻略</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-03-05</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/多线程/">多线程</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/多线程/">多线程</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/GCD/">GCD</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/NSOperationQueue/">NSOperationQueue</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/NSThread/">NSThread</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://mobile.51cto.com/iphone-403490.htm" target="_blank" rel="external">http://mobile.51cto.com/iphone-403490.htm</a></p>
+<p><img src="http://s9.51cto.com/wyfs01/M00/10/64/wKioOVHm1uDBoy8BAAE-0JFe7qA823.jpg" alt="专题：全面掌握iOS多线程攻略"></p>
+<div class="lead"><br><br>###<br><br>多线程是一个比较轻量级的方法来实现单个应用程序内多个代码执行路径。在系统级别内，程序并排执行，系统分配到每个程序的执行时间是基于该程序的所需时间和其他程序的所需时间来决定的。然而在每个应程序的内部，存在一个或多个执行线程，它同时或在一个几乎同时发生的方式里执行不同的任务。<br><br>### 头条推荐<br><br>#### <a href="http://mobile.51cto.com/iphone-386596.htm" target="_blank" rel="external">iOS中多线程原理与runloop介绍</a><br><br>iPhone中的线程应用并不是无节制的，官方给出的资料显示iPhone OS下的主线程的堆栈大小是1M，第二个线程开始都是512KB。并且该值不能通过编译器开关或线程API函数来更改。只有主线程有直接修改UI的能力。……<a href="http://mobile.51cto.com/iphone-386596.htm" target="_blank" rel="external">&gt;&gt;详细</a><br><br>#### <a href="http://developer.51cto.com/art/201305/393568.htm" target="_blank" rel="external">Go语言1.1版发布</a><br><br>“很高兴宣布 Go 语言 1.1 版的发布。在去年3月，我们发布了 1.0 版。此后我们发布了3个小版本更新，这些都只是修复了严重问题，所以各位到现在用的都是 Go 1.0.3 版。<br><br>和 1.0 版相比，Go 1.1 包含了许多改进。最显著的改进是和性能相关。我们优化了编译器和链接器、垃圾回收器、goroutine 调度、映射实现和部分标准库。在 Go 1.1 之下，你的Go代码应该会明显快多了。还有Go语言本身一些细微变化，其中两点这里要摘出来说说：① return 的变化将带来更为简洁和正确的程序，② 引入了方法值（method values）。并行编程在这更为安全……<a href="http://developer.51cto.com/art/201305/393568.htm" target="_blank" rel="external">&gt;&gt;详细</a><br><a href="http://mobile.51cto.com/iphone-401939.htm" target="_blank" rel="external"><img src="http://s7.51cto.com/wyfs01/M00/10/64/wKioOVHm4ofA5rrWAAEnv_KhxSQ852.jpg" alt=""></a><div class="imgrt"><a href="http://mobile.51cto.com/iphone-401939.htm" target="_blank" rel="external"><span>兄弟专题：iOS人机交互指南之UI设计基础</span></a></div></div>
+
+<h3 id="1-nbsp-iOS多线程编程知多少"><a href="#1-nbsp-iOS多线程编程知多少" class="headerlink" title="1&nbsp;iOS多线程编程知多少"></a><span>1&nbsp;<a href="http://mobile.51cto.com/iphone-402967.htm" target="_blank" rel="external">iOS多线程编程知多少</a></span></h3><p>在iOS的世界里有两种实现多线程的方式：</p>
+<p><a href="http://s5.51cto.com/wyfs01/M01/10/64/wKioOVHm5i-SLYRSAAb_0wIZIoE958.jpg" target="_blank" rel="external"><img src="http://s5.51cto.com/wyfs01/M01/10/64/wKioOVHm5i-SLYRSAAb_0wIZIoE958.jpg" alt=""></a></p>
+<p>多线程是一个比较轻量级的方法来实现单个应用程序内多个代码执行路径。在系统级别内，程序并排执行，系统分配到每个程序的执行时间是基于该程序的所需时间和其他程序的所需时间来决定的。然而在每个应程序的内部，存在一个或多个执行线程，它同时或在一个几乎同时发生的方式里执行不同的任务。</p>
+<p><strong>第一种：GCD</strong></p>
+<p><a href="http://mobile.51cto.com/iphone-402967.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="2-nbsp-GCD使用攻略"><a href="#2-nbsp-GCD使用攻略" class="headerlink" title="2&nbsp;GCD使用攻略"></a><span>2&nbsp;<a href="http://mobile.51cto.com/iphone-402964.htm" target="_blank" rel="external">GCD使用攻略</a></span></h3><p><a href="http://s9.51cto.com/wyfs01/M00/10/64/wKioOVHm5s_yHEMTAAdxHWQ_1sk269.jpg" target="_blank" rel="external"><img src="http://s9.51cto.com/wyfs01/M00/10/64/wKioOVHm5s_yHEMTAAdxHWQ_1sk269.jpg" alt=""></a></p>
+<h2 id="什么是GCD"><a href="#什么是GCD" class="headerlink" title="什么是GCD"></a>什么是GCD</h2><p>Grand Central Dispatch (GCD)是Apple开发的一个多核编程的解决方法。该方法在Mac OS X  10.6雪豹中首次推出，并随后被引入到了iOS4.0中。GCD是一个替代诸如NSThread, NSOperationQueue,  NSInvocationOperation等技术的很高效和强大的技术，它看起来象就其它语言的闭包(Closure)一样，但苹果把它叫做blocks。</p>
+<p>&nbsp;</p>
+<h2 id="应用举例"><a href="#应用举例" class="headerlink" title="应用举例"></a>应用举例</h2><p>让我们来看一个编程场景。我们要在iphone上做一个下载网页的功能，该功能非常简单，就是在iphone上放置一个按钮，点击该按钮时，显示一个转动的圆圈，表示正在进行下载，下载完成之后，将内容加载到界面上的一个文本控件中。</p>
+<p><a href="http://mobile.51cto.com/iphone-402964.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="3-nbsp-GCD介绍-一-基本概念和Dispatch-Queue"><a href="#3-nbsp-GCD介绍-一-基本概念和Dispatch-Queue" class="headerlink" title="3&nbsp;GCD介绍(一):基本概念和Dispatch Queue"></a><span>3&nbsp;<a href="http://mobile.51cto.com/iphone-402981.htm" target="_blank" rel="external">GCD介绍(一):基本概念和Dispatch Queue</a></span></h3><p><a href="http://s5.51cto.com/wyfs01/M01/10/63/wKioJlHm58ngXF3oAAas23HcB6s926.png" target="_blank" rel="external"><img src="http://s5.51cto.com/wyfs01/M01/10/63/wKioJlHm58ngXF3oAAas23HcB6s926.png" alt=""></a></p>
+<p><strong>什么是GCD？</strong></p>
+<p>Grand Central  Dispatch或者GCD，是一套低层API，提供了一种新的方法来进行并发程序编写。从基本功能上讲，GCD有点像NSOperationQueue，他们都允许程序将任务切分为多个单一任务然后提交至工作队列来并发地或者串行地执行。GCD比之NSOpertionQueue更底层更高效，并且它不是Cocoa框架的一部分。</p>
+<p>除了代码的平行执行能力，GCD还提供高度集成的事件控制系统。可以设置句柄来响应文件描述符、mach ports（Mach port&nbsp;用于  OS X上的进程间通讯）、进程、计时器、信号、用户生成事件。这些句柄通过GCD来并发执行。</p>
+<p><a href="http://mobile.51cto.com/iphone-402981.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="4-nbsp-GCD介绍-二-多核心的性能"><a href="#4-nbsp-GCD介绍-二-多核心的性能" class="headerlink" title="4&nbsp;GCD介绍(二):多核心的性能"></a><span>4&nbsp;<a href="http://mobile.51cto.com/iphone-402991.htm" target="_blank" rel="external">GCD介绍(二):多核心的性能</a></span></h3><p><a href="http://s1.51cto.com/wyfs01/M01/10/63/wKioJlHm6BDTgZDTAAa5o4UiX6k728.jpg" target="_blank" rel="external"><img src="http://s1.51cto.com/wyfs01/M01/10/63/wKioJlHm6BDTgZDTAAa5o4UiX6k728.jpg" alt=""></a></p>
+<p><strong>概念</strong></p>
+<p>为了在单一进程中充分发挥多核的优势，我们有必要使用多线程技术（我们没必要去提多进程，这玩意儿和GCD没关系）。在低层，GCD全局dispatch  queue仅仅是工作线程池的抽象。这些队列中的Block一旦可用，就会被dispatch到工作线程中。提交至用户队列的Block最终也会通过全局队列进入相同的工作线程池（除非你的用户队列的目标是主线程，但是为了提高运行速度，我们绝不会这么干）。</p>
+<p>有两种途径来通过GCD&ldquo;榨取&rdquo;多核心系统的性能：将单一任务或者一组相关任务并发至全局队列中运算；将多个不相关的任务或者关联不紧密的任务并发至用户队列中运算；</p>
+<p><a href="http://mobile.51cto.com/iphone-402991.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="5-nbsp-GCD介绍-三-Dispatch-Sources"><a href="#5-nbsp-GCD介绍-三-Dispatch-Sources" class="headerlink" title="5&nbsp;GCD介绍(三):Dispatch Sources"></a><span>5&nbsp;<a href="http://mobile.51cto.com/iphone-403003.htm" target="_blank" rel="external">GCD介绍(三):Dispatch Sources</a></span></h3><p><a href="http://s1.51cto.com/wyfs01/M00/10/64/wKioOVHm6RLA7lNgAAYTkpqIhHI443.png" target="_blank" rel="external"><img src="http://s1.51cto.com/wyfs01/M00/10/64/wKioOVHm6RLA7lNgAAYTkpqIhHI443.png" alt=""></a></p>
+<p><strong>何为Dispatch Sources</strong></p>
+<p>简单来说，dispatch source是一个监视某些类型事件的对象。当这些事件发生时，它自动将一个block放入一个dispatch  queue的执行例程中。</p>
+<p>说的貌似有点不清不楚。我们到底讨论哪些事件类型？</p>
+<p><a href="http://mobile.51cto.com/iphone-403003.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="6-nbsp-GCD介绍-四-完结"><a href="#6-nbsp-GCD介绍-四-完结" class="headerlink" title="6&nbsp;GCD介绍(四):完结"></a><span>6&nbsp;<a href="http://mobile.51cto.com/hot-403005.htm" target="_blank" rel="external">GCD介绍(四):完结</a></span></h3><p><a href="http://s9.51cto.com/wyfs01/M01/10/65/wKioOVHm6WHyfZpwAAUW85FL2rw592.jpg" target="_blank" rel="external"><img src="http://s9.51cto.com/wyfs01/M01/10/65/wKioOVHm6WHyfZpwAAUW85FL2rw592.jpg" alt=""></a></p>
+<p><strong>Dispatch Queue挂起</strong></p>
+<p>dispatch queue可以被挂起和恢复。使用&nbsp;<code>dispatch_suspend</code>函数来挂起，使用  &nbsp;<code>dispatch_resume</code>&nbsp;函数来恢复。这两个函数的行为是如你所愿的。另外，这两个函数也可以用于dispatch  source。</p>
+<p>一个要注意的地方是，dispatch  queue的挂起是block粒度的。换句话说，挂起一个queue并不会将当前正在执行的block挂起。它会允许当前执行的block执行完毕，然后后续的block不再会被执行，直至queue被恢复。</p>
+<p><a href="http://mobile.51cto.com/hot-403005.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="7-nbsp-GCD实战一-使用串行队列实现简单的预加载"><a href="#7-nbsp-GCD实战一-使用串行队列实现简单的预加载" class="headerlink" title="7&nbsp;GCD实战一:使用串行队列实现简单的预加载"></a><span>7&nbsp;<a href="http://mobile.51cto.com/hot-403008.htm" target="_blank" rel="external">GCD实战一:使用串行队列实现简单的预加载</a></span></h3><p><a href="http://s6.51cto.com/wyfs01/M01/10/63/wKioJlHm6ZiQcNvyAAZZhSPdwzs163.jpg" target="_blank" rel="external"><img src="http://s6.51cto.com/wyfs01/M01/10/63/wKioJlHm6ZiQcNvyAAZZhSPdwzs163.jpg" alt=""></a></p>
+<p>本文为大家介绍了如何使用串行队列实现简单的预加载，思路是使用gcd创建串行队列，然后在此队列中先后执行两个任务：1.预加载一个viewController 2.将这个viewController推入。文章最后提供了源码下载，希望对各位有所帮助。</p>
+<p>其主要思路是使用gcd创建串行队列，然后在此队列中先后执行两个任务：1.预加载一个viewController 2.将这个viewController推入</p>
+<p>代码如下：</p>
+<p><a href="http://mobile.51cto.com/hot-403008.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="8-nbsp-GCD实战二-资源竞争"><a href="#8-nbsp-GCD实战二-资源竞争" class="headerlink" title="8&nbsp;GCD实战二:资源竞争"></a><span>8&nbsp;<a href="http://mobile.51cto.com/hot-403011.htm" target="_blank" rel="external">GCD实战二:资源竞争</a></span></h3><p><a href="http://s8.51cto.com/wyfs01/M00/10/63/wKioJlHm6dryWbz9AAbiZzr2fkA513.jpg" target="_blank" rel="external"><img src="http://s8.51cto.com/wyfs01/M00/10/63/wKioJlHm6dryWbz9AAbiZzr2fkA513.jpg" alt=""></a></p>
+<p><strong>概述</strong></p>
+<p>我将分四步来带大家研究研究程序的并发计算。第一步是基本的串行程序，然后使用GCD把它并行计算化。如果你想顺着步骤来尝试这些程序的话，可以下载源码。注意，别运行imagegcd2.m，这是个反面教材。</p>
+<p><strong>源码下载：</strong><a href="http://down.51cto.com/data/872222" target="_blank" rel="external"><strong>http://down.51cto.com/data/872222</strong></a></p>
+<p><a href="http://mobile.51cto.com/hot-403011.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="9-nbsp-iOS多线程初体验"><a href="#9-nbsp-iOS多线程初体验" class="headerlink" title="9&nbsp;iOS多线程初体验"></a><span>9&nbsp;<a href="http://mobile.51cto.com/iphone-280299.htm" target="_blank" rel="external">iOS多线程初体验</a></span></h3><p><strong>iOS多线程</strong>初体验是本文要介绍的内容，<a href="http://mobile.51cto.com/iphone/" target="_blank" rel="external">iPhone</a>中的<strong>线程</strong>应用并不是无节制的，官方给出的资料显示<a href="http://mobile.51cto.com/iphone/" target="_blank" rel="external">iPhone </a>OS下的主<strong>线程</strong>的堆栈大小是1M，第二个<strong>线程</strong>开始都是512KB。并且该值不能通过编译器开关或<strong>线程</strong>API函数来更改。只有主<strong>线程</strong>有直接修改UI的能力。</p>
+<p><strong>一、 NSOperation和NSOperationQueue</strong></p>
+<p>1、一个继承自&nbsp; NSOperation的操作类，该类的实现中必须有 - (void)main方法的。</p>
+<p>2、使用NSOperation的最简单方法就是将其放入NSOperationQueue中。</p>
+<p><a href="http://mobile.51cto.com/iphone-280299.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="10-nbsp-iPhone多线程编程初体验"><a href="#10-nbsp-iPhone多线程编程初体验" class="headerlink" title="10&nbsp;iPhone多线程编程初体验"></a><span>10&nbsp;<a href="http://mobile.51cto.com/iphone-267455.htm" target="_blank" rel="external">iPhone多线程编程初体验</a></span></h3><p>找了很长时间<strong>IPhone</strong>下多线程的编程的内容, 用到的类是UIKit的中NSThread.。</p>
+<p>在google过程中,发现很多文都惊喜地标题着类似&lt; 多线程的OS4来了&gt;, 这些想正向引导一下, 0S4的亮点在于多任务,一个任务为一个进程,也叫多进程, 而多线程在早期的IPHONEOS上都是有的.</p>
+<p>IPHONE OS中任务的概念是一个应用, 在一个时间你只能做一件事情, 即不能同时玩游戏,同时上QQ. 而多任务的时候是可以这么做的.</p>
+<p>流程大概如下:</p>
+<p><a href="http://mobile.51cto.com/iphone-267455.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="11-nbsp-剖析iPhone多线程"><a href="#11-nbsp-剖析iPhone多线程" class="headerlink" title="11&nbsp;剖析iPhone多线程"></a><span>11&nbsp;<a href="http://mobile.51cto.com/iphone-277631.htm" target="_blank" rel="external">剖析iPhone多线程</a></span></h3><p><strong>iPhone多线程</strong>是本文要介绍的内容，<strong>多线程</strong>在各种编程语言中都是难点，很多语言中实现起来很麻烦，objective-c虽然源于c,但其<strong>多线程</strong>编程却相当简单，可以与java相媲美。这篇文章主要从<strong>线程</strong>创建与启动、<strong>线程</strong>的同步与锁、<strong>线程</strong>的交互、<strong>线程</strong>池等等四个方面简单的讲解一下<strong>iphone</strong>中的<strong>多线程</strong>编程。</p>
+<p><strong>一、线程创建与启动</strong></p>
+<p>线程创建主要有二种方式：</p>
+<pre>
+
+1.  <span><span>-&nbsp;(id)init;&nbsp;//&nbsp;designated&nbsp;initializer &nbsp;</span></span>
+2.  <span>-&nbsp;(id)initWithTarget:(id)target&nbsp;selector:(SEL)selector&nbsp;object:(id)argument;&nbsp;</span></pre>
+
+<p>当然，还有一种比较特殊，就是使用所谓的convenient method，这个方法可以直接生成一个线程并启动它，而且无需为线程的清理负责。这个方法的接口是：</p>
+<p><a href="http://mobile.51cto.com/iphone-277631.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="12-nbsp-iPhone开发多线程使用与注意事项"><a href="#12-nbsp-iPhone开发多线程使用与注意事项" class="headerlink" title="12&nbsp;iPhone开发多线程使用与注意事项"></a><span>12&nbsp;<a href="http://mobile.51cto.com/iphone-279986.htm" target="_blank" rel="external">iPhone开发多线程使用与注意事项</a></span></h3><p><strong>iPhone</strong>开发<strong>多线程</strong>使用与注意事项是本文要介绍的内容，主要介绍一下<a href="http://mobile.51cto.com/iphone/" target="_blank" rel="external">iPhone </a>SDK中多线程的使用方法以及注意事项。虽然现在大部分PC应用程序都支持<strong>多线程</strong>/多任务的开发方式，但是在<strong>iPhone</strong>上，Apple并不推荐使用<strong>多线程</strong>的编程方式。</p>
+<p>但是<strong>多线程</strong>编程毕竟是发展的趋势，而且据说即将推出的<strong>iPhone </strong>OS4将全面支持<strong>多线程</strong>的处理方式。所以说掌握<strong>多线程</strong>的编程方式，在某些场合一定能挖掘出<strong>iPhone</strong>的更大潜力。</p>
+<p>从例子入手</p>
+<p>先从一个例程入手，具体的代码参考了这里。还有例程可以下载。</p>
+<p><a href="http://mobile.51cto.com/iphone-279986.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="13-nbsp-iPhone-SDK-多线程使用方法以及注意事项"><a href="#13-nbsp-iPhone-SDK-多线程使用方法以及注意事项" class="headerlink" title="13&nbsp;iPhone SDK 多线程使用方法以及注意事项"></a><span>13&nbsp;<a href="http://mobile.51cto.com/iphone-277753.htm" target="_blank" rel="external">iPhone SDK 多线程使用方法以及注意事项</a></span></h3><p><strong>iPhone SDK 多线程</strong>使用方法以及注意事项是本文要介绍的内容，不多说，直接进入话题。虽然现在大部分PC应用程序都支持<strong>多线程</strong>/多任务的开发方式，但是在<strong>iPhone</strong>上，Apple并不推荐使用<strong>多线程</strong>的编程方式。但是<strong>多线程</strong>编程毕竟是发展的趋势，而且据说即将推出的<strong>iPhone </strong>OS4将全 </p>
+<p>&nbsp; </p>
+<p>虽然现在大部分PC应用程序都支持<strong>多线程</strong>/多任务的开发方式，但是在<strong>iPhone</strong>上，Apple并不推荐使用<strong>多线程</strong>的编程方式。但是<strong>多线程</strong>编程毕竟是发展的趋势，而且据说即将推出的<strong>iPhone </strong>OS4将全面支持<strong>多线程</strong>的处理方式。所以说掌握<strong>多线程</strong>的编程方式，在某些场合一定能挖掘出<strong>iPhone</strong>的更大潜力</p>
+<p>从例子入手</p>
+<p>先从一个例程入手，具体的代码参考了这里。还有例程可以下载。多线程程序的控制模型可以参考这里，一般情况下都是使用 管理者/工人模型, 这里，我们使用iPhone SDK中的 NSThread 来实现它。</p>
+<p>首先创建一个新的 View-based application 工程，名字为 &quot;TutorialProject&quot; 。界面如下图所示，使用UILabel实现两部分的Part(Thread Part和Test Part)，Thread Part中包含一个UIProgressView和一个UIButton；而Test Part包含一个值和一个UISlider。如图：</p>
+<p><a href="http://mobile.51cto.com/iphone-277753.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="14-nbsp-SQLite在多线程环境下的应用"><a href="#14-nbsp-SQLite在多线程环境下的应用" class="headerlink" title="14&nbsp;SQLite在多线程环境下的应用"></a><span>14&nbsp;<a href="http://mobile.51cto.com/iphone-299765.htm" target="_blank" rel="external">SQLite在多线程环境下的应用</a></span></h3><p>先说下初衷吧，实际上我经常看到有人抱怨SQLite不支持多线程。而在iOS开发时，为了不阻塞主线程，数据库访问必须移到子线程中。为了解决这个矛盾，很有必要对此一探究竟。</p>
+<p>关于这个问题，最权威的解答当然是SQLite官网上的&ldquo;Is SQLite threadsafe?&rdquo;这个问答。</p>
+<p>简单来说，从3.3.1版本开始，它就是线程安全的了。而iOS的SQLite版本没有低于这个版本的：</p>
+<p>3.4.0 - iPhone OS 2.2.1</p>
+<p><a href="http://mobile.51cto.com/iphone-299765.htm" target="_blank" rel="external">阅读全文</a> </p>
+<h3 id="15-nbsp-关于iPhone多线程编程的教程"><a href="#15-nbsp-关于iPhone多线程编程的教程" class="headerlink" title="15&nbsp;关于iPhone多线程编程的教程"></a><span>15&nbsp;<a href="http://mobile.51cto.com/iphone-281869.htm" target="_blank" rel="external">关于iPhone多线程编程的教程</a></span></h3><p><strong>iPhone多线程</strong>编程的教程是本文要介绍的内容，相信大家也都接触过<strong>多线程</strong>的使用，那么本文也可以作为一个参考来进行学习。不多说，我们来看内容中详细讲解<strong>多线程</strong>编程。</p>
+<p><strong>iphone中多线程编程：线程的创建</strong></p>
+<p><strong>多线程</strong>在各种编程语言中都是难点，很多语言中实现起来很麻烦，objective-c虽然源于c,但其多线程编程却相当简单，可以与java相媲美。</p>
+<p>一、线程创建与启动</p>
+<p><a href="http://mobile.51cto.com/iphone-281869.htm" target="_blank" rel="external">阅读全文</a> </p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-nbsp-iOS多线程编程知多少"><span class="toc-text">1 iOS多线程编程知多少</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-nbsp-GCD使用攻略"><span class="toc-text">2 GCD使用攻略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是GCD"><span class="toc-text">什么是GCD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用举例"><span class="toc-text">应用举例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-nbsp-GCD介绍-一-基本概念和Dispatch-Queue"><span class="toc-text">3 GCD介绍(一):基本概念和Dispatch Queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-nbsp-GCD介绍-二-多核心的性能"><span class="toc-text">4 GCD介绍(二):多核心的性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-nbsp-GCD介绍-三-Dispatch-Sources"><span class="toc-text">5 GCD介绍(三):Dispatch Sources</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-nbsp-GCD介绍-四-完结"><span class="toc-text">6 GCD介绍(四):完结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-nbsp-GCD实战一-使用串行队列实现简单的预加载"><span class="toc-text">7 GCD实战一:使用串行队列实现简单的预加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-nbsp-GCD实战二-资源竞争"><span class="toc-text">8 GCD实战二:资源竞争</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-nbsp-iOS多线程初体验"><span class="toc-text">9 iOS多线程初体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-nbsp-iPhone多线程编程初体验"><span class="toc-text">10 iPhone多线程编程初体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-nbsp-剖析iPhone多线程"><span class="toc-text">11 剖析iPhone多线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-nbsp-iPhone开发多线程使用与注意事项"><span class="toc-text">12 iPhone开发多线程使用与注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-nbsp-iPhone-SDK-多线程使用方法以及注意事项"><span class="toc-text">13 iPhone SDK 多线程使用方法以及注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-nbsp-SQLite在多线程环境下的应用"><span class="toc-text">14 SQLite在多线程环境下的应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-nbsp-关于iPhone多线程编程的教程"><span class="toc-text">15 关于iPhone多线程编程的教程</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/04/10/17.4.10_AFNetworking3.0如何取消单个网络请求/" class="prev">&larr; 上一篇 AFNetworking3.0 如何取消网络请求</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2017/02/16/17.2.16_禅与 Objective-C编程艺术/" class="next">下一篇 [转]禅与 Objective-C 编程艺术 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2017/03/05/17.3.5_全面掌握iOS多线程攻略/" data-title="[转]掌握iOS多线程攻略" data-url="https://github.com/zhoutq/zhoutq.github.io/2017/03/05/17.3.5_全面掌握iOS多线程攻略/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

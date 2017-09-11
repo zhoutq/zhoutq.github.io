@@ -1,0 +1,500 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://www.jianshu.com/p/2d72ef8dbf5a
+iOS 升级HTTPS通过ATS你所要知道的苹果强制升级的HTTPS不仅仅是在接口HTTP上加个S那么简单:它所有满足的是iOS9中新增App Transport Security（简称ATS）特性:那满足ATS我们需要做什么呢1.必须是苹果信任的CA证书机构颁发的证书2.后台传输协议必须满足: TLS1.2 ...">
+  
+  <title>[转]iOS 升级HTTPS通过ATS你所要知道的 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/02/16/17.2.16_禅与 Objective-C编程艺术/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]禅与 Objective-C 编程艺术
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]iOS 升级HTTPS通过ATS你所要知道的</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-01-14</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/HTTPS/">HTTPS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/HTTPS/ATS/">ATS</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/HTTPS/">HTTPS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/ATS/">ATS</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://www.jianshu.com/p/2d72ef8dbf5a" target="_blank" rel="external">http://www.jianshu.com/p/2d72ef8dbf5a</a></p>
+<h1 id="iOS-升级HTTPS通过ATS你所要知道的"><a href="#iOS-升级HTTPS通过ATS你所要知道的" class="headerlink" title="iOS 升级HTTPS通过ATS你所要知道的"></a>iOS 升级HTTPS通过ATS你所要知道的</h1><p>苹果强制升级的HTTPS不仅仅是在接口HTTP上加个S那么简单:<br>它所有满足的是iOS9中新增App Transport Security（简称ATS）特性:<br>那满足ATS我们需要做什么呢<br>1.必须是苹果信任的CA证书机构颁发的证书<br>2.后台传输协议必须满足: TLS1.2   (这很重要, 后面的自制证书满足这个条件是前提)<br>3.签字算法只能是下面的一种: </p>
+<p>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384<br>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256<br>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384<br>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA<br>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256<br>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA<br>TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384<br>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256<br>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384<br>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256<br>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA`</p>
+<p>4.证书必须使用SHA256或者更好的哈希算法进行签名，要么是2048位或者更长的RSA密钥，要么就是256位或更长的ECC密钥。</p>
+<p>目前有两种升级到HTTPS得方法:<br>1.第三方认证的颁发CA证书(推荐)<br>2.自己制作证书(这种不知道能不能满足苹果的审核)</p>
+<blockquote>
+<p>一: 第三方认证的颁发CA证书</p>
+</blockquote>
+<p>证书到底长什么样子呢? 取个栗子:<br>大家请打开<a href="https://www.baidu.com" target="_blank" rel="external">https://www.baidu.com</a><br>然后看到</p>
+<div class="image-package"><br><img src="http://chuantu.biz/t5/43/1480644859x3074328177.png" alt=""><br><div class="image-caption">百度的证书分析</div><br></div>
+
+<p>那些证书机构颁发的证书能用:<a href="https://support.apple.com/zh-cn/HT205205" target="_blank" rel="external">苹果官方信任证书</a></p>
+<p><code>收费SSL证书:</code> 网上百度一大把, 收费还挺贵的,自己可以多找几个对比一下<br><code>免费SSL证书:</code> 除了收费的CA证书机构, 你还可以去<a href="https://www.qcloud.com/product/ssl" target="_blank" rel="external">腾讯云</a>申请免费的SSL证书,  教程<a href="http://www.jianshu.com/p/08f64ff9ed6b/comments/4374507" target="_blank" rel="external">免费在腾讯云申请SSL证书的方法</a><br>沃通(WoSign)免费的SSL证书最近被苹果封杀了, 能不能用大家可以看一下苹果的公告: 您的苹果手机轻点“设置”&gt;“通用”&gt;“关于本机”&gt;”证书信任设置”&gt;”进一步了解被信任的证书”去了解</p>
+<blockquote>
+<p>检测你的接口是否满足苹果的ATS要求, 有以下两种方法:</p>
+</blockquote>
+<p>1.<a href="https://www.qcloud.com/product/ssl" target="_blank" rel="external">腾讯云</a>提供的检测页面检测</p>
+<div class="image-package"><br><img src="http://chuantu.biz/t5/43/1480644925x3074328177.png" alt=""><br><div class="image-caption">腾讯云的检测页面</div><br></div>
+
+<p>2 终端输入 <code>nsurl --ats-diagnostics --verbose 你的接口地址</code><br>大家可以参考这篇文章,里面的说的很明白:<br><a href="https://my.oschina.net/vimfung/blog/494687?_t_t_t=0.1896578531749944" target="_blank" rel="external">关于iOS9中的App Transport Security相关说明及适配(更新于2016.7.1)</a><br>里面会详细说明你的证书哪点不符合ATS要求<br>当然下面自己制作证书去实现HTTPS的,检测不通过的,所以我觉得审核会被拒<br>这种方法配置好了, 在手机端就什么都不用配置就可以请求了</p>
+<blockquote>
+<p>二:  自己制作证书</p>
+</blockquote>
+<p><a href="https://support.apple.com/zh-cn/HT205205" target="_blank" rel="external">苹果官方信任证书</a>里说到有三种证书:</p>
+<pre>`1 可信的根证书用于建立信任链，以验证由可信的根签署的其他证书，例如，与 Web 服务器建立安全连接。当 IT 管理员创建 iPhone、iPad 或 iPod touch 的配置描述文件时，无需提供这些可信的根证书。
+2 始终询问的证书不受信任，但不受阻止。使用其中一个证书时，系统将提示您选择是否信任该证书。
+3 已阻止的证书视为被盗用，将不再受信任。`</pre>
+
+<p>自制证书我觉得应该就是属于第二种情况, 所以这种方法我也不知道能不能通过苹果的审核, 只是提供一个方法给大家参考, 看到网上有人说可以,有人说不可以, 不到1月1号,自己没试过都不敢说大话<br>这种方式拿到后台的接口用谷歌浏览器打开跟百度的证书是有区别的</p>
+<div class="image-package"><br><img src="http://chuantu.biz/t5/43/1480644913x3074328177.png" alt=""><br><div class="image-caption">自己制作证书</div><br></div>
+
+<p>很明显没有绿锁, 当打开的时候会询问是否连接这个不受信任的连接才会进一步打开, 下面就来一步步的实现(包括怎么制作证书)<br><a href="http://www.jianshu.com/p/e6a26ecd84aa" target="_blank" rel="external">iOS使用自签名证书实现HTTPS请求</a><br><a href="http://www.jianshu.com/p/ec61e5ab6fbb" target="_blank" rel="external">iOS Https协议 自签证书访问数据</a>参考这个例子的时候,博主自带的Demo  AFN框架请求不了数据, 我用了最新AFN版本的成功返回数据<br>还可以参考一下<br><a href="http://www.jianshu.com/p/36ddc5b009a7" target="_blank" rel="external">iOS 10 适配 ATS app支持https通过App Store审核</a></p>
+<p>我在利用原生的代码测试时遇到的问题</p>
+<p><pre>`@interface ViewController () &lt;NSURLSessionDelegate&gt;</pre></p>
+<p>@end</p>
+<p>@implementation ViewController</p>
+<ul>
+<li>(void)viewDidLoad {</li>
+</ul>
+<p>}</p>
+<ul>
+<li>(void)touchesBegan:(NSSet <em>)touches withEvent:(UIEvent </em>)event<br>{<br>NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];</li>
+</ul>
+<p>NSURLSessionDataTask <em>task =  [session dataTaskWithURL:[NSURL URLWithString:@”<a href="https://www.baidu.com" target="_blank" rel="external">https://www.baidu.com</a>“] completionHandler:^(NSData </em>data, NSURLResponse <em>response, NSError </em>error) {<br>NSLog(@”%@”, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);<br>}];<br>[task resume];<br>}</p>
+<ul>
+<li><p>(void)URLSession:(NSURLSession <em>)session dataTask:(NSURLSessionDataTask </em>)dataTask<br>didReceiveResponse:(NSURLResponse <em>)response<br>completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {<br>NSLog(@”接收到服务器响应”);<br>//注意：这里需要使用completionHandler回调告诉系统应该如何处理服务器返回的数据<br>//默认是取消<br>/**<br>NSURLSessionResponseCancel = 0,            默认的处理方式，取消<br>NSURLSessionResponseAllow = 1,             接收服务器返回的数据<br>NSURLSessionResponseBecomeDownload = 2,    变成一个下载请求<br>NSURLSessionResponseBecomeStream           变成一个流
+</em>/<br>completionHandler(NSURLSessionResponseAllow);<br>}</p>
+</li>
+<li><p>(void)URLSession:(NSURLSession <em>)session dataTask:(NSURLSessionDataTask </em>)dataTask<br>didReceiveData:(NSData *)data {<br>NSLog(@”获取到服务段数据”);<br>NSLog(@”%@”,[self jsonToDictionary:data]);<br>}</p>
+</li>
+<li><p>(void)URLSession:(NSURLSession <em>)session task:(NSURLSessionTask </em>)task<br>didCompleteWithError:(nullable NSError *)error {<br>NSLog(@”请求完成%@”, error);<br>}</p>
+</li>
+<li><p>(void)URLSession:(NSURLSession <em>)session didReceiveChallenge:(NSURLAuthenticationChallenge </em>)challenge<br>completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential <em> _Nullable credential))completionHandler {<br>NSLog(@”证书认证”);<br>if ([[[challenge protectionSpace] authenticationMethod] isEqualToString: NSURLAuthenticationMethodServerTrust]) {<br>do<br>{<br>SecTrustRef serverTrust = [[challenge protectionSpace] serverTrust];<br>NSCAssert(serverTrust != nil, @”serverTrust is nil”);<br>if(nil == serverTrust)<br>break; /</em> failed <em>/<br>/*</em></p>
+</li>
+</ul>
+<ul>
+<li>导入多张CA证书（Certification Authority，支持SSL证书以及自签名的CA），请替换掉你的证书名称<br><em>/<br>NSString </em>cerPath = [[NSBundle mainBundle] pathForResource:@”ca” ofType:@”cer”];//自签名证书<br>NSData* caCert = [NSData dataWithContentsOfFile:cerPath];</li>
+</ul>
+<p>NSCAssert(caCert != nil, @”caCert is nil”);<br>if(nil == caCert)<br>break; /<em> failed </em>/</p>
+<p>SecCertificateRef caRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)caCert);<br>NSCAssert(caRef != nil, @”caRef is nil”);<br>if(nil == caRef)<br>break; /<em> failed </em>/</p>
+<p>//可以添加多张证书<br>NSArray *caArray = @[(__bridge id)(caRef)];</p>
+<p>NSCAssert(caArray != nil, @”caArray is nil”);<br>if(nil == caArray)<br>break; /<em> failed </em>/</p>
+<p>//将读取的证书设置为服务端帧数的根证书<br>OSStatus status = SecTrustSetAnchorCertificates(serverTrust, (__bridge CFArrayRef)caArray);<br>NSCAssert(errSecSuccess == status, @”SecTrustSetAnchorCertificates failed”);<br>if(!(errSecSuccess == status))<br>break; /<em> failed </em>/</p>
+<p>SecTrustResultType result = -1;<br>//通过本地导入的证书来验证服务器的证书是否可信<br>status = SecTrustEvaluate(serverTrust, &amp;result);<br>if(!(errSecSuccess == status))<br>break; /<em> failed </em>/<br>NSLog(@”stutas:%d”,(int)status);<br>NSLog(@”Result: %d”, result);</p>
+<p>BOOL allowConnect = (result == kSecTrustResultUnspecified) || (result == kSecTrustResultProceed);<br>if (allowConnect) {<br>NSLog(@”success”);<br>}else {<br>NSLog(@”error”);<br>}</p>
+<p>/<em> kSecTrustResultUnspecified and kSecTrustResultProceed are success </em>/<br>if(! allowConnect)<br>{<br>break; /<em> failed </em>/<br>}</p>
+<p>#if 0<br>/<em> Treat kSecTrustResultConfirm and kSecTrustResultRecoverableTrustFailure as success </em>/<br>/<em>   since the user will likely tap-through to see the dancing bunnies </em>/<br>if(result == kSecTrustResultDeny || result == kSecTrustResultFatalTrustFailure || result == kSecTrustResultOtherError)<br>break; /<em> failed to trust cert (good in this case) </em>/</p>
+<p>#endif</p>
+<p>// The only good exit point<br>NSLog(@”信任该证书”);</p>
+<p>NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];<br>completionHandler(NSURLSessionAuthChallengeUseCredential,credential);<br>return [[challenge sender] useCredential: credential<br>forAuthenticationChallenge: challenge];</p>
+<p>}<br>while(0);<br>}</p>
+<p>// Bad dog<br>NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];<br>completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge,credential);<br>return [[challenge sender] cancelAuthenticationChallenge: challenge];<br>}</p>
+<ul>
+<li>(NSDictionary <em>)jsonToDictionary:(NSData </em>)jsonData {<br>NSError <em>jsonError;<br>NSDictionary </em>resultDic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&amp;jsonError];<br>return resultDic;<br>}</li>
+</ul>
+<p>@end</p>
+<p>下面说说我在配置自己制作证书过程中遇到的问题:<br>1.转换证书: 把后台给你的<code>.crt</code>证书转化为<code>.cer</code>后缀<br>终端命令行<code>openssl x509 -in 你的证书.crt -out 你的证书.cer -outform der</code></p>
+<p>2.利用系统的方法来不到<code>- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler {
+NSLog(@&quot;证书认证&quot;);
+}</code>这个方法的时候, 是因为后台的传输协议还没升级到TLS1.2, 叫后台升级后就可以来到验证证书的这个方法了.</p>
+<p>3.拖入证书读取不出证书数据<br>参考: <a href="http://blog.csdn.net/jia12216/article/details/49204797" target="_blank" rel="external">https的证书错误，错误码-1012问题及解决方案</a></p>
+<p>SDWebImage: 项目中大家用到AFN请求网络数据, 升级验证SSL证书的方案相信你看完上面的参考文章已经没问题了, 我给出的代码, 自定义网络请求也没问题了, 还有就是SDWebImage框架的请求HTTPS的图片时,大家可以绕过证书验证去加载图片<code>[imageView sd_setImageWithURL:[NSURL URLWithString:urlString] placeholderImage:self.placeholder options:SDWebImageAllowInvalidSSLCertificates];</code></p>
+<p>恩, 这就是这几天升级HTTPS觉得有帮助的参考和总结.希望帮到你</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS-升级HTTPS通过ATS你所要知道的"><span class="toc-text">iOS 升级HTTPS通过ATS你所要知道的</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/02/16/17.2.16_禅与 Objective-C编程艺术/" class="prev">&larr; 上一篇 [转]禅与 Objective-C 编程艺术</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/" class="next">下一篇 [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2017/01/14/17.1.14 iOS升级HTTPS通过ATS你所要知道的/" data-title="[转]iOS 升级HTTPS通过ATS你所要知道的" data-url="https://github.com/zhoutq/zhoutq.github.io/2017/01/14/17.1.14 iOS升级HTTPS通过ATS你所要知道的/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

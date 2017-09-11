@@ -17,9 +17,8 @@
   
   
     <meta name="description" content="原文：http://www.jianshu.com/p/11bb0d4dc649
-前言本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:袁峥Seemygo,也可以来小码哥，了解下我们的iOS培训课程。后续还会更新更多内容。。。
-一、runtime简介
-RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
+前言
+昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSU...">
   
   <title>[转]iOS开发之AFNetworking 3.0.4使用 [ 统乾 ]</title>
   
@@ -43,21 +42,21 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
 <div class="side-navigate hide-area">
   
     <div class="item prev">
-      <a href="/zhoutq.github.io/2017/06/21/简单监测iOS卡顿的demo/">
+      <a href="/zhoutq.github.io/2016/03/08/转-让你快速上手Runtime/">
         <div class="item-icon"></div>
       </a>
       <div class="item-title">
-        [转]简单监测iOS卡顿的demo
+        [转]让你快速上手Runtime
       </div>
     </div>
   
   
     <div class="item next">
-      <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/">
+      <a href="/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/">
         <div class="item-icon"></div>
       </a>
       <div class="item-title">
-        [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构
+        [转]Convert to Objective-C ARC
       </div>
     </div>
   
@@ -134,7 +133,7 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
   <article id="post">
     <h1>[转]iOS开发之AFNetworking 3.0.4使用</h1>
     <p class="page-title-sub">
-      <span id = "post-title-date">撰写于 2017-03-08</span>
+      <span id = "post-title-date">撰写于 2016-02-05</span>
       
 
       
@@ -174,10 +173,7 @@ RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
     </p>
     
     <p>原文：<a href="http://www.jianshu.com/p/11bb0d4dc649" target="_blank" rel="external">http://www.jianshu.com/p/11bb0d4dc649</a></p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:<a href="http://weibo.com/2034818060/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo" target="_blank" rel="external">袁峥Seemygo</a>,也可以来<a href="http://www.520it.com" target="_blank" rel="external">小码哥</a>，了解下我们的iOS培训课程。后续还会更新更多内容。。。</p>
-<h3 id="一、runtime简介"><a href="#一、runtime简介" class="headerlink" title="一、runtime简介"></a>一、runtime简介</h3><ul>
-<li>RunTime简称运行时。OC就是<code>运行时机制</code>，也就是在运行时候的一些机制，其中最主要的是消息机制。</li>
-<li>对于C语言，<code>函数的调用在编译的时候会决定调用哪个函数</code>。</li>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><ul>
 <li>昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSURLConnection了，被弃用了，突然意识到，这个就是AFHTTPRequestOperationManager找不到的原因了，它是基于NSURLConnection封装的！！于是找了一下，现在都用的是NSURLSession了，AFN中用的是AFHTTPSessionManager了~~<p></p><br><p>特地记录下来，以便遇到这个的朋友们看看！</p><br><p>ps:如果想用以前的话，cocoapods 就不要用最新的版本了，2.6的上面有。</p><br><hr><br><h3>GET请求</h3><br><p></p><p>  <code></code></p><br><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager]; </code></pre></li>
 </ul>
 <p>[manager GET:URL parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {  </p>
@@ -315,20 +311,20 @@ switch (status) {
   <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
   <div class="random-toc">
     <h2>目录</h2>
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、runtime简介"><span class="toc-text">一、runtime简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">GET请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">POST 请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">补充试用AFN3.0下载方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">AFN3.0 上传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">监测当前网络状态（网络监听）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#undefined"><span class="toc-text">在使用的过程中遇到了一些问题的 总结，在这里，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">GET请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">POST 请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">补充试用AFN3.0下载方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">AFN3.0 上传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">监测当前网络状态（网络监听）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#undefined"><span class="toc-text">在使用的过程中遇到了一些问题的 总结，在这里，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</span></a></li></ol></li></ol></li></ol>
   </div>
 </div>
 
   
 <nav id="pagination">
   
-    <a href="/zhoutq.github.io/2017/06/21/简单监测iOS卡顿的demo/" class="prev">&larr; 上一篇 [转]简单监测iOS卡顿的demo</a>
+    <a href="/zhoutq.github.io/2016/03/08/转-让你快速上手Runtime/" class="prev">&larr; 上一篇 [转]让你快速上手Runtime</a>
   
 
   
 
   
-    <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/" class="next">下一篇 [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构 &rarr;</a>
+    <a href="/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/" class="next">下一篇 [转]Convert to Objective-C ARC &rarr;</a>
   
 </nav>
 
@@ -338,7 +334,7 @@ switch (status) {
 
 
       
-      <div class="ds-thread" data-thread-key="2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/" data-title="[转]iOS开发之AFNetworking 3.0.4使用" data-url="https://github.com/zhoutq/zhoutq.github.io/2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/"></div>
+      <div class="ds-thread" data-thread-key="2016/02/05/16.2.9_iOS开发之AFNetworking3.0.4使用/" data-title="[转]iOS开发之AFNetworking 3.0.4使用" data-url="https://github.com/zhoutq/zhoutq.github.io/2016/02/05/16.2.9_iOS开发之AFNetworking3.0.4使用/"></div>
       
       
       
