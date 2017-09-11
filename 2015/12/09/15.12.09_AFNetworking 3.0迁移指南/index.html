@@ -1,0 +1,483 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://www.jianshu.com/p/047463a7ce9b
+AFNetworking 3.0
+AFNetworking是一款在OS X和iOS下都令人喜爱的网络库。为了迎合iOS新版本的升级, AFNetworking在3.0版本中删除了基于 NSURLConnection API的所有支持。如果你的项目以前使用过这些API，建议您立即升级到基于 NSURLSessio...">
+  
+  <title>[转]AFNetworking 3.0迁移指南 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]Convert to Objective-C ARC
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2015/11/20/15.11.20_使用AFNetworking, SDWebimage和OHHTTPStubs/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]使用AFNetworking, SDWebimage和OHHTTPStubs
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]AFNetworking 3.0迁移指南</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2015-12-09</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/AFNetworking/">AFNetworking</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/AFNetworking/">AFNetworking</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://www.jianshu.com/p/047463a7ce9b" target="_blank" rel="external">http://www.jianshu.com/p/047463a7ce9b</a></p>
+<h2 id="AFNetworking-3-0"><a href="#AFNetworking-3-0" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h2><blockquote>
+<p>AFNetworking是一款在OS X和iOS下都令人喜爱的网络库。为了迎合iOS新版本的升级, AFNetworking在3.0版本中删除了基于 <del><strong>NSURLConnection</strong></del> API的所有支持。如果你的项目以前使用过这些API，建议您立即升级到基于 <strong>NSURLSession</strong> 的API的AFNetworking的版本。本指南将引导您完成这个过程。</p>
+</blockquote>
+<p>本指南是为了引导使用AFNetworking 2.x升级到最新的版本API，以达到过渡的目的，并且解释了新增和更改的设计结构。</p>
+<h2 id="新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7"><a href="#新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7" class="headerlink" title="新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, &amp; Xcode 7"></a>新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, &amp; Xcode 7</h2><p>AFNetworking 3.0正式支持的iOS 7， Mac OS X的10.9， watchOS 2 ， tvOS 9 和Xcode 7。如果你想使用AFNetworking在针对较旧版本的SDK项目，请检查<a href="https://github.com/AFNetworking/AFNetworking/blob/master/README.md#requirements">README</a>的兼容性信息。</p>
+<h2 id="NSURLConnection的API已废弃"><a href="#NSURLConnection的API已废弃" class="headerlink" title="NSURLConnection的API已废弃"></a>NSURLConnection的API已废弃</h2><p>AFNetworking 1.0建立在NSURLConnection的基础API之上 ，AFNetworking 2.0开始使用NSURLConnection的基础API ，以及较新基于NSURLSession的API的选项。 AFNetworking 3.0现已完全基于NSURLSession的API，这降低了维护的负担，同时支持苹果增强关于NSURLSession提供的任何额外功能。由于Xcode 7中，NSURLConnection的API已经正式被苹果弃用。虽然该API将继续运行，但将没有新功能将被添加，并且苹果已经通知所有基于网络的功能，以充分使NSURLSession向前发展。</p>
+<p>AFNetworking 2.X将继续获得关键的隐患和安全补丁，但没有新的功能将被添加。Alamofire(Swift下的网络请求)软件基金会建议，所有的项目迁移到基于NSURLSession的API。</p>
+<h2 id="弃用的类"><a href="#弃用的类" class="headerlink" title="弃用的类"></a>弃用的类</h2><p>下面的类已从AFNetworking 3.0中废弃：</p>
+<ul>
+<li>AFURLConnectionOperation</li>
+<li>AFHTTPRequestOperation</li>
+<li>AFHTTPRequestOperationManager</li>
+</ul>
+<h2 id="修改的类"><a href="#修改的类" class="headerlink" title="修改的类"></a>修改的类</h2><p>下面的类包含基于NSURLConnection的API的内部实现。他们已经被使用NSURLSession重构:</p>
+<ul>
+<li>UIImageView+AFNetworking</li>
+<li>UIWebView+AFNetworking</li>
+<li>UIButton+AFNetworking</li>
+</ul>
+<h2 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h2><hr>
+<h4 id="AFHTTPRequestOperationManager-核心代码"><a href="#AFHTTPRequestOperationManager-核心代码" class="headerlink" title="AFHTTPRequestOperationManager 核心代码"></a>AFHTTPRequestOperationManager 核心代码</h4><p>如果你以前使用 <strong>AFHTTPRequestOperationManager</strong> ， 你将需要迁移去使用 <strong>AFHTTPSessionManager</strong>。 以下的类在两者过渡间并没有变化：</p>
+<ul>
+<li>securityPolicy</li>
+<li>requestSerializer</li>
+<li>responseSerializer</li>
+</ul>
+<p>接下来举一个关于AFHTTPSessionManager的简单例子。<strong>注意</strong>HTTP网络请求返回的不再是AFHTTPRequestOperation, 修改成为了NSURLSessionTask，并且成功和失败的Block块中的参数也变更为了NSURLSessionTask，而不再是AFHTTPRequestOperation。</p>
+<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><pre><code>AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+[manager GET:@&quot;请求的url&quot; parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@&quot;成功&quot;);
+} failure:^(AFHTTPRequestOperation *operation, NSError*error) {
+        NSLog(@&quot;失败&quot;);
+}];`&lt;/pre&gt;
+
+##### AFNetworking 3.0
+
+&lt;pre&gt;`AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+[session GET:@&quot;请求的url&quot; parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@&quot;成功&quot;);
+} failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@&quot;失败&quot;);        
+}];`&lt;/pre&gt;
+
+#### AFHTTPRequestOperation 核心代码
+
+与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。
+
+在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。
+
+接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。
+
+##### AFNetworking 2.x
+
+&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
+NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+op.responseSerializer = [AFJSONResponseSerializer serializer];
+[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@&quot;JSON: %@&quot;, responseObject);
+} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@&quot;Error: %@&quot;, error);
+}];
+[[NSOperationQueue mainQueue] addOperation:op];`&lt;/pre&gt;
+
+##### AFNetworking 3.0
+
+&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
+AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+[manager GET:URL.absoluteString parameters:nil success:^(NSURLSessionTask *task, id responseObject) {
+        NSLog(@&quot;JSON: %@&quot;, responseObject);
+} failure:^(NSURLSessionTask *operation, NSError *error) {
+        NSLog(@&quot;Error: %@&quot;, error);
+}];
+</code></pre><h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
+<p>UIWebView的类目被重构为使用AFHTTPSessionManager作为其网络请求。</p>
+<h4 id="UIAlertView的类目被废弃"><a href="#UIAlertView的类目被废弃" class="headerlink" title="UIAlertView的类目被废弃"></a>UIAlertView的类目被废弃</h4><p>从AFNetworking 3.0后UIAlertView的类目因过时而被废弃。并没有提供UIAlertController类目的计划，因为这是应用程序应处理的逻辑，而不是这个库。</p>
+<p>原文链接: <a href="https://github.com/AFNetworking/AFNetworking/wiki/AFNetworking-3.0-Migration-Guide#new-requirements-ios-7-mac-os-x-109-watchos-2-tvos-9--xcode-7">AFNetworking 3.0</a><br>纯属个人翻译，如有错误，还请纠正。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking-3-0"><span class="toc-text">AFNetworking 3.0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7"><span class="toc-text">新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, & Xcode 7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSURLConnection的API已废弃"><span class="toc-text">NSURLConnection的API已废弃</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#弃用的类"><span class="toc-text">弃用的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改的类"><span class="toc-text">修改的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迁移"><span class="toc-text">迁移</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AFHTTPRequestOperationManager-核心代码"><span class="toc-text">AFHTTPRequestOperationManager 核心代码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-2-x"><span class="toc-text">AFNetworking 2.x</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIKit的迁移"><span class="toc-text">UIKit的迁移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIAlertView的类目被废弃"><span class="toc-text">UIAlertView的类目被废弃</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/" class="prev">&larr; 上一篇 [转]Convert to Objective-C ARC</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2015/11/20/15.11.20_使用AFNetworking, SDWebimage和OHHTTPStubs/" class="next">下一篇 [转]使用AFNetworking, SDWebimage和OHHTTPStubs &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2015/12/09/15.12.09_AFNetworking 3.0迁移指南/" data-title="[转]AFNetworking 3.0迁移指南" data-url="https://github.com/zhoutq/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking 3.0迁移指南/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

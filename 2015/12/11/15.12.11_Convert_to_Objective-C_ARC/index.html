@@ -1,0 +1,445 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://www.cnblogs.com/tracy-e/p/3151459.html
+今天在进行代码走查时，竟然发现了下面这段代码：
+Bad Code
+顿时感觉吐槽无力，虽然我反复强调内存管理问题，无非就是谁申请谁释放，利用强弱引用避免 retain-cycles，但是还是会有这样那样的问题，leaks 每次就是一片红。本来是计划等他们交易都开发完了，进行一次集体代码走查，好好给...">
+  
+  <title>[转]Convert to Objective-C ARC [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2016/03/08/转-让你快速上手Runtime/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]让你快速上手Runtime
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking 3.0迁移指南/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]AFNetworking 3.0迁移指南
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]Convert to Objective-C ARC</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2015-12-11</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/ARC/">ARC</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/ARC/">ARC</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/MRC/">MRC</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://www.cnblogs.com/tracy-e/p/3151459.html" target="_blank" rel="external">http://www.cnblogs.com/tracy-e/p/3151459.html</a></p>
+<p>今天在进行代码走查时，竟然发现了下面这段代码：</p><p></p>
+<p></p><p><a class="fancybox" title="Bad Code" href="http://esoftmobile.com/image/convert_to_objective-c_arc_bad_code.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_bad_code.png" alt="Bad Code"></a><span class="caption">Bad Code</span></p><p></p>
+<p></p><p>顿时感觉吐槽无力，虽然我反复强调内存管理问题，无非就是谁申请谁释放，利用强弱引用避免 retain-cycles，但是还是会有这样那样的问题，leaks 每次就是一片红。本来是计划等他们交易都开发完了，进行一次集体代码走查，好好给他们上一课，集中来解决内存问题。但是由于个人原因我 7 月份会离开项目组，恐怕没有时间来这么做了，所以最终还是决定将工程转成 ARC 模式。</p><p></p>
+<p></p><p>该项目是某行手机银行客户端，iOS 开发这块除了我，其他的所有 7 个开发人员都是项目组临时招聘的，技术参差不齐，毕竟公司招聘标准就是：便宜 + 能干事。我的职责就是负责客户端架构，公共机制的设计与实现，公共组件的封装，开发过程中的解疑。其他开发人员每人负责一两个模块的交易开发，其实无非就剩下请求数据绘界面的事了。</p><p></p>
+<p></p><p>其实项目开始时就打算尝试用 ARC 的，但是项目组内其他人员之前都没接触过 ARC，迫于项目进度压力也没有时间做培训，就使用大家比较熟悉的 MRR，还是太信任他们了。</p><p></p>
+<p></p><p><a name="more"></a></p><p></p>
+<p></p><h2>Convertion Steps</h2><p></p>
+<p></p><p>1.<strong>将不要转成 ARC 的代码标注一下</strong></p><p></p>
+<p></p><p>如开源代码 AFNetworking(因为项目需要支持 4.3，所以用的 AFNetworking 是支持 4.3 的非 ARC 版本)、GDataXML、RegexKitLite、Reachability 等，其实这些也能转，但是感觉没有必要，将这些源文件在 Build Phases / Complie Sources 中标注为<code>-fno-objc-arc</code>，如果之前用到了使用 ARC 的代码，现在可以将<code>-fobjc-arc</code>标记去掉了。</p><p></p>
+<p></p><p><a class="fancybox" title="setp1" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step1.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step1.png" alt="setp1"></a><span class="caption">setp1</span></p><p></p>
+<p></p><p>2.<strong>工程检查</strong></p><p></p>
+<p></p><p>我选择使用 Xcode5.0_DP 版本来转，之前使用 Xcode4.6 在转换过程中电脑经常会假死，或者 Xcode4.6 直接崩溃，不知道什么原因。而 Xcode5.0 默认就是 ARC 模式，我想为了能让之前的程序都转换为 ARC，它的转换工具一定比之前强化了不少。</p><p></p>
+<p></p><p>Xcode -&gt; Edit -&gt; Refactor -&gt; Convert to Objective-C ARC&hellip;</p><p></p>
+<p></p><p>选择要转换的 Target，工程 target，如果有单元测试也会出现单元测试的 target，点击&ldquo;Check&rdquo;。</p><p></p>
+<p></p><p>3.<strong>解决 ARC 不允许的问题</strong></p><p></p>
+<p></p><p><a class="fancybox" title="setp3" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step3.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step3.png" alt="setp3"></a><span class="caption">setp3</span></p><p></p>
+<p></p><p>转换工具会自动将代码里面的 retain、release、autorelease 等操作去掉，属性中的 retain、copy、assign 转为为对应的关键字（retain、copy -&gt; strong, assign 会根据工程是否支持 5.0 一下版本转出 weak，或 unsafe_unretained）。</p><p></p>
+<p></p><p>但是如果你在宏里面定义如：</p><p></p>
+<p></p><p><code>#define MB_RELEASE_SAFELY(<strong>POINTER) { [</strong>POINTER release]; __POINTER = nil; }</code></p><p></p>
+<p></p><p>转换工具是不会自动处理里面的 release 的，需要手动将<code>[__POINTER release];</code>去掉。（我工程里面 4201 个问题基本上都是因为这个导致的）</p><p></p>
+<p></p><p>此外在 CF 对象与 NS 对象之间转换的需要加上关键字<code>__bridge</code>，这个也需要手动来来修改。</p><p></p>
+<p></p><p>4.<strong>开始转换</strong></p><p></p>
+<p></p><p><a class="fancybox" title="setp4" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step4.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step4.png" alt="setp4"></a><span class="caption">setp4</span></p><p></p>
+<p></p><p>解决完所有的冲突，再次选择&ldquo;Convert to Objective-C ARC&hellip;&rdquo;，你就能看到这个界面，点击&ldquo;Next&rdquo;后，再次经过漫长的等待， 工具会列出了将会为了转换的代码的对照列表。默认所有出现在列表里面的文件都是选中的，你可以选在不要转换的文件，去掉对勾。确认完后，点击&ldquo;Save&rdquo;就完成了整个工程的转换工作, Congratulations!</p><p></p>
+<p></p><p>(我在完成后编译时，发现之前被我标为<code>-fno-objc-arc</code>的文件会有报错，原来在转换过程中工具将之前的标记都去掉了，无奈再次标记了一遍。)</p><p></p>
+<p></p><p>5.<strong>其他处理</strong></p><p></p>
+<p></p><p>因为我们工程支持 4.3，所以 weak, __weak 关键字不能用， 可以通过宏定义将 5.0 以下时 weak 关键字定义为 unsafe_unretained:</p><p></p>
+<p><pre><span class="preprocessor">#if (!<strong>has_feature(objc_arc)) || \</strong></span><br>(defined IPHONE_OS_VERSION_MIN_REQUIRED &amp;&amp; \<br><strong>IPHONE_OS_VERSION_MIN_REQUIRED &lt; </strong>IPHONE_5_0) || \<br>(defined <strong>MAC_OS_X_VERSION_MIN_REQUIRED &amp;&amp; \
+</strong>MAC_OS_X_VERSION_MIN_REQUIRED &lt; <strong>MAC_10_7)<br><span class="preprocessor">#undef weak</span><br><span class="preprocessor">#define weak unsafe_unretained</span><br><span class="preprocessor">#undef </span></strong>weak<br><span class="preprocessor">#define <strong>weak </strong>unsafe_unretained</span><br><span class="preprocessor">#endif</span><br></pre></p>
+<p></p><p><span>在 ARC 模式下，使用 performSelector 方法会有编译警告：PerformSelector may cause a leak because its selector is unknown，作为有洁癖的程序员是不能容许程序中有警告的：</span></p><p></p>
+<p><pre><span class="preprocessor">#progma clang diagnostic push</span><br><span class="preprocessor">#progma clang disgnostic ignored “-Warc-performSelecotr-leaks”</span><br>[<span class="keyword">self</span> performSelector:@<span class="keyword">selector</span>(mySelector:) withObject:object];<br><span class="preprocessor">#progma clang disgnostic pop</span><br></pre></p>
+<p></p><p><span>Posted by&nbsp;<a href="http://weibo.com/534072785" target="_blank" rel="external"><strong>XiaoYi_HD</strong></a>&nbsp;- 6月 19 2013</span><br><span>如需转载，请注明： 本文来自&nbsp;<a href="http://esoftmobile.com/" target="_blank" rel="external"><strong>Esoft Mobile</strong></a></span></p><div id="MySignature"></div><p></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">Convertion Steps</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2016/03/08/转-让你快速上手Runtime/" class="prev">&larr; 上一篇 [转]让你快速上手Runtime</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking 3.0迁移指南/" class="next">下一篇 [转]AFNetworking 3.0迁移指南 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2015/12/11/15.12.11_Convert_to_Objective-C_ARC/" data-title="[转]Convert to Objective-C ARC" data-url="https://github.com/zhoutq/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

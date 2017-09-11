@@ -115,11 +115,386 @@
       <category term="性能优化" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
     
     
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
       <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="性能优化" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]iOS开发之AFNetworking 3.0.4使用</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/03/08/16.2.9_iOS%E5%BC%80%E5%8F%91%E4%B9%8BAFNetworking3.0.4%E4%BD%BF%E7%94%A8/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/</id>
+    <published>2017-03-08T08:44:53.000Z</published>
+    <updated>2017-09-11T12:03:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.jianshu.com/p/11bb0d4dc649" target="_blank" rel="external">http://www.jianshu.com/p/11bb0d4dc649</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:<a href="http://weibo.com/2034818060/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo" target="_blank" rel="external">袁峥Seemygo</a>,也可以来<a href="http://www.520it.com" target="_blank" rel="external">小码哥</a>，了解下我们的iOS培训课程。后续还会更新更多内容。。。</p>
+<h3 id="一、runtime简介"><a href="#一、runtime简介" class="headerlink" title="一、runtime简介"></a>一、runtime简介</h3><ul>
+<li>RunTime简称运行时。OC就是<code>运行时机制</code>，也就是在运行时候的一些机制，其中最主要的是消息机制。</li>
+<li>对于C语言，<code>函数的调用在编译的时候会决定调用哪个函数</code>。</li>
+<li>昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSURLConnection了，被弃用了，突然意识到，这个就是AFHTTPRequestOperationManager找不到的原因了，它是基于NSURLConnection封装的！！于是找了一下，现在都用的是NSURLSession了，AFN中用的是AFHTTPSessionManager了~~<p></p><br><p>特地记录下来，以便遇到这个的朋友们看看！</p><br><p>ps:如果想用以前的话，cocoapods 就不要用最新的版本了，2.6的上面有。</p><br><hr><br><h3>GET请求</h3><br><p></p><p>  <code></code></p><br><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager]; </code></pre></li>
+</ul>
+<p>[manager GET:URL parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {  </p>
+<p>}<br> success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {  </p>
+<p> NSLog(@”这里打印请求成功要做的事”);  </p>
+<p>}</p>
+<p>failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull   error) {  </p>
+<p>NSLog(@”%@”,error);  //这里打印错误信息</p>
+<p>}];</p>
+<p></p><h3>POST 请求</h3><p></p>
+<p></p><p></p><p>  <code></code></p><p></p>
+<p><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</code></pre></p>
+<p>NSMutableDictionary *parameters = @{@””:@””,@””:@””};</p>
+<p>[manager POST:URL parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<p>} success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<p>} failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<p>}];</p>
+<p><hr></p>
+<p></p><p>暂时用的比较多的就这两个，用到其他的 再来更新！！</p><p></p>
+<p></p><h2>最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</h2><p></p>
+<p></p><h3>补充试用AFN3.0下载方法</h3><p></p>
+<p><pre><code>/**</code></pre></p>
+<ul>
+<li><p>AFN3.0 下载<br>*/</p>
+<ul>
+<li>(void)downLoad{</li>
+</ul>
+<p>//1.创建管理者对象<br>AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>//2.确定请求的URL地址<br>NSURL </em>url = [NSURL URLWithString:@””];</p>
+<p>//3.创建请求对象<br>NSURLRequest *request = [NSURLRequest requestWithURL:url];</p>
+<p>//下载任务<br>NSURLSessionDownloadTask <em>task = [manager downloadTaskWithRequest:request progress:^(NSProgress </em> _Nonnull downloadProgress) {</p>
+<pre><code>//打印下下载进度
+WKNSLog(@&quot;%lf&quot;,1.0 * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
+</code></pre><p>} destination:^NSURL <em> _Nonnull(NSURL </em> _Nonnull targetPath, NSURLResponse * _Nonnull response) {</p>
+<pre><code>//下载地址
+WKNSLog(@&quot;默认下载地址:%@&quot;,targetPath);
+
+//设置下载路径，通过沙盒获取缓存地址，最后返回NSURL对象
+NSString *filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+return [NSURL fileURLWithPath:filePath];
+</code></pre></li>
+</ul>
+<pre><code>} completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+
+    //下载完成调用的方法
+    WKNSLog(@&quot;下载完成：&quot;);
+    WKNSLog(@&quot;%@--%@&quot;,response,filePath);
+
+}];
+
+//开始启动任务
+[task resume];
+</code></pre><p>}</p>
+<p></p><h3>AFN3.0 上传</h3><p></p>
+<p><pre><code>/**</code></pre></p>
+<ul>
+<li>AFN 3.0 上传</li>
+<li>有两种方式</li>
+<li>upLoad1 和 upLoad2<br>*/</li>
+</ul>
+<p>//第一种方法是通过工程中的文件进行上传</p>
+<ul>
+<li><p>(void)upLoad1{</p>
+<p>  //1。创建管理者对象<br>  AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</p>
+<p>  //2.上传文件<br>  NSDictionary *dict = @{@”username”:@”1234”};</p>
+<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
+<pre><code>//上传文件参数
+UIImage *iamge = [UIImage imageNamed:@&quot;123.png&quot;];
+NSData *data = UIImagePNGRepresentation(iamge);
+//这个就是参数
+[formData appendPartWithFileData:data name:@&quot;file&quot; fileName:@&quot;123.png&quot; mimeType:@&quot;image/png&quot;];
+</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<pre><code>//打印下上传进度
+WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<pre><code>//请求成功
+WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
+</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<pre><code>//请求失败
+WKNSLog(@&quot;请求失败：%@&quot;,error);
+</code></pre><p>  }];</p>
+</li>
+</ul>
+<p>}</p>
+<p>//第二种是通过URL来获取路径，进入沙盒或者系统相册等等</p>
+<ul>
+<li><p>(void)upLoda2{<br>  //1.创建管理者对象<br>  AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>  //2.上传文件<br>  NSDictionary </em>dict = @{@”username”:@”1234”};</p>
+<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
+<pre><code>[formData appendPartWithFileURL:[NSURL fileURLWithPath:@&quot;文件地址&quot;] name:@&quot;file&quot; fileName:@&quot;1234.png&quot; mimeType:@&quot;application/octet-stream&quot; error:nil];
+</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<pre><code>//打印下上传进度
+WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<pre><code>//请求成功
+WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
+</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<pre><code>//请求失败
+WKNSLog(@&quot;请求失败：%@&quot;,error);
+</code></pre><p>  }];<br>}<br></p><h3>监测当前网络状态（网络监听）</h3><br><pre><code>- (void)AFNetworkStatus{<p></p>
+<p>  //1.创建网络监测者<br>  AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];</p>
+<p>  /*枚举里面四个状态  分别对应 未知 无网络 数据 WiFi<br>   typedef NS_ENUM(NSInteger, AFNetworkReachabilityStatus) {</p>
+<pre><code>AFNetworkReachabilityStatusUnknown          = -1,      未知
+AFNetworkReachabilityStatusNotReachable     = 0,       无网络
+AFNetworkReachabilityStatusReachableViaWWAN = 1,       蜂窝数据网络
+AFNetworkReachabilityStatusReachableViaWiFi = 2,       WiFi
+</code></pre><p>   };<br>   */</p>
+<p>  [manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {</p>
+<pre><code>//这里是监测到网络改变的block  可以写成switch方便
+//在里面可以随便写事件
+switch (status) {
+    case AFNetworkReachabilityStatusUnknown:
+        WKNSLog(@&quot;未知网络状态&quot;);
+        break;
+    case AFNetworkReachabilityStatusNotReachable:
+        WKNSLog(@&quot;无网络&quot;);
+        break;
+
+    case AFNetworkReachabilityStatusReachableViaWWAN:
+        WKNSLog(@&quot;蜂窝数据网&quot;);
+        break;
+
+    case AFNetworkReachabilityStatusReachableViaWiFi:
+        WKNSLog(@&quot;WiFi网络&quot;);
+        break;
+
+    default:
+        break;
+}
+</code></pre><p>  }] ;<br>}</p></code></pre><br><p>有知道新版本用法的各位大神请不吝赐教，小白再次拜谢了！！</p><br><h5>在使用的过程中遇到了一些问题的 总结，<a href="http://www.jianshu.com/p/95a368c6f7de" target="_blank">在这里</a>，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</h5><br><hr><br><p>多谢各位道友的指正，在下载里面那个地方return [NSURL fileURLWithPath:filePath]; 已经改过来了</p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.jianshu.com/p/11bb0d4dc649&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.jianshu.com/p/11bb0d4dc649&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;前
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
+    
     
       <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
     
-      <category term="性能优化" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]一步一步写算法（之 算法总结）</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/07/13/16.7.13%20_%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E5%86%99%E7%AE%97%E6%B3%95%EF%BC%88%E4%B9%8B%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%EF%BC%89/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/07/13/16.7.13 _一步一步写算法（之算法总结）/</id>
+    <published>2016-07-13T00:44:10.000Z</published>
+    <updated>2017-09-11T12:04:07.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://blog.csdn.net/feixiaoxing/article/details/6993718" target="_blank" rel="external">http://blog.csdn.net/feixiaoxing/article/details/6993718</a></p>
+<p>&nbsp;&nbsp; &nbsp;自10月初编写算法系列的博客以来，陆陆续续以来写了几十篇。按照计划，还有三个部分的内容没有介绍，主要是（Dijkstra算法、二叉平衡树、红黑树）。这部分会在后面的博客补充完整。这里主要是做一个总结，有兴趣的朋友可以好好看看，欢迎大家提出宝贵意见。</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（1） 排序算法</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6845132" target="_blank" rel="external">快速排序 </a><br>&nbsp;&nbsp; &nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6846008" target="_blank" rel="external">合并排序</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6846664" target="_blank" rel="external">&nbsp;堆排序</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6874619" target="_blank" rel="external">&nbsp;选择排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6876831" target="_blank" rel="external">基数排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">冒泡排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">插入排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">希尔排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6905260" target="_blank" rel="external">链表排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（2） 数据结构</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847885" target="_blank" rel="external">线性队列</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847998" target="_blank" rel="external">线性堆栈</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6848077" target="_blank" rel="external">&nbsp;单向链表</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6849457" target="_blank" rel="external">&nbsp;双向链表</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6853455" target="_blank" rel="external">循环单向链表</a></p>
+<p>&nbsp;&nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6860493" target="_blank" rel="external"> &nbsp;排序二叉树</a>（<a href="http://blog.csdn.net/feixiaoxing/article/details/6863946" target="_blank" rel="external">插入</a>，删除<a href="http://blog.csdn.net/feixiaoxing/article/details/6867460" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6867997" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6868221" target="_blank" rel="external">下</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6892471" target="_blank" rel="external">保存和加载</a>）</p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6885657" target="_blank" rel="external">&nbsp;哈希表</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6901584" target="_blank" rel="external">哈希二叉树</a></p>
+<p>&nbsp;&nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（3）图</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6918768" target="_blank" rel="external">图结构</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6922766" target="_blank" rel="external">图创建</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6926004" target="_blank" rel="external">图的添加、删除</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6929586" target="_blank" rel="external">&nbsp;图的保存</a></p>
+<p>&nbsp;&nbsp; &nbsp;prim算法（<a href="http://blog.csdn.net/feixiaoxing/article/details/6937338" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6938916" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6940335" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;哈夫曼树（<a href="http://blog.csdn.net/feixiaoxing/article/details/6960990" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6963136" target="_blank" rel="external">下</a>） &nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;克鲁斯卡尔算法（<a href="http://blog.csdn.net/feixiaoxing/article/details/6969776" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6974826" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6978095" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（4）常用算法</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844723" target="_blank" rel="external">查找</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847808" target="_blank" rel="external">内存分配</a></p>
+<p>&nbsp;&nbsp; &nbsp;字符串查找（<a href="http://blog.csdn.net/feixiaoxing/article/details/6908453" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6911730" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6915588" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6957546" target="_blank" rel="external">通用数据结构</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6953562" target="_blank" rel="external">通用算法</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6838362" target="_blank" rel="external">循环和递归</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6838773" target="_blank" rel="external">递归和堆栈</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6839301" target="_blank" rel="external">内存中的数据</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6982932" target="_blank" rel="external">&nbsp;A*算法</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6989591" target="_blank" rel="external">可变参数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6933416" target="_blank" rel="external">函数堆栈</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6894981" target="_blank" rel="external">递归寻路</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6897095" target="_blank" rel="external">&nbsp;广度遍历</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6897644" target="_blank" rel="external">深度遍历</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6889211" target="_blank" rel="external">排序二叉树线索化</a></p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（5）趣味算法题目</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6933416" target="_blank" rel="external">链表逆转</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6856686" target="_blank" rel="external">大数计算</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6856936" target="_blank" rel="external">&nbsp;n！末位0个数计算</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6860339" target="_blank" rel="external">洗牌算法</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6917556" target="_blank" rel="external">&nbsp;“数星星”</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6877965" target="_blank" rel="external">八皇后</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6877461" target="_blank" rel="external">数据选择</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871294" target="_blank" rel="external">单词统计</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871148" target="_blank" rel="external">爬楼梯</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871148" target="_blank" rel="external">回数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6949758" target="_blank" rel="external">链表重合</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6945730" target="_blank" rel="external">寻找丢失的数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6991770" target="_blank" rel="external">最大公约数、最小公倍数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6882510" target="_blank" rel="external">挑选最大的n个数</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://blog.csdn.net/feixiaoxing/article/details/6993718&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/feixiaoxing/art
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="c/c++" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/c-c/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="c/c++" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/c-c/"/>
+    
+      <category term="数据结构和算法" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]iOS用CGContextRef画各种图形</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/06/01/16.6.1_IOS%E7%94%A8CGContextRef%E7%94%BB%E5%90%84%E7%A7%8D%E5%9B%BE%E5%BD%A2/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/06/01/16.6.1_IOS用CGContextRef画各种图形/</id>
+    <published>2016-06-01T02:04:33.000Z</published>
+    <updated>2017-09-11T12:04:06.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://blog.csdn.net/rhljiayou/article/details/9919713" target="_blank" rel="external">http://blog.csdn.net/rhljiayou/article/details/9919713</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>首先了解一下CGContextRef:<br>An opaque type that represents a Quartz 2D drawing environment.<br>Graphics Context是图形上下文,可以将其理解为一块画布,我们可以在上面进行绘画操作,绘制完成后,将画布放到我们的view中显示即可,view看作是一个画框.<br>自己学习时实现的demo，希望对大家有帮助，具体的实现看代码，并有完美的注释解释，还有一些对我帮助的博文供大家参考。都在代码里面。<br>看一下demo效果图先：<br><a href="http://img.blog.csdn.net/20130812112413640?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcmhsamlheW91/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" target="_blank" rel="external"><img src="http://img.blog.csdn.net/20130812112413640?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcmhsamlheW91/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></a></p>
+<p>自定义CustomView类,CustomView.h:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIKit.h&gt;</span>  </span></div><div class="line"><span class="meta">#import <span class="meta-string">&lt;QuartzCore/QuartzCore.h&gt;</span>  </span></div><div class="line"><span class="meta">#define PI 3.14159265358979323846  </span></div><div class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CustomView</span> : <span class="title">UIView</span>  </span></div><div class="line">  </div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>实现类CustomView.m：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"CustomView.h"</span>  </span></div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">CustomView</span>  </span></div><div class="line">  </div><div class="line">- (<span class="keyword">id</span>)initWithFrame:(<span class="built_in">CGRect</span>)frame  </div><div class="line">&#123;  </div><div class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> initWithFrame:frame];  </div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;  </div><div class="line">    &#125;  </div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;  </div><div class="line">&#125;  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="comment">// 覆盖drawRect方法，你可以在此自定义绘画和动画  </span></div><div class="line">- (<span class="keyword">void</span>)drawRect:(<span class="built_in">CGRect</span>)rect  </div><div class="line">&#123;  </div><div class="line">    <span class="comment">//An opaque type that represents a Quartz 2D drawing environment.  </span></div><div class="line">    <span class="comment">//一个不透明类型的Quartz 2D绘画环境,相当于一个画布,你可以在上面任意绘画  </span></div><div class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();  </div><div class="line">      </div><div class="line">    <span class="comment">/*写文字*/</span>  </div><div class="line">    <span class="built_in">CGContextSetRGBFillColor</span> (context,  <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1.0</span>);<span class="comment">//设置填充颜色  </span></div><div class="line">    <span class="built_in">UIFont</span>  *font = [<span class="built_in">UIFont</span> boldSystemFontOfSize:<span class="number">15.0</span>];<span class="comment">//设置  </span></div><div class="line">    [<span class="string">@"画圆："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">20</span>, <span class="number">80</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画线及孤线："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">80</span>, <span class="number">100</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画矩形："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">120</span>, <span class="number">80</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画扇形和椭圆："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">160</span>, <span class="number">110</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画三角形："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">220</span>, <span class="number">80</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画圆角矩形："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">260</span>, <span class="number">100</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"画贝塞尔曲线："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">300</span>, <span class="number">100</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">    [<span class="string">@"图片："</span> drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">10</span>, <span class="number">340</span>, <span class="number">80</span>, <span class="number">20</span>) withFont:font];  </div><div class="line">  </div><div class="line">    <span class="comment">/*画圆*/</span>  </div><div class="line">    <span class="comment">//边框圆  </span></div><div class="line">    <span class="built_in">CGContextSetRGBStrokeColor</span>(context,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1.0</span>);<span class="comment">//画笔线的颜色  </span></div><div class="line">    <span class="built_in">CGContextSetLineWidth</span>(context, <span class="number">1.0</span>);<span class="comment">//线的宽度  </span></div><div class="line">    <span class="comment">//void CGContextAddArc(CGContextRef c,CGFloat x, CGFloat y,CGFloat radius,CGFloat startAngle,CGFloat endAngle, int clockwise)1弧度＝180°/π （≈57.3°） 度＝弧度×180°/π 360°＝360×π/180 ＝2π 弧度   </span></div><div class="line">    <span class="comment">// x,y为圆点坐标，radius半径，startAngle为开始的弧度，endAngle为 结束的弧度，clockwise 0为顺时针，1为逆时针。  </span></div><div class="line">    <span class="built_in">CGContextAddArc</span>(context, <span class="number">100</span>, <span class="number">20</span>, <span class="number">15</span>, <span class="number">0</span>, <span class="number">2</span>*PI, <span class="number">0</span>); <span class="comment">//添加一个圆  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathStroke); <span class="comment">//绘制路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">//填充圆，无边框  </span></div><div class="line">    <span class="built_in">CGContextAddArc</span>(context, <span class="number">150</span>, <span class="number">30</span>, <span class="number">30</span>, <span class="number">0</span>, <span class="number">2</span>*PI, <span class="number">0</span>); <span class="comment">//添加一个圆  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFill);<span class="comment">//绘制填充  </span></div><div class="line">      </div><div class="line">    <span class="comment">//画大圆并填充颜  </span></div><div class="line">    <span class="built_in">UIColor</span>*aColor = [<span class="built_in">UIColor</span> colorWithRed:<span class="number">1</span> green:<span class="number">0.0</span> blue:<span class="number">0</span> alpha:<span class="number">1</span>];  </div><div class="line">    <span class="built_in">CGContextSetFillColorWithColor</span>(context, aColor.CGColor);<span class="comment">//填充颜色  </span></div><div class="line">    <span class="built_in">CGContextSetLineWidth</span>(context, <span class="number">3.0</span>);<span class="comment">//线的宽度  </span></div><div class="line">    <span class="built_in">CGContextAddArc</span>(context, <span class="number">250</span>, <span class="number">40</span>, <span class="number">40</span>, <span class="number">0</span>, <span class="number">2</span>*PI, <span class="number">0</span>); <span class="comment">//添加一个圆  </span></div><div class="line">    <span class="comment">//kCGPathFill填充非零绕数规则,kCGPathEOFill表示用奇偶规则,kCGPathStroke路径,kCGPathFillStroke路径填充,kCGPathEOFillStroke表示描线，不是填充  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke); <span class="comment">//绘制路径加填充  </span></div><div class="line">      </div><div class="line">    <span class="comment">/*画线及孤线*/</span>  </div><div class="line">    <span class="comment">//画线  </span></div><div class="line">    <span class="built_in">CGPoint</span> aPoints[<span class="number">2</span>];<span class="comment">//坐标点  </span></div><div class="line">    aPoints[<span class="number">0</span>] =<span class="built_in">CGPointMake</span>(<span class="number">100</span>, <span class="number">80</span>);<span class="comment">//坐标1  </span></div><div class="line">    aPoints[<span class="number">1</span>] =<span class="built_in">CGPointMake</span>(<span class="number">130</span>, <span class="number">80</span>);<span class="comment">//坐标2  </span></div><div class="line">    <span class="comment">//CGContextAddLines(CGContextRef c, const CGPoint points[],size_t count)  </span></div><div class="line">    <span class="comment">//points[]坐标数组，和count大小  </span></div><div class="line">    <span class="built_in">CGContextAddLines</span>(context, aPoints, <span class="number">2</span>);<span class="comment">//添加线  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathStroke); <span class="comment">//根据坐标绘制路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">//画笑脸弧线  </span></div><div class="line">    <span class="comment">//左  </span></div><div class="line">    <span class="built_in">CGContextSetRGBStrokeColor</span>(context, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>);<span class="comment">//改变画笔颜色  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">140</span>, <span class="number">80</span>);<span class="comment">//开始坐标p1  </span></div><div class="line">    <span class="comment">//CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1,CGFloat x2, CGFloat y2, CGFloat radius)  </span></div><div class="line">    <span class="comment">//x1,y1跟p1形成一条线的坐标p2，x2,y2结束坐标跟p3形成一条线的p3,radius半径,注意, 需要算好半径的长度,  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">148</span>, <span class="number">68</span>, <span class="number">156</span>, <span class="number">80</span>, <span class="number">10</span>);  </div><div class="line">    <span class="built_in">CGContextStrokePath</span>(context);<span class="comment">//绘画路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">//右  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">160</span>, <span class="number">80</span>);<span class="comment">//开始坐标p1  </span></div><div class="line">    <span class="comment">//CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1,CGFloat x2, CGFloat y2, CGFloat radius)  </span></div><div class="line">    <span class="comment">//x1,y1跟p1形成一条线的坐标p2，x2,y2结束坐标跟p3形成一条线的p3,radius半径,注意, 需要算好半径的长度,  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">168</span>, <span class="number">68</span>, <span class="number">176</span>, <span class="number">80</span>, <span class="number">10</span>);  </div><div class="line">    <span class="built_in">CGContextStrokePath</span>(context);<span class="comment">//绘画路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">//右  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">150</span>, <span class="number">90</span>);<span class="comment">//开始坐标p1  </span></div><div class="line">    <span class="comment">//CGContextAddArcToPoint(CGContextRef c, CGFloat x1, CGFloat y1,CGFloat x2, CGFloat y2, CGFloat radius)  </span></div><div class="line">    <span class="comment">//x1,y1跟p1形成一条线的坐标p2，x2,y2结束坐标跟p3形成一条线的p3,radius半径,注意, 需要算好半径的长度,  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">158</span>, <span class="number">102</span>, <span class="number">166</span>, <span class="number">90</span>, <span class="number">10</span>);  </div><div class="line">    <span class="built_in">CGContextStrokePath</span>(context);<span class="comment">//绘画路径  </span></div><div class="line">    <span class="comment">//注，如果还是没弄明白怎么回事，请参考：http://donbe.blog.163.com/blog/static/138048021201052093633776/  </span></div><div class="line">      </div><div class="line">    <span class="comment">/*画矩形*/</span>  </div><div class="line">    <span class="built_in">CGContextStrokeRect</span>(context,<span class="built_in">CGRectMake</span>(<span class="number">100</span>, <span class="number">120</span>, <span class="number">10</span>, <span class="number">10</span>));<span class="comment">//画方框  </span></div><div class="line">    <span class="built_in">CGContextFillRect</span>(context,<span class="built_in">CGRectMake</span>(<span class="number">120</span>, <span class="number">120</span>, <span class="number">10</span>, <span class="number">10</span>));<span class="comment">//填充框  </span></div><div class="line">    <span class="comment">//矩形，并填弃颜色  </span></div><div class="line">    <span class="built_in">CGContextSetLineWidth</span>(context, <span class="number">2.0</span>);<span class="comment">//线的宽度  </span></div><div class="line">    aColor = [<span class="built_in">UIColor</span> blueColor];<span class="comment">//blue蓝色  </span></div><div class="line">    <span class="built_in">CGContextSetFillColorWithColor</span>(context, aColor.CGColor);<span class="comment">//填充颜色  </span></div><div class="line">    aColor = [<span class="built_in">UIColor</span> yellowColor];  </div><div class="line">    <span class="built_in">CGContextSetStrokeColorWithColor</span>(context, aColor.CGColor);<span class="comment">//线框颜色  </span></div><div class="line">    <span class="built_in">CGContextAddRect</span>(context,<span class="built_in">CGRectMake</span>(<span class="number">140</span>, <span class="number">120</span>, <span class="number">60</span>, <span class="number">30</span>));<span class="comment">//画方框  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke);<span class="comment">//绘画路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">//矩形，并填弃渐变颜色  </span></div><div class="line">    <span class="comment">//关于颜色参考http://blog.sina.com.cn/s/blog_6ec3c9ce01015v3c.html  </span></div><div class="line">    <span class="comment">//http://blog.csdn.net/reylen/article/details/8622932  </span></div><div class="line">    <span class="comment">//第一种填充方式，第一种方式必须导入类库quartcore并#import &lt;QuartzCore/QuartzCore.h&gt;，这个就不属于在context上画，而是将层插入到view层上面。那么这里就设计到Quartz Core 图层编程了。  </span></div><div class="line">    <span class="built_in">CAGradientLayer</span> *gradient1 = [<span class="built_in">CAGradientLayer</span> layer];  </div><div class="line">    gradient1.frame = <span class="built_in">CGRectMake</span>(<span class="number">240</span>, <span class="number">120</span>, <span class="number">60</span>, <span class="number">30</span>);  </div><div class="line">    gradient1.colors = [<span class="built_in">NSArray</span> arrayWithObjects:(<span class="keyword">id</span>)[<span class="built_in">UIColor</span> whiteColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> grayColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> blackColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> yellowColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> blueColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> redColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> greenColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> orangeColor].CGColor,  </div><div class="line">                        (<span class="keyword">id</span>)[<span class="built_in">UIColor</span> brownColor].CGColor,<span class="literal">nil</span>];  </div><div class="line">    [<span class="keyword">self</span>.layer insertSublayer:gradient1 atIndex:<span class="number">0</span>];  </div><div class="line">    <span class="comment">//第二种填充方式   </span></div><div class="line">    <span class="built_in">CGColorSpaceRef</span> rgb = <span class="built_in">CGColorSpaceCreateDeviceRGB</span>();  </div><div class="line">    <span class="built_in">CGFloat</span> colors[] =  </div><div class="line">    &#123;  </div><div class="line">        <span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>, <span class="number">1.00</span>,  </div><div class="line">        <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>, <span class="number">1.00</span>,  </div><div class="line">    &#125;;  </div><div class="line">    <span class="built_in">CGGradientRef</span> gradient = <span class="built_in">CGGradientCreateWithColorComponents</span>  </div><div class="line">    (rgb, colors, <span class="literal">NULL</span>, <span class="keyword">sizeof</span>(colors)/(<span class="keyword">sizeof</span>(colors[<span class="number">0</span>])*<span class="number">4</span>));<span class="comment">//形成梯形，渐变的效果   </span></div><div class="line">    <span class="built_in">CGColorSpaceRelease</span>(rgb);  </div><div class="line">    <span class="comment">//画线形成一个矩形  </span></div><div class="line">    <span class="comment">//CGContextSaveGState与CGContextRestoreGState的作用  </span></div><div class="line">    <span class="comment">/* </span></div><div class="line">     CGContextSaveGState函数的作用是将当前图形状态推入堆栈。之后，您对图形状态所做的修改会影响随后的描画操作，但不影响存储在堆栈中的拷贝。在修改完成后，您可以通过CGContextRestoreGState函数把堆栈顶部的状态弹出，返回到之前的图形状态。这种推入和弹出的方式是回到之前图形状态的快速方法，避免逐个撤消所有的状态修改；这也是将某些状态（比如裁剪路径）恢复到原有设置的唯一方式。 </div><div class="line">     */  </div><div class="line">    <span class="built_in">CGContextSaveGState</span>(context);  </div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">220</span>, <span class="number">90</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">240</span>, <span class="number">90</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">240</span>, <span class="number">110</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">220</span>, <span class="number">110</span>);  </div><div class="line">    <span class="built_in">CGContextClip</span>(context);<span class="comment">//context裁剪路径,后续操作的路径  </span></div><div class="line">    <span class="comment">//CGContextDrawLinearGradient(CGContextRef context,CGGradientRef gradient, CGPoint startPoint, CGPoint endPoint,CGGradientDrawingOptions options)  </span></div><div class="line">    <span class="comment">//gradient渐变颜色,startPoint开始渐变的起始位置,endPoint结束坐标,options开始坐标之前or开始之后开始渐变  </span></div><div class="line">    <span class="built_in">CGContextDrawLinearGradient</span>(context, gradient,<span class="built_in">CGPointMake</span>  </div><div class="line">                                (<span class="number">220</span>,<span class="number">90</span>) ,<span class="built_in">CGPointMake</span>(<span class="number">240</span>,<span class="number">110</span>),  </div><div class="line">                                kCGGradientDrawsAfterEndLocation);  </div><div class="line">    <span class="built_in">CGContextRestoreGState</span>(context);<span class="comment">// 恢复到之前的context  </span></div><div class="line">      </div><div class="line">    <span class="comment">//再写一个看看效果  </span></div><div class="line">    <span class="built_in">CGContextSaveGState</span>(context);  </div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">260</span>, <span class="number">90</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">280</span>, <span class="number">90</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">280</span>, <span class="number">100</span>);  </div><div class="line">    <span class="built_in">CGContextAddLineToPoint</span>(context, <span class="number">260</span>, <span class="number">100</span>);  </div><div class="line">    <span class="built_in">CGContextClip</span>(context);<span class="comment">//裁剪路径  </span></div><div class="line">    <span class="comment">//说白了，开始坐标和结束坐标是控制渐变的方向和形状  </span></div><div class="line">    <span class="built_in">CGContextDrawLinearGradient</span>(context, gradient,<span class="built_in">CGPointMake</span>  </div><div class="line">                                (<span class="number">260</span>, <span class="number">90</span>) ,<span class="built_in">CGPointMake</span>(<span class="number">260</span>, <span class="number">100</span>),  </div><div class="line">                                kCGGradientDrawsAfterEndLocation);  </div><div class="line">    <span class="built_in">CGContextRestoreGState</span>(context);<span class="comment">// 恢复到之前的context  </span></div><div class="line">      </div><div class="line">    <span class="comment">//下面再看一个颜色渐变的圆  </span></div><div class="line">    <span class="built_in">CGContextDrawRadialGradient</span>(context, gradient, <span class="built_in">CGPointMake</span>(<span class="number">300</span>, <span class="number">100</span>), <span class="number">0.0</span>, <span class="built_in">CGPointMake</span>(<span class="number">300</span>, <span class="number">100</span>), <span class="number">10</span>, kCGGradientDrawsBeforeStartLocation);  </div><div class="line">      </div><div class="line">    <span class="comment">/*画扇形和椭圆*/</span>  </div><div class="line">    <span class="comment">//画扇形，也就画圆，只不过是设置角度的大小，形成一个扇形  </span></div><div class="line">    aColor = [<span class="built_in">UIColor</span> colorWithRed:<span class="number">0</span> green:<span class="number">1</span> blue:<span class="number">1</span> alpha:<span class="number">1</span>];  </div><div class="line">    <span class="built_in">CGContextSetFillColorWithColor</span>(context, aColor.CGColor);<span class="comment">//填充颜色  </span></div><div class="line">    <span class="comment">//以10为半径围绕圆心画指定角度扇形  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">160</span>, <span class="number">180</span>);  </div><div class="line">    <span class="built_in">CGContextAddArc</span>(context, <span class="number">160</span>, <span class="number">180</span>, <span class="number">30</span>,  <span class="number">-60</span> * PI / <span class="number">180</span>, <span class="number">-120</span> * PI / <span class="number">180</span>, <span class="number">1</span>);  </div><div class="line">    <span class="built_in">CGContextClosePath</span>(context);  </div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke); <span class="comment">//绘制路径  </span></div><div class="line">  </div><div class="line">    <span class="comment">//画椭圆  </span></div><div class="line">    <span class="built_in">CGContextAddEllipseInRect</span>(context, <span class="built_in">CGRectMake</span>(<span class="number">160</span>, <span class="number">180</span>, <span class="number">20</span>, <span class="number">8</span>)); <span class="comment">//椭圆  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke);  </div><div class="line">      </div><div class="line">    <span class="comment">/*画三角形*/</span>  </div><div class="line">    <span class="comment">//只要三个点就行跟画一条线方式一样，把三点连接起来  </span></div><div class="line">    <span class="built_in">CGPoint</span> sPoints[<span class="number">3</span>];<span class="comment">//坐标点  </span></div><div class="line">    sPoints[<span class="number">0</span>] =<span class="built_in">CGPointMake</span>(<span class="number">100</span>, <span class="number">220</span>);<span class="comment">//坐标1  </span></div><div class="line">    sPoints[<span class="number">1</span>] =<span class="built_in">CGPointMake</span>(<span class="number">130</span>, <span class="number">220</span>);<span class="comment">//坐标2  </span></div><div class="line">    sPoints[<span class="number">2</span>] =<span class="built_in">CGPointMake</span>(<span class="number">130</span>, <span class="number">160</span>);<span class="comment">//坐标3  </span></div><div class="line">    <span class="built_in">CGContextAddLines</span>(context, sPoints, <span class="number">3</span>);<span class="comment">//添加线  </span></div><div class="line">    <span class="built_in">CGContextClosePath</span>(context);<span class="comment">//封起来  </span></div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke); <span class="comment">//根据坐标绘制路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">/*画圆角矩形*/</span>  </div><div class="line">    <span class="keyword">float</span> fw = <span class="number">180</span>;  </div><div class="line">    <span class="keyword">float</span> fh = <span class="number">280</span>;  </div><div class="line">      </div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, fw, fh<span class="number">-20</span>);  <span class="comment">// 开始坐标右边开始  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, fw, fh, fw<span class="number">-20</span>, fh, <span class="number">10</span>);  <span class="comment">// 右下角角度  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">120</span>, fh, <span class="number">120</span>, fh<span class="number">-20</span>, <span class="number">10</span>); <span class="comment">// 左下角角度  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, <span class="number">120</span>, <span class="number">250</span>, fw<span class="number">-20</span>, <span class="number">250</span>, <span class="number">10</span>); <span class="comment">// 左上角  </span></div><div class="line">    <span class="built_in">CGContextAddArcToPoint</span>(context, fw, <span class="number">250</span>, fw, fh<span class="number">-20</span>, <span class="number">10</span>); <span class="comment">// 右上角  </span></div><div class="line">    <span class="built_in">CGContextClosePath</span>(context);  </div><div class="line">    <span class="built_in">CGContextDrawPath</span>(context, kCGPathFillStroke); <span class="comment">//根据坐标绘制路径  </span></div><div class="line">      </div><div class="line">    <span class="comment">/*画贝塞尔曲线*/</span>  </div><div class="line">    <span class="comment">//二次曲线  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">120</span>, <span class="number">300</span>);<span class="comment">//设置Path的起点  </span></div><div class="line">    <span class="built_in">CGContextAddQuadCurveToPoint</span>(context,<span class="number">190</span>, <span class="number">310</span>, <span class="number">120</span>, <span class="number">390</span>);<span class="comment">//设置贝塞尔曲线的控制点坐标和终点坐标  </span></div><div class="line">    <span class="built_in">CGContextStrokePath</span>(context);  </div><div class="line">    <span class="comment">//三次曲线函数  </span></div><div class="line">    <span class="built_in">CGContextMoveToPoint</span>(context, <span class="number">200</span>, <span class="number">300</span>);<span class="comment">//设置Path的起点  </span></div><div class="line">    <span class="built_in">CGContextAddCurveToPoint</span>(context,<span class="number">250</span>, <span class="number">280</span>, <span class="number">250</span>, <span class="number">400</span>, <span class="number">280</span>, <span class="number">300</span>);<span class="comment">//设置贝塞尔曲线的控制点坐标和控制点坐标终点坐标  </span></div><div class="line">    <span class="built_in">CGContextStrokePath</span>(context);  </div><div class="line">      </div><div class="line">      </div><div class="line">    <span class="comment">/*图片*/</span>  </div><div class="line">    <span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"apple.jpg"</span>];  </div><div class="line">    [image drawInRect:<span class="built_in">CGRectMake</span>(<span class="number">60</span>, <span class="number">340</span>, <span class="number">20</span>, <span class="number">20</span>)];<span class="comment">//在坐标中画出图片  </span></div><div class="line"><span class="comment">//    [image drawAtPoint:CGPointMake(100, 340)];//保持图片大小在point点开始画图片，可以把注释去掉看看  </span></div><div class="line">    <span class="built_in">CGContextDrawImage</span>(context, <span class="built_in">CGRectMake</span>(<span class="number">100</span>, <span class="number">340</span>, <span class="number">20</span>, <span class="number">20</span>), image.CGImage);<span class="comment">//使用这个使图片上下颠倒了，参考http://blog.csdn.net/koupoo/article/details/8670024  </span></div><div class="line">      </div><div class="line"><span class="comment">//    CGContextDrawTiledImage(context, CGRectMake(0, 0, 20, 20), image.CGImage);//平铺图  </span></div><div class="line">  </div><div class="line">&#125;  </div><div class="line">  </div><div class="line">  </div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure>
+<p>用法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CustomView *customView = [[CustomView alloc]initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">320</span>, <span class="keyword">self</span>.view.frame.size.height)];  </div><div class="line">    [<span class="keyword">self</span>.view addSubview:customView];</div></pre></td></tr></table></figure>
+<p>ok，完成。<br>大家如果看过我的其它博客，会发现，这遍博客跟我的某一片博客很像，没错，就是<a href="http://blog.csdn.net/rhljiayou/article/details/7212620" target="_blank" rel="external">http://blog.csdn.net/rhljiayou/article/details/7212620</a><br>当年写andriod的时候写的一遍博客。<br>请大家尊重一下我的劳动成功，转载请注明原创地址！<br><a href="http://blog.csdn.net/rhljiayou/article/details/9919713" target="_blank" rel="external">http://blog.csdn.net/rhljiayou/article/details/9919713</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://blog.csdn.net/rhljiayou/article/details/9919713&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/rhljiayou/article
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="图形绘制" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/%E5%9B%BE%E5%BD%A2%E7%BB%98%E5%88%B6/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="CGContextRef" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/CGContextRef/"/>
+    
+      <category term="图形绘制" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%9B%BE%E5%BD%A2%E7%BB%98%E5%88%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]AFNetworking、ASIHTTPRequest中SSL的使用</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/05/20/16.5.20_AFNetworking%E3%80%81ASIHTTPRequest%E4%B8%ADSSL%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/05/20/16.5.20_AFNetworking、ASIHTTPRequest中SSL的使用/</id>
+    <published>2016-05-20T02:10:13.000Z</published>
+    <updated>2017-09-11T12:04:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="https://www.caijixia.net/jianzhanjingyan/2014080371676.html" target="_blank" rel="external">https://www.caijixia.net/jianzhanjingyan/2014080371676.html</a></p>
+<p>首先介绍下AFNetworking中的使用：<br>2.0要注意个地方：IOS7及其以后，采用AFHTTPSessionManager，IOS7之前采用AFHTTPRequestOperationManager。<br>以AFHTTPSessionManager为例，代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">AFHTTPSessionManager *httpClient = [AFHTTPSessionManager manager]; httpClient.requestSerializer = [AFHTTPRequestSerializer serializer]; httpClient.responseSerializer = [AFHTTPResponseSerializer serializer]; <span class="comment">// SSL Pinning NSString *certificatePath = [[NSBundle mainBundle] pathForResource:@certificate ofType:@der]; NSData *certificateData = [NSData dataWithContentsOfFile:certificatePath]; AFSecurityPolicy *securityPolicy = [[AFSecurityPolicy alloc] init]; [securityPolicy setAllowInvalidCertificates:YES]; [securityPolicy setPinnedCertificates:@[certificateData]]; [securityPolicy setSSLPinningMode:AFSSLPinningModeCertificate]; [httpClient setSecurityPolicy:securityPolicy]; [httpClient GET:@http://xxxx parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) &#123; &#125; failure:^(NSURLSessionDataTask *task, NSError *error) &#123; //失败信息 &#125;];</span></div></pre></td></tr></table></figure></p>
+<p>以AFHTTPRequestOperationManager为例，站群，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">AFHTTPRequestOperationManager *httpClient1 = [AFHTTPRequestOperationManager manager]; </div><div class="line">httpClient1.requestSerializer = [AFHTTPRequestSerializer serializer]; httpClient1.responseSerializer = [AFHTTPResponseSerializer serializer]; <span class="comment">// SSL Pinning </span></div><div class="line"><span class="built_in">NSString</span> *certificatePath1 = [[<span class="built_in">NSBundle</span> mainBundle] pathForResource:@certificate ofType:@der]; </div><div class="line"><span class="built_in">NSData</span> *certificateData1 = [<span class="built_in">NSData</span> dataWithContentsOfFile:certificatePath1]; AFSecurityPolicy *securityPolicy1 = [[AFSecurityPolicy alloc] init]; </div><div class="line">[securityPolicy1 setAllowInvalidCertificates:<span class="literal">YES</span>]; [securityPolicy1 setPinnedCertificates:@[certificateData1]]; </div><div class="line">[securityPolicy1 setSSLPinningMode:AFSSLPinningModeCertificate]; </div><div class="line">[httpClient setSecurityPolicy:securityPolicy1];</div><div class="line">[httpClient1 GET:@http:<span class="comment">//xxxx parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) &#123; //成功信息 &#125; failure:^(AFHTTPRequestOperation *operation, NSError *error) &#123; //失败信息 &#125;];</span></div></pre></td></tr></table></figure>
+<p>下面来讲下ASI，<br>以ASIFormDataRequest为例，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ASIFormDataRequest * request; request = [ASIFormDataRequest requestWithURL:[<span class="built_in">NSURL</span> URLWithString:@]]; </div><div class="line"><span class="built_in">NSData</span> *cerFile = [<span class="built_in">NSData</span> dataWithContentsOfFile:[[<span class="built_in">NSBundle</span> mainBundle] pathForResource:@d1 ofType:@cer]]; </div><div class="line">SecCertificateRef cert = SecCertificateCreateWithData(<span class="literal">NULL</span>, (__bridge <span class="built_in">CFDataRef</span>)cerFile); </div><div class="line"><span class="built_in">NSArray</span> *array = [<span class="built_in">NSArray</span> arrayWithObjects:(__bridge <span class="keyword">id</span>)cert,<span class="literal">nil</span>];</div><div class="line">[request setClientCertificates:array]; </div><div class="line">[request setValidatesSecureCertificate:<span class="literal">NO</span>]; [request startSynchronous];</div></pre></td></tr></table></figure>
+<p>ASIHTTPRequest的参考<a href="http://www.tuicool.com/articles/UN3AveR，代码就不贴了。" target="_blank" rel="external">http://www.tuicool.com/articles/UN3AveR，代码就不贴了。</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;https://www.caijixia.net/jianzhanjingyan/2014080371676.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.caijixia.net/jianzhan
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
+    
+      <category term="ASIHTTPRequest" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/ASIHTTPRequest/"/>
+    
+      <category term="SSL" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/SSL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]使用AFNetworking 3.0库进行网络请求时，取消单个队列和全部队列的方法(取消网络请求)</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/05/11/16.5.11_%E4%BD%BF%E7%94%A8AFNetworking3.0%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/05/11/16.5.11_使用AFNetworking3.0取消网络请求/</id>
+    <published>2016-05-11T02:44:11.000Z</published>
+    <updated>2017-09-11T12:04:01.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://blog.csdn.net/a645258072/article/details/51208360" target="_blank" rel="external">http://blog.csdn.net/a645258072/article/details/51208360</a></p>
+<p>项目中有时会有这种情况，当界面正在请求数据，但数据为返回之前。返回到上一个界面，这种情况下，应取消此界面的网络请求。此篇就是为了处理此种情况下的操作，可        以取消单个请求队列，如果界面接口很多，可以一次性取消所有请求队列。</p>
+<pre><code>AFHTTPSessionManager *manager = [AFHTTPSessionManagermanager];
+
+NSURLSessionDataTask *ljTask = [manager GET:@&quot;url地址&quot;parameters:@&quot;入参&quot;progress:^(NSProgress *_Nonnull downloadProgress) {
+
+    //数据请求进度
+
+} success:^(NSURLSessionDataTask *_Nonnull task,id _Nullable responseObject) {
+
+    //请求成功
+
+
+} failure:^(NSURLSessionDataTask *_Nullable task,NSError *_Nonnull error) {
+
+    //请求失败
+
+}];
+
+//取消单个网络请求
+[ljTask cancel];
+
+//取消所有的网络请求
+[manager.operationQueuecancelAllOperations];
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://blog.csdn.net/a645258072/article/details/51208360&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/a645258072/arti
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
     
   </entry>
   
@@ -224,13 +599,311 @@
       <category term="runtime" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/runtime/"/>
     
     
-      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
-    
       <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
     
       <category term="runtime" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/runtime/"/>
     
       <category term="动态运行时" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%8A%A8%E6%80%81%E8%BF%90%E8%A1%8C%E6%97%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]Convert to Objective-C ARC</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2015/12/11/15.12.11_Convert_to_Objective-C_ARC/</id>
+    <published>2015-12-11T05:34:23.000Z</published>
+    <updated>2017-09-11T12:03:58.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.cnblogs.com/tracy-e/p/3151459.html" target="_blank" rel="external">http://www.cnblogs.com/tracy-e/p/3151459.html</a></p>
+<p>今天在进行代码走查时，竟然发现了下面这段代码：</p><p></p>
+<p></p><p><a class="fancybox" title="Bad Code" href="http://esoftmobile.com/image/convert_to_objective-c_arc_bad_code.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_bad_code.png" alt="Bad Code"></a><span class="caption">Bad Code</span></p><p></p>
+<p></p><p>顿时感觉吐槽无力，虽然我反复强调内存管理问题，无非就是谁申请谁释放，利用强弱引用避免 retain-cycles，但是还是会有这样那样的问题，leaks 每次就是一片红。本来是计划等他们交易都开发完了，进行一次集体代码走查，好好给他们上一课，集中来解决内存问题。但是由于个人原因我 7 月份会离开项目组，恐怕没有时间来这么做了，所以最终还是决定将工程转成 ARC 模式。</p><p></p>
+<p></p><p>该项目是某行手机银行客户端，iOS 开发这块除了我，其他的所有 7 个开发人员都是项目组临时招聘的，技术参差不齐，毕竟公司招聘标准就是：便宜 + 能干事。我的职责就是负责客户端架构，公共机制的设计与实现，公共组件的封装，开发过程中的解疑。其他开发人员每人负责一两个模块的交易开发，其实无非就剩下请求数据绘界面的事了。</p><p></p>
+<p></p><p>其实项目开始时就打算尝试用 ARC 的，但是项目组内其他人员之前都没接触过 ARC，迫于项目进度压力也没有时间做培训，就使用大家比较熟悉的 MRR，还是太信任他们了。</p><p></p>
+<p></p><p><a name="more"></a></p><p></p>
+<p></p><h2>Convertion Steps</h2><p></p>
+<p></p><p>1.<strong>将不要转成 ARC 的代码标注一下</strong></p><p></p>
+<p></p><p>如开源代码 AFNetworking(因为项目需要支持 4.3，所以用的 AFNetworking 是支持 4.3 的非 ARC 版本)、GDataXML、RegexKitLite、Reachability 等，其实这些也能转，但是感觉没有必要，将这些源文件在 Build Phases / Complie Sources 中标注为<code>-fno-objc-arc</code>，如果之前用到了使用 ARC 的代码，现在可以将<code>-fobjc-arc</code>标记去掉了。</p><p></p>
+<p></p><p><a class="fancybox" title="setp1" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step1.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step1.png" alt="setp1"></a><span class="caption">setp1</span></p><p></p>
+<p></p><p>2.<strong>工程检查</strong></p><p></p>
+<p></p><p>我选择使用 Xcode5.0_DP 版本来转，之前使用 Xcode4.6 在转换过程中电脑经常会假死，或者 Xcode4.6 直接崩溃，不知道什么原因。而 Xcode5.0 默认就是 ARC 模式，我想为了能让之前的程序都转换为 ARC，它的转换工具一定比之前强化了不少。</p><p></p>
+<p></p><p>Xcode -&gt; Edit -&gt; Refactor -&gt; Convert to Objective-C ARC&hellip;</p><p></p>
+<p></p><p>选择要转换的 Target，工程 target，如果有单元测试也会出现单元测试的 target，点击&ldquo;Check&rdquo;。</p><p></p>
+<p></p><p>3.<strong>解决 ARC 不允许的问题</strong></p><p></p>
+<p></p><p><a class="fancybox" title="setp3" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step3.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step3.png" alt="setp3"></a><span class="caption">setp3</span></p><p></p>
+<p></p><p>转换工具会自动将代码里面的 retain、release、autorelease 等操作去掉，属性中的 retain、copy、assign 转为为对应的关键字（retain、copy -&gt; strong, assign 会根据工程是否支持 5.0 一下版本转出 weak，或 unsafe_unretained）。</p><p></p>
+<p></p><p>但是如果你在宏里面定义如：</p><p></p>
+<p></p><p><code>#define MB_RELEASE_SAFELY(<strong>POINTER) { [</strong>POINTER release]; __POINTER = nil; }</code></p><p></p>
+<p></p><p>转换工具是不会自动处理里面的 release 的，需要手动将<code>[__POINTER release];</code>去掉。（我工程里面 4201 个问题基本上都是因为这个导致的）</p><p></p>
+<p></p><p>此外在 CF 对象与 NS 对象之间转换的需要加上关键字<code>__bridge</code>，这个也需要手动来来修改。</p><p></p>
+<p></p><p>4.<strong>开始转换</strong></p><p></p>
+<p></p><p><a class="fancybox" title="setp4" href="http://esoftmobile.com/image/convert_to_objective-c_arc_step4.png" rel="external" target="_blank"><img src="http://esoftmobile.com/image/convert_to_objective-c_arc_step4.png" alt="setp4"></a><span class="caption">setp4</span></p><p></p>
+<p></p><p>解决完所有的冲突，再次选择&ldquo;Convert to Objective-C ARC&hellip;&rdquo;，你就能看到这个界面，点击&ldquo;Next&rdquo;后，再次经过漫长的等待， 工具会列出了将会为了转换的代码的对照列表。默认所有出现在列表里面的文件都是选中的，你可以选在不要转换的文件，去掉对勾。确认完后，点击&ldquo;Save&rdquo;就完成了整个工程的转换工作, Congratulations!</p><p></p>
+<p></p><p>(我在完成后编译时，发现之前被我标为<code>-fno-objc-arc</code>的文件会有报错，原来在转换过程中工具将之前的标记都去掉了，无奈再次标记了一遍。)</p><p></p>
+<p></p><p>5.<strong>其他处理</strong></p><p></p>
+<p></p><p>因为我们工程支持 4.3，所以 weak, __weak 关键字不能用， 可以通过宏定义将 5.0 以下时 weak 关键字定义为 unsafe_unretained:</p><p></p>
+<p><pre><span class="preprocessor">#if (!<strong>has_feature(objc_arc)) || \</strong></span><br>(defined IPHONE_OS_VERSION_MIN_REQUIRED &amp;&amp; \<br><strong>IPHONE_OS_VERSION_MIN_REQUIRED &lt; </strong>IPHONE_5_0) || \<br>(defined <strong>MAC_OS_X_VERSION_MIN_REQUIRED &amp;&amp; \
+</strong>MAC_OS_X_VERSION_MIN_REQUIRED &lt; <strong>MAC_10_7)<br><span class="preprocessor">#undef weak</span><br><span class="preprocessor">#define weak unsafe_unretained</span><br><span class="preprocessor">#undef </span></strong>weak<br><span class="preprocessor">#define <strong>weak </strong>unsafe_unretained</span><br><span class="preprocessor">#endif</span><br></pre></p>
+<p></p><p><span>在 ARC 模式下，使用 performSelector 方法会有编译警告：PerformSelector may cause a leak because its selector is unknown，作为有洁癖的程序员是不能容许程序中有警告的：</span></p><p></p>
+<p><pre><span class="preprocessor">#progma clang diagnostic push</span><br><span class="preprocessor">#progma clang disgnostic ignored “-Warc-performSelecotr-leaks”</span><br>[<span class="keyword">self</span> performSelector:@<span class="keyword">selector</span>(mySelector:) withObject:object];<br><span class="preprocessor">#progma clang disgnostic pop</span><br></pre></p>
+<p></p><p><span>Posted by&nbsp;<a href="http://weibo.com/534072785" target="_blank" rel="external"><strong>XiaoYi_HD</strong></a>&nbsp;- 6月 19 2013</span><br><span>如需转载，请注明： 本文来自&nbsp;<a href="http://esoftmobile.com/" target="_blank" rel="external"><strong>Esoft Mobile</strong></a></span></p><div id="MySignature"></div><p></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.cnblogs.com/tracy-e/p/3151459.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cnblogs.com/tracy-e/p/3151459.html&lt;/
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="ARC" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/ARC/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="ARC" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/ARC/"/>
+    
+      <category term="MRC" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/MRC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]AFNetworking 3.0迁移指南</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking%203.0%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking 3.0迁移指南/</id>
+    <published>2015-12-09T08:44:53.000Z</published>
+    <updated>2017-09-11T12:04:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.jianshu.com/p/047463a7ce9b" target="_blank" rel="external">http://www.jianshu.com/p/047463a7ce9b</a></p>
+<h2 id="AFNetworking-3-0"><a href="#AFNetworking-3-0" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h2><blockquote>
+<p>AFNetworking是一款在OS X和iOS下都令人喜爱的网络库。为了迎合iOS新版本的升级, AFNetworking在3.0版本中删除了基于 <del><strong>NSURLConnection</strong></del> API的所有支持。如果你的项目以前使用过这些API，建议您立即升级到基于 <strong>NSURLSession</strong> 的API的AFNetworking的版本。本指南将引导您完成这个过程。</p>
+</blockquote>
+<p>本指南是为了引导使用AFNetworking 2.x升级到最新的版本API，以达到过渡的目的，并且解释了新增和更改的设计结构。</p>
+<h2 id="新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7"><a href="#新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7" class="headerlink" title="新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, &amp; Xcode 7"></a>新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, &amp; Xcode 7</h2><p>AFNetworking 3.0正式支持的iOS 7， Mac OS X的10.9， watchOS 2 ， tvOS 9 和Xcode 7。如果你想使用AFNetworking在针对较旧版本的SDK项目，请检查<a href="https://github.com/AFNetworking/AFNetworking/blob/master/README.md#requirements">README</a>的兼容性信息。</p>
+<h2 id="NSURLConnection的API已废弃"><a href="#NSURLConnection的API已废弃" class="headerlink" title="NSURLConnection的API已废弃"></a>NSURLConnection的API已废弃</h2><p>AFNetworking 1.0建立在NSURLConnection的基础API之上 ，AFNetworking 2.0开始使用NSURLConnection的基础API ，以及较新基于NSURLSession的API的选项。 AFNetworking 3.0现已完全基于NSURLSession的API，这降低了维护的负担，同时支持苹果增强关于NSURLSession提供的任何额外功能。由于Xcode 7中，NSURLConnection的API已经正式被苹果弃用。虽然该API将继续运行，但将没有新功能将被添加，并且苹果已经通知所有基于网络的功能，以充分使NSURLSession向前发展。</p>
+<p>AFNetworking 2.X将继续获得关键的隐患和安全补丁，但没有新的功能将被添加。Alamofire(Swift下的网络请求)软件基金会建议，所有的项目迁移到基于NSURLSession的API。</p>
+<h2 id="弃用的类"><a href="#弃用的类" class="headerlink" title="弃用的类"></a>弃用的类</h2><p>下面的类已从AFNetworking 3.0中废弃：</p>
+<ul>
+<li>AFURLConnectionOperation</li>
+<li>AFHTTPRequestOperation</li>
+<li>AFHTTPRequestOperationManager</li>
+</ul>
+<h2 id="修改的类"><a href="#修改的类" class="headerlink" title="修改的类"></a>修改的类</h2><p>下面的类包含基于NSURLConnection的API的内部实现。他们已经被使用NSURLSession重构:</p>
+<ul>
+<li>UIImageView+AFNetworking</li>
+<li>UIWebView+AFNetworking</li>
+<li>UIButton+AFNetworking</li>
+</ul>
+<h2 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h2><hr>
+<h4 id="AFHTTPRequestOperationManager-核心代码"><a href="#AFHTTPRequestOperationManager-核心代码" class="headerlink" title="AFHTTPRequestOperationManager 核心代码"></a>AFHTTPRequestOperationManager 核心代码</h4><p>如果你以前使用 <strong>AFHTTPRequestOperationManager</strong> ， 你将需要迁移去使用 <strong>AFHTTPSessionManager</strong>。 以下的类在两者过渡间并没有变化：</p>
+<ul>
+<li>securityPolicy</li>
+<li>requestSerializer</li>
+<li>responseSerializer</li>
+</ul>
+<p>接下来举一个关于AFHTTPSessionManager的简单例子。<strong>注意</strong>HTTP网络请求返回的不再是AFHTTPRequestOperation, 修改成为了NSURLSessionTask，并且成功和失败的Block块中的参数也变更为了NSURLSessionTask，而不再是AFHTTPRequestOperation。</p>
+<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><pre><code>AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+[manager GET:@&quot;请求的url&quot; parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@&quot;成功&quot;);
+} failure:^(AFHTTPRequestOperation *operation, NSError*error) {
+        NSLog(@&quot;失败&quot;);
+}];`&lt;/pre&gt;
+
+##### AFNetworking 3.0
+
+&lt;pre&gt;`AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+[session GET:@&quot;请求的url&quot; parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSLog(@&quot;成功&quot;);
+} failure:^(NSURLSessionDataTask *task, NSError *error) {
+        NSLog(@&quot;失败&quot;);        
+}];`&lt;/pre&gt;
+
+#### AFHTTPRequestOperation 核心代码
+
+与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。
+
+在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。
+
+接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。
+
+##### AFNetworking 2.x
+
+&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
+NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+op.responseSerializer = [AFJSONResponseSerializer serializer];
+[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@&quot;JSON: %@&quot;, responseObject);
+} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@&quot;Error: %@&quot;, error);
+}];
+[[NSOperationQueue mainQueue] addOperation:op];`&lt;/pre&gt;
+
+##### AFNetworking 3.0
+
+&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
+AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+[manager GET:URL.absoluteString parameters:nil success:^(NSURLSessionTask *task, id responseObject) {
+        NSLog(@&quot;JSON: %@&quot;, responseObject);
+} failure:^(NSURLSessionTask *operation, NSError *error) {
+        NSLog(@&quot;Error: %@&quot;, error);
+}];
+</code></pre><h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
+<p>UIWebView的类目被重构为使用AFHTTPSessionManager作为其网络请求。</p>
+<h4 id="UIAlertView的类目被废弃"><a href="#UIAlertView的类目被废弃" class="headerlink" title="UIAlertView的类目被废弃"></a>UIAlertView的类目被废弃</h4><p>从AFNetworking 3.0后UIAlertView的类目因过时而被废弃。并没有提供UIAlertController类目的计划，因为这是应用程序应处理的逻辑，而不是这个库。</p>
+<p>原文链接: <a href="https://github.com/AFNetworking/AFNetworking/wiki/AFNetworking-3.0-Migration-Guide#new-requirements-ios-7-mac-os-x-109-watchos-2-tvos-9--xcode-7">AFNetworking 3.0</a><br>纯属个人翻译，如有错误，还请纠正。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.jianshu.com/p/047463a7ce9b&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.jianshu.com/p/047463a7ce9b&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;A
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]使用AFNetworking, SDWebimage和OHHTTPStubs</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2015/11/20/15.11.20_%E4%BD%BF%E7%94%A8AFNetworking,%20SDWebimage%E5%92%8COHHTTPStubs/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2015/11/20/15.11.20_使用AFNetworking, SDWebimage和OHHTTPStubs/</id>
+    <published>2015-11-20T09:44:53.000Z</published>
+    <updated>2017-09-11T12:03:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://blog.shiqichan.com/using-afnetworking-sdwebimage-and-ohhttpstubs/" target="_blank" rel="external">http://blog.shiqichan.com/using-afnetworking-sdwebimage-and-ohhttpstubs/</a></p>
+<p>写了个示例，放在<a href="https://github.com/MarshalW/AFNetworkingDemo">GitHub</a>上。</p>
+<p>这是运行的动画：<br><img src="http://shiqichan.qiniudn.com//using-afnetworking-sdwebimage-and-ohhttpstubs/af1.gif" alt=""><br>以下内容主要介绍：</p>
+<ul>
+<li>基于AFNetworking的HTTP操作，GET获取网页和JSON数据，上传文件，下载文件，以及加载图片</li>
+<li>基于SDWebimage的加载图片</li>
+<li>基于OHHTTPStubs的伪造网络响应用于测试（stub），而且可以模拟出网络的延时<br><a id="more"></a></li>
+</ul>
+<h2 id="使用基于NSURLSession的AFNetworking-API"><a href="#使用基于NSURLSession的AFNetworking-API" class="headerlink" title="使用基于NSURLSession的AFNetworking API"></a>使用基于NSURLSession的AFNetworking API</h2><p>AFNetworking有2套用于网络操作的API：</p>
+<ul>
+<li>基于NSURLConnection</li>
+<li>基于NSURLSession</li>
+</ul>
+<p>后者是新的API，用于iOS 7 / Mac OS X 10.9及以上版本。</p>
+<p>这篇文章写的很好：<a href="http://objccn.io/issue-5-4/" target="_blank" rel="external">从 NSURLConnection 到 NSURLSession</a>，说明后者做了哪些改善和加强。</p>
+<p>现在越来越多的iOS项目最低要求iOS 7，让我们可以开始尝试使用这种新的方式。</p>
+<h2 id="GET请求，获取普通网页文本"><a href="#GET请求，获取普通网页文本" class="headerlink" title="GET请求，获取普通网页文本"></a>GET请求，获取普通网页文本</h2><p>AFHTTPSessionManager是使用NSURLSession的API。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> <em>baseURL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@”<a href="http://localhost/" target="_blank" rel="external">http://localhost/</a>“</span>];</em></span><br><span class="line">    </span><br><span class="line"><span class="comment">//设置和加入头信息</span></span><br><span class="line"><span class="built_in">NSURLSessionConfiguration</span> config = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</span><br><span class="line">[config setHTTPAdditionalHeaders:@&#123; <span class="string">@”User-Agent”</span> : <span class="string">@”My Browser”</span>&#125;];</span><br><span class="line"></span><br><span class="line">AFHTTPSessionManager <em>manager=[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL sessionConfiguration:config];</em></span><br><span class="line">manager<span class="variable">.responseSerializer</span> = [AFHTTPResponseSerializer serializer];</span><br><span class="line">manager<span class="variable">.responseSerializer</span><span class="variable">.acceptableContentTypes</span> = [<span class="built_in">NSSet</span> setWithObject:<span class="string">@”text/html”</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置GET请求的参数</span></span><br><span class="line"><span class="built_in">NSDictionary</span> params=[[<span class="built_in">NSDictionary</span> alloc] initWithObjectsAndKeys:<span class="string">@”3”</span>,<span class="string">@”id”</span>,<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//发起GET请求</span></span><br><span class="line">[manager GET:<span class="string">@””</span> parameters:params success:^(<span class="built_in">NSURLSessionDataTask</span> <em>task, <span class="keyword">id</span> responseObject) &#123;</em></span><br><span class="line">     <span class="built_in">NSLog</span>(<span class="string">@”HTML: %@”</span>, [[<span class="built_in">NSString</span> alloc]initWithData:responseObject encoding:<span class="built_in">NSUTF8StringEncoding</span>]);</span><br><span class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> task, <span class="built_in">NSError</span> *error) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”visit error: %@”</span>,error);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>为了方便测试，这个示例里写了个简单的Web Server，<a href="https://github.com/MarshalW/AFNetworkingDemo/blob/master/httpServer.js">httpServer.js</a>。</p>
+<p>运行httpServer.js，需要安装node.js环境。然后：</p>
+<pre><code>&lt;span class=&quot;title&quot;&gt;sudo&lt;/span&gt; node httpServer
+</code></pre><p>我使用了80端口，在Mac环境下是需要root权限的。</p>
+<h2 id="GET请求，获取JSON数据"><a href="#GET请求，获取JSON数据" class="headerlink" title="GET请求，获取JSON数据"></a>GET请求，获取JSON数据</h2><p>方法和GET请求网页文本大同小异，个别参数或者设置对象上有不同：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> <em>baseURL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@”<a href="http://localhost/" target="_blank" rel="external">http://localhost/</a>“</span>];</em></span><br><span class="line"><span class="built_in">NSURLSessionConfiguration</span> config = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</span><br><span class="line">[config setHTTPAdditionalHeaders:@&#123; <span class="string">@”User-Agent”</span> : <span class="string">@”My Browser”</span>&#125;];</span><br><span class="line"></span><br><span class="line">AFHTTPSessionManager <em>manager=[[AFHTTPSessionManager alloc] initWithBaseURL:baseURL sessionConfiguration:config];</em></span><br><span class="line"><span class="built_in">NSDictionary</span> params=[[<span class="built_in">NSDictionary</span> alloc] initWithObjectsAndKeys:<span class="string">@”8”</span>,<span class="string">@”id”</span>,<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line">[manager GET:<span class="string">@”/json”</span> parameters:params success:^(<span class="built_in">NSURLSessionDataTask</span> <em>task, <span class="keyword">id</span> responseObject) &#123;</em></span><br><span class="line">    <span class="built_in">NSDictionary</span>  object=(<span class="built_in">NSDictionary</span> <em>)responseObject;</em></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”response message: %@”</span>,object[<span class="string">@”message”</span>]);</span><br><span class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> task, <span class="built_in">NSError</span> *error) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”visit error: %@”</span>,error);</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>AFNetworking API会返回<code>NSURLSessionDownloadTask</code>，可用于网络请求的取消、暂停和恢复。</p>
+<p>其实上文中的GET方法也返回了这个对象，只不过下载文件时间可能会较长，有可能有这方面的需求。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURLSessionConfiguration</span> <em>configuration = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</em></span><br><span class="line">AFURLSessionManager manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSURL</span> <em>URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@”<a href="http://www.baidu.com/img/bdlogo.png" target="_blank" rel="external">http://www.baidu.com/img/bdlogo.png</a>“</span>];</em></span><br><span class="line"><span class="built_in">NSURLRequest</span> request = [<span class="built_in">NSURLRequest</span> requestWithURL:URL];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSURLSessionDownloadTask</span> <em>downloadTask = [manager downloadTaskWithRequest:request progress:<span class="literal">nil</span> destination:^<span class="built_in">NSURL</span> </em>(<span class="built_in">NSURL</span> <em>targetPath, <span class="built_in">NSURLResponse</span> </em>response) &#123;</span><br><span class="line">    <span class="built_in">NSURL</span> <em>documentsDirectoryURL = [[<span class="built_in">NSFileManager</span> defaultManager] URLForDirectory:<span class="built_in">NSDocumentDirectory</span> inDomain:<span class="built_in">NSUserDomainMask</span> appropriateForURL:<span class="literal">nil</span> create:<span class="literal">NO</span> error:<span class="literal">nil</span>];</em></span><br><span class="line">    <span class="keyword">return</span> [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];</span><br><span class="line">&#125; completionHandler:^(<span class="built_in">NSURLResponse</span> response, <span class="built_in">NSURL</span> <em>filePath, <span class="built_in">NSError</span> </em>error) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”File downloaded to: %@”</span>, filePath);</span><br><span class="line">    uploadFilePath=filePath;</span><br><span class="line">&#125;];</span><br><span class="line">[downloadTask resume];</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用AFNetworking加载图片"><a href="#使用AFNetworking加载图片" class="headerlink" title="使用AFNetworking加载图片"></a>使用AFNetworking加载图片</h2><p>需要引入一下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#import <span class="title">&lt;UIImageView+AFNetworking.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>然后，UIImageView就会有setImageWithURL供使用。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@”<a href="http://www.baidu.com/img/bdlogo.png" target="_blank" rel="external">http://www.baidu.com/img/bdlogo.png</a>“</span>];</span><br><span class="line">[imageView setImageWithURL:URL];</span><br></pre></td></tr></table></figure>
+
+<p>另外，提供了其他方法，可设置占位图片，图片下载成功和失败的处理，以及停止图片下载的方法。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">– <span class="string">setImageWithURL:</span></span><br><span class="line">– <span class="string">setImageWithURL:</span><span class="string">placeholderImage:</span></span><br><span class="line">– <span class="string">setImageWithURLRequest:</span><span class="string">placeholderImage:</span><span class="string">success:</span><span class="string">failure:</span></span><br><span class="line">– cancelImageRequestOperation</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用SDWebimage加载图片"><a href="#使用SDWebimage加载图片" class="headerlink" title="使用SDWebimage加载图片"></a>使用SDWebimage加载图片</h2><p><a href="https://github.com/rs/SDWebImage">SDWebImage</a>，调用方式和AFNetworking类似，功能更强大，使用也很普及。</p>
+<p>需要引入：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#import <span class="title">&lt;SDWebImage/UIImageView+WebCache.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@”<a href="http://www.sogou.com/images/logo/new/sogou.png" target="_blank" rel="external">http://www.sogou.com/images/logo/new/sogou.png</a>“</span>];</span><br><span class="line">[imageView sd_setImageWithURL:URL];</span><br></pre></td></tr></table></figure>
+
+<p>下面是完整的方法列表：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">– sd_imageURL</span><br><span class="line">– <span class="string">sd_setImageWithURL:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">placeholderImage:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">placeholderImage:</span><span class="string">options:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">completed:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">placeholderImage:</span><span class="string">completed:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">placeholderImage:</span><span class="string">options:</span><span class="string">completed:</span></span><br><span class="line">– <span class="string">sd_setImageWithURL:</span><span class="string">placeholderImage:</span><span class="string">options:</span><span class="string">progress:</span><span class="string">completed:</span></span><br><span class="line">– <span class="string">sd_setImageWithPreviousCachedImageWithURL:</span><span class="string">andPlaceholderImage:</span><span class="string">options:</span><span class="string">progress:</span><span class="string">completed:</span></span><br><span class="line">– <span class="string">sd_setAnimationImagesWithURLs:</span></span><br><span class="line">– sd_cancelCurrentImageLoad</span><br><span class="line">– sd_cancelCurrentAnimationImagesLoad</span><br></pre></td></tr></table></figure>
+
+<p>比AFNetworking选项更多一些，比如可以设置<code>SDWebImageOptions</code>：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_OPTIONS(NSUInteger, SDWebImageOptions ) &#123;</span><br><span class="line">   <span class="variable">SDWebImageRetryFailed =</span> <span class="number">1</span> &lt; &lt; <span class="number">0</span>,</span><br><span class="line">   <span class="variable">SDWebImageLowPriority =</span> <span class="number">1</span> &lt; &lt; <span class="number">1</span>,</span><br><span class="line">   <span class="variable">SDWebImageCacheMemoryOnly =</span> <span class="number">1</span> &lt; &lt; <span class="number">2</span>,</span><br><span class="line">   <span class="variable">SDWebImageProgressiveDownload =</span> <span class="number">1</span> &lt; &lt; <span class="number">3</span>,</span><br><span class="line">   <span class="variable">SDWebImageRefreshCached =</span> <span class="number">1</span> &lt; &lt; <span class="number">4</span>,</span><br><span class="line">   <span class="variable">SDWebImageContinueInBackground =</span> <span class="number">1</span> &lt; &lt; <span class="number">5</span>,</span><br><span class="line">   <span class="variable">SDWebImageHandleCookies =</span> <span class="number">1</span> &lt; &lt; <span class="number">6</span>,</span><br><span class="line">   <span class="variable">SDWebImageAllowInvalidSSLCertificates =</span> <span class="number">1</span> &lt; &lt; <span class="number">7</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>还有：typedef void(^SDWebImageDownloaderProgressBlock)(NSInteger receivedSize, NSInteger expectedSize)</p>
+<ul>
+<li>可以用一组图片生成动画：sd_setAnimationImagesWithURLs</li>
+<li>使用之前的Cache先显示图片？sd_setImageWithPreviousCachedImageWithURL，这个我从字面意思理解，还没有使用</li>
+<li>有个process block，<code>sd_setImageWithURL:placeholderImage:options:progress:completed:</code>，可以获得<code>receivedSize</code>和<code>expectedSize</code>字节参数，用来显示进程百分比</li>
+</ul>
+<p>另外，<a href="http://bpoplauschi.wordpress.com/2014/03/21/ios-image-caching-sdwebimage-vs-fastimage/" target="_blank" rel="external">iOS image caching. Libraries benchmark (SDWebImage vs FastImageCache)</a>，这篇文章测试和对比，结论也是SDWebimage更好一些。</p>
+<h2 id="AFNetworking上传文件"><a href="#AFNetworking上传文件" class="headerlink" title="AFNetworking上传文件"></a>AFNetworking上传文件</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSMutableURLRequest</span> <em>request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:<span class="string">@”POST”</span> URLString:<span class="string">@”<a href="http://localhost/upload" target="_blank" rel="external">http://localhost/upload</a>“</span> parameters:<span class="literal">nil</span> constructingBodyWithBlock:^(<span class="keyword">id</span>&lt;AFMultipartFormData&gt; formData) &#123;</em></span><br><span class="line">    [formData appendPartWithFileURL:uploadFilePath name:<span class="string">@”file”</span> fileName:<span class="string">@”filename.jpg”</span> mimeType:<span class="string">@”image/jpeg”</span> error:<span class="literal">nil</span>];</span><br><span class="line">&#125; error:<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line">AFURLSessionManager manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration]];</span><br><span class="line"><span class="built_in">NSProgress</span> <em>progress = <span class="literal">nil</span>;</em></span><br><span class="line"></span><br><span class="line"><span class="built_in">NSURLSessionUploadTask</span> uploadTask = [manager uploadTaskWithStreamedRequest:request progress:&amp;progress completionHandler:^(<span class="built_in">NSURLResponse</span> <em>response, <span class="keyword">id</span> responseObject, <span class="built_in">NSError</span> </em>error) &#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@”Error: %@”</span>, error);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@”%@ %@”</span>, response, responseObject);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line">[uploadTask resume];</span><br></pre></td></tr></table></figure>
+
+<p>可以通过<code>NSProgress</code>获取上传进度（具体怎么做呢？）</p>
+<h2 id="使用OHHTTPStubs伪造HTTP响应"><a href="#使用OHHTTPStubs伪造HTTP响应" class="headerlink" title="使用OHHTTPStubs伪造HTTP响应"></a>使用OHHTTPStubs伪造HTTP响应</h2><p><a href="https://github.com/AliSoftware/OHHTTPStubs">OHHTTPStubs</a>，可用来伪造HTTP响应，这样不依赖服务器端，iOS的开发人员就可以测试网络服务了。</p>
+<p>这个API，同时支持：</p>
+<ul>
+<li>NSURLConnection</li>
+<li>NSURLSession</li>
+</ul>
+<p>不过，有个问题需要注意，如果App要上AppStore，是不能连接OHHTTPStubs的。</p>
+<p>下面说下怎么使用，先看代码：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSString</span> <em>baseUrl=<span class="string">@”<a href="http://localhost" target="_blank" rel="external">http://localhost</a>“</span>;</em></span><br><span class="line"></span><br><span class="line"><span class="comment">//针对<a href="http://locahost/json请求的mock" target="_blank" rel="external">http://locahost/json请求的mock</a></span></span><br><span class="line">[OHHTTPStubs stubRequestsPassingTest:^<span class="built_in">BOOL</span>(<span class="built_in">NSURLRequest</span> request) &#123;        </span><br><span class="line">    <span class="built_in">NSDictionary</span> <em>params=[<span class="built_in">NSDictionary</span> objectsFromURLQueryString:request<span class="variable">.URL</span><span class="variable">.query</span>];</em></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”id: %@”</span>,params[<span class="string">@”id”</span>]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> [[request<span class="variable">.URL</span> absoluteString] rangeOfString:[<span class="built_in">NSString</span> stringWithFormat:<span class="string">@”%@/json”</span>,baseUrl]]<span class="variable">.location</span>==<span class="number">0</span>;</span><br><span class="line">&#125; withStubResponse:^OHHTTPStubsResponse(<span class="built_in">NSURLRequest</span> <em>request) &#123;</em></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”reqeust: %@”</span>,request);</span><br><span class="line">    <span class="built_in">NSString</span> fixture = OHPathForFileInBundle(<span class="string">@”test.json”</span>,<span class="literal">nil</span>);</span><br><span class="line">    <span class="keyword">return</span> [[OHHTTPStubsResponse responseWithFileAtPath:fixture</span><br><span class="line">                                             statusCode:<span class="number">200</span> headers:@&#123;<span class="string">@”Content-Type”</span>:<span class="string">@”text/json”</span>&#125;</span><br><span class="line">             ]requestTime:<span class="number">0</span> responseTime:<span class="number">0</span>];</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>基本思路是，调用方法，通过2个回调（Block）实现对指定HTTP请求的响应伪造：</p>
+<ul>
+<li>是否是要拦截的请求</li>
+<li>拦截后，创建一个响应</li>
+</ul>
+<p>在上述代码里还演示了：</p>
+<ul>
+<li>如何从URL中提取GET请求的参数，这里用到了：<a href="https://github.com/anegmawad/URLQueryToCocoa">URLQueryToCocoa</a></li>
+<li>使用本地文件作为JSON数据，加入到HTTP响应中</li>
+<li>可以设置请求和响应的延时，<code>requestTime:0 responseTime:0</code>，这个相当有用</li>
+</ul>
+<p>## </p>
+<p>还可以用于伪造图片的响应，测试了一下，上述的AFNetworking以及SDWebimage都有效。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//GET image with sdwebimage</span></span><br><span class="line">[OHHTTPStubs stubRequestsPassingTest:^<span class="built_in">BOOL</span>(<span class="built_in">NSURLRequest</span> <em>request) &#123;</em></span><br><span class="line">    <span class="keyword">return</span> [[request<span class="variable">.URL</span> absoluteString] isEqualToString:<span class="string">@”<a href="http://www.sogou.com/images/logo/new/sogou.png" target="_blank" rel="external">http://www.sogou.com/images/logo/new/sogou.png</a>“</span>];</span><br><span class="line">&#125; withStubResponse:^OHHTTPStubsResponse(<span class="built_in">NSURLRequest</span> <em>request) &#123;</em></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@”reqeust: %@”</span>,request);</span><br><span class="line">    <span class="built_in">NSString</span> fixture = OHPathForFileInBundle(<span class="string">@”taobao.png”</span>,<span class="literal">nil</span>);</span><br><span class="line">    <span class="keyword">return</span> [[OHHTTPStubsResponse responseWithFileAtPath:fixture</span><br><span class="line">                                             statusCode:<span class="number">200</span> headers:@&#123;<span class="string">@”Content-Type”</span>:<span class="string">@”image/png”</span>&#125;</span><br><span class="line">             ]requestTime:<span class="number">0</span> responseTime:<span class="number">0</span>];</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>测试的时候，要注意，之前可能是通过真实网络获取的，因此会有缓存。需要把App删除，重新安装测试。</p>
+<p>应该能看到类似下面的效果（使用的时本地图片了）：</p>
+<p><img src="http://shiqichan.qiniudn.com//using-afnetworking-sdwebimage-and-ohhttpstubs/p1.png" alt=""></p>
+<p>## </p>
+<p>OHHTTPStubs这些代码，只需在App启动加载一次即可，可写在<code>AppDelegate</code>中：</p>
+<p><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">-</span> (BOOL)<span class="tag">application</span>:(UIApplication <em>)<span class="tag">application</span> <span class="tag">didFinishLaunchingWithOptions</span>:(NSDictionary </em>)<span class="tag">launchOptions</span> &#123;</span><br><span class="line">    <span class="attr_selector">[[AFNetworkReachabilityManager sharedManager]</span> <span class="tag">startMonitoring</span>];</span><br><span class="line">    <span class="attr_selector">[HttpMock initMock]</span>;</span><br><span class="line"><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;代码屏蔽掉，自然就使用真实网络了。&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;编译正式使用代码的时候，可以考虑条件编译。&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;## &lt;span class=&quot;tag&quot;&gt;AFNetworking&lt;/span&gt;的网络监控&lt;span class=&quot;tag&quot;&gt;API&lt;/span&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;提供的`&lt;span class=&quot;tag&quot;&gt;AFNetworkReachabilityManager&lt;/span&gt;`可以单独使用，很方便，用于监控网络变化。&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;比如，可以在&lt;span class=&quot;tag&quot;&gt;App&lt;/span&gt;启动后执行下面操作，启动监控器：&lt;/span&gt;</div><div class="line">&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</div><div class="line"></div><div class="line">*   (BOOL)application:(UIApplication _)application didFinishLaunchingWithOptions:(NSDictionary _)launchOptions &#123;</div><div class="line">  [[AFNetworkReachabilityManager sharedManager] startMonitoring];&lt;figure class=&quot;highlight asciidoc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;</div><div class="line">&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;header&quot;&gt;&amp;lt;p&amp;gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;---&lt;/span&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;</div><div class="line">&lt;span class=&quot;line&quot;&gt;在ViewController中：&lt;/span&gt;</div><div class="line">&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</div><div class="line"></div><div class="line">-(void)viewDidLoad</div><div class="line">&#123;</div><div class="line">    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</div><div class="line">        NSLog(@”Reachability: %@”, AFStringFromNetworkReachabilityStatus(status));</div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure></span></pre></td></tr></table></figure></p>
+<p>监听网络变化，做出相应的操作，比如弹出提示框。</p>
+<p>## </p>
+<p>正式使用时：</p>
+<ul>
+<li>可考虑在AppDelegate中<code>setReachabilityStatusChangeBlock</code>，当状态变化后，通过<code>NSNotification</code>发出通知</li>
+<li>在各个ViewController的<code>viewDidAppear</code>和<code>viewWillDisappear</code>中监听和取消监听通知</li>
+</ul>
+<p>这是设想，还没有付诸实施，也许还有问题。</p>
+<p>不过至少不应该像本例中的，在ViewController中使用<code>setReachabilityStatusChangeBlock</code>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://blog.shiqichan.com/using-afnetworking-sdwebimage-and-ohhttpstubs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.shiqicha
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
+    
+      <category term="SDWebimage" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/SDWebimage/"/>
+    
+      <category term="OHHTTPStubs" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/OHHTTPStubs/"/>
     
   </entry>
   

@@ -1,0 +1,541 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://www.jianshu.com/p/11bb0d4dc649
+前言本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:袁峥Seemygo,也可以来小码哥，了解下我们的iOS培训课程。后续还会更新更多内容。。。
+一、runtime简介
+RunTime简称运行时。OC就是运行时机制，也就是在运行时候...">
+  
+  <title>[转]iOS开发之AFNetworking 3.0.4使用 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/06/21/简单监测iOS卡顿的demo/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]简单监测iOS卡顿的demo
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2016/07/13/16.7.13 _一步一步写算法（之算法总结）/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]一步一步写算法（之 算法总结）
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]iOS开发之AFNetworking 3.0.4使用</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-03-08</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/AFNetworking/">AFNetworking</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/AFNetworking/">AFNetworking</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://www.jianshu.com/p/11bb0d4dc649" target="_blank" rel="external">http://www.jianshu.com/p/11bb0d4dc649</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本篇主要介绍Runtime在开发中的一些使用场景，顺便讲解了下MJExtension的底层实现。如果喜欢我的文章，可以关注我微博:<a href="http://weibo.com/2034818060/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo" target="_blank" rel="external">袁峥Seemygo</a>,也可以来<a href="http://www.520it.com" target="_blank" rel="external">小码哥</a>，了解下我们的iOS培训课程。后续还会更新更多内容。。。</p>
+<h3 id="一、runtime简介"><a href="#一、runtime简介" class="headerlink" title="一、runtime简介"></a>一、runtime简介</h3><ul>
+<li>RunTime简称运行时。OC就是<code>运行时机制</code>，也就是在运行时候的一些机制，其中最主要的是消息机制。</li>
+<li>对于C语言，<code>函数的调用在编译的时候会决定调用哪个函数</code>。</li>
+<li>昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSURLConnection了，被弃用了，突然意识到，这个就是AFHTTPRequestOperationManager找不到的原因了，它是基于NSURLConnection封装的！！于是找了一下，现在都用的是NSURLSession了，AFN中用的是AFHTTPSessionManager了~~<p></p><br><p>特地记录下来，以便遇到这个的朋友们看看！</p><br><p>ps:如果想用以前的话，cocoapods 就不要用最新的版本了，2.6的上面有。</p><br><hr><br><h3>GET请求</h3><br><p></p><p>  <code></code></p><br><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager]; </code></pre></li>
+</ul>
+<p>[manager GET:URL parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {  </p>
+<p>}<br> success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {  </p>
+<p> NSLog(@”这里打印请求成功要做的事”);  </p>
+<p>}</p>
+<p>failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull   error) {  </p>
+<p>NSLog(@”%@”,error);  //这里打印错误信息</p>
+<p>}];</p>
+<p></p><h3>POST 请求</h3><p></p>
+<p></p><p></p><p>  <code></code></p><p></p>
+<p><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</code></pre></p>
+<p>NSMutableDictionary *parameters = @{@””:@””,@””:@””};</p>
+<p>[manager POST:URL parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<p>} success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<p>} failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<p>}];</p>
+<p><hr></p>
+<p></p><p>暂时用的比较多的就这两个，用到其他的 再来更新！！</p><p></p>
+<p></p><h2>最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</h2><p></p>
+<p></p><h3>补充试用AFN3.0下载方法</h3><p></p>
+<p><pre><code>/**</code></pre></p>
+<ul>
+<li><p>AFN3.0 下载<br>*/</p>
+<ul>
+<li>(void)downLoad{</li>
+</ul>
+<p>//1.创建管理者对象<br>AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>//2.确定请求的URL地址<br>NSURL </em>url = [NSURL URLWithString:@””];</p>
+<p>//3.创建请求对象<br>NSURLRequest *request = [NSURLRequest requestWithURL:url];</p>
+<p>//下载任务<br>NSURLSessionDownloadTask <em>task = [manager downloadTaskWithRequest:request progress:^(NSProgress </em> _Nonnull downloadProgress) {</p>
+<pre><code>//打印下下载进度
+WKNSLog(@&quot;%lf&quot;,1.0 * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
+</code></pre><p>} destination:^NSURL <em> _Nonnull(NSURL </em> _Nonnull targetPath, NSURLResponse * _Nonnull response) {</p>
+<pre><code>//下载地址
+WKNSLog(@&quot;默认下载地址:%@&quot;,targetPath);
+
+//设置下载路径，通过沙盒获取缓存地址，最后返回NSURL对象
+NSString *filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
+return [NSURL fileURLWithPath:filePath];
+</code></pre></li>
+</ul>
+<pre><code>} completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+
+    //下载完成调用的方法
+    WKNSLog(@&quot;下载完成：&quot;);
+    WKNSLog(@&quot;%@--%@&quot;,response,filePath);
+
+}];
+
+//开始启动任务
+[task resume];
+</code></pre><p>}</p>
+<p></p><h3>AFN3.0 上传</h3><p></p>
+<p><pre><code>/**</code></pre></p>
+<ul>
+<li>AFN 3.0 上传</li>
+<li>有两种方式</li>
+<li>upLoad1 和 upLoad2<br>*/</li>
+</ul>
+<p>//第一种方法是通过工程中的文件进行上传</p>
+<ul>
+<li><p>(void)upLoad1{</p>
+<p>  //1。创建管理者对象<br>  AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</p>
+<p>  //2.上传文件<br>  NSDictionary *dict = @{@”username”:@”1234”};</p>
+<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
+<pre><code>//上传文件参数
+UIImage *iamge = [UIImage imageNamed:@&quot;123.png&quot;];
+NSData *data = UIImagePNGRepresentation(iamge);
+//这个就是参数
+[formData appendPartWithFileData:data name:@&quot;file&quot; fileName:@&quot;123.png&quot; mimeType:@&quot;image/png&quot;];
+</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<pre><code>//打印下上传进度
+WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<pre><code>//请求成功
+WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
+</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<pre><code>//请求失败
+WKNSLog(@&quot;请求失败：%@&quot;,error);
+</code></pre><p>  }];</p>
+</li>
+</ul>
+<p>}</p>
+<p>//第二种是通过URL来获取路径，进入沙盒或者系统相册等等</p>
+<ul>
+<li><p>(void)upLoda2{<br>  //1.创建管理者对象<br>  AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>  //2.上传文件<br>  NSDictionary </em>dict = @{@”username”:@”1234”};</p>
+<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
+<pre><code>[formData appendPartWithFileURL:[NSURL fileURLWithPath:@&quot;文件地址&quot;] name:@&quot;file&quot; fileName:@&quot;1234.png&quot; mimeType:@&quot;application/octet-stream&quot; error:nil];
+</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
+<pre><code>//打印下上传进度
+WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
+</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
+<pre><code>//请求成功
+WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
+</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
+<pre><code>//请求失败
+WKNSLog(@&quot;请求失败：%@&quot;,error);
+</code></pre><p>  }];<br>}<br></p><h3>监测当前网络状态（网络监听）</h3><br><pre><code>- (void)AFNetworkStatus{<p></p>
+<p>  //1.创建网络监测者<br>  AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];</p>
+<p>  /*枚举里面四个状态  分别对应 未知 无网络 数据 WiFi<br>   typedef NS_ENUM(NSInteger, AFNetworkReachabilityStatus) {</p>
+<pre><code>AFNetworkReachabilityStatusUnknown          = -1,      未知
+AFNetworkReachabilityStatusNotReachable     = 0,       无网络
+AFNetworkReachabilityStatusReachableViaWWAN = 1,       蜂窝数据网络
+AFNetworkReachabilityStatusReachableViaWiFi = 2,       WiFi
+</code></pre><p>   };<br>   */</p>
+<p>  [manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {</p>
+<pre><code>//这里是监测到网络改变的block  可以写成switch方便
+//在里面可以随便写事件
+switch (status) {
+    case AFNetworkReachabilityStatusUnknown:
+        WKNSLog(@&quot;未知网络状态&quot;);
+        break;
+    case AFNetworkReachabilityStatusNotReachable:
+        WKNSLog(@&quot;无网络&quot;);
+        break;
+
+    case AFNetworkReachabilityStatusReachableViaWWAN:
+        WKNSLog(@&quot;蜂窝数据网&quot;);
+        break;
+
+    case AFNetworkReachabilityStatusReachableViaWiFi:
+        WKNSLog(@&quot;WiFi网络&quot;);
+        break;
+
+    default:
+        break;
+}
+</code></pre><p>  }] ;<br>}</p></code></pre><br><p>有知道新版本用法的各位大神请不吝赐教，小白再次拜谢了！！</p><br><h5>在使用的过程中遇到了一些问题的 总结，<a href="http://www.jianshu.com/p/95a368c6f7de" target="_blank">在这里</a>，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</h5><br><hr><br><p>多谢各位道友的指正，在下载里面那个地方return [NSURL fileURLWithPath:filePath]; 已经改过来了</p>
+</li>
+</ul>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、runtime简介"><span class="toc-text">一、runtime简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">GET请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">POST 请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">补充试用AFN3.0下载方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">AFN3.0 上传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-text">监测当前网络状态（网络监听）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#undefined"><span class="toc-text">在使用的过程中遇到了一些问题的 总结，在这里，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/06/21/简单监测iOS卡顿的demo/" class="prev">&larr; 上一篇 [转]简单监测iOS卡顿的demo</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2016/07/13/16.7.13 _一步一步写算法（之算法总结）/" class="next">下一篇 [转]一步一步写算法（之 算法总结） &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/" data-title="[转]iOS开发之AFNetworking 3.0.4使用" data-url="https://github.com/zhoutq/zhoutq.github.io/2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,471 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://blog.csdn.net/feixiaoxing/article/details/6993718
+&nbsp;&nbsp; &nbsp;自10月初编写算法系列的博客以来，陆陆续续以来写了几十篇。按照计划，还有三个部分的内容没有介绍，主要是（Dijkstra算法、二叉平衡树、红黑树）。这部分会在后面的博客补充完整。这里主要是做一个总结，有兴趣的朋友可以好好看看，欢迎大家提...">
+  
+  <title>[转]一步一步写算法（之 算法总结） [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]iOS开发之AFNetworking 3.0.4使用
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2016/06/01/16.6.1_IOS用CGContextRef画各种图形/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]iOS用CGContextRef画各种图形
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]一步一步写算法（之 算法总结）</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2016-07-13</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/c-c/">c/c++</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/c-c/">c/c++</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/数据结构和算法/">数据结构和算法</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://blog.csdn.net/feixiaoxing/article/details/6993718" target="_blank" rel="external">http://blog.csdn.net/feixiaoxing/article/details/6993718</a></p>
+<p>&nbsp;&nbsp; &nbsp;自10月初编写算法系列的博客以来，陆陆续续以来写了几十篇。按照计划，还有三个部分的内容没有介绍，主要是（Dijkstra算法、二叉平衡树、红黑树）。这部分会在后面的博客补充完整。这里主要是做一个总结，有兴趣的朋友可以好好看看，欢迎大家提出宝贵意见。</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（1） 排序算法</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6845132" target="_blank" rel="external">快速排序 </a><br>&nbsp;&nbsp; &nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6846008" target="_blank" rel="external">合并排序</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6846664" target="_blank" rel="external">&nbsp;堆排序</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6874619" target="_blank" rel="external">&nbsp;选择排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6876831" target="_blank" rel="external">基数排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">冒泡排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">插入排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844826" target="_blank" rel="external">希尔排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6905260" target="_blank" rel="external">链表排序</a></p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（2） 数据结构</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847885" target="_blank" rel="external">线性队列</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847998" target="_blank" rel="external">线性堆栈</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6848077" target="_blank" rel="external">&nbsp;单向链表</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6849457" target="_blank" rel="external">&nbsp;双向链表</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6853455" target="_blank" rel="external">循环单向链表</a></p>
+<p>&nbsp;&nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6860493" target="_blank" rel="external"> &nbsp;排序二叉树</a>（<a href="http://blog.csdn.net/feixiaoxing/article/details/6863946" target="_blank" rel="external">插入</a>，删除<a href="http://blog.csdn.net/feixiaoxing/article/details/6867460" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6867997" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6868221" target="_blank" rel="external">下</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6892471" target="_blank" rel="external">保存和加载</a>）</p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6885657" target="_blank" rel="external">&nbsp;哈希表</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6901584" target="_blank" rel="external">哈希二叉树</a></p>
+<p>&nbsp;&nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（3）图</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6918768" target="_blank" rel="external">图结构</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6922766" target="_blank" rel="external">图创建</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6926004" target="_blank" rel="external">图的添加、删除</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6929586" target="_blank" rel="external">&nbsp;图的保存</a></p>
+<p>&nbsp;&nbsp; &nbsp;prim算法（<a href="http://blog.csdn.net/feixiaoxing/article/details/6937338" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6938916" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6940335" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;哈夫曼树（<a href="http://blog.csdn.net/feixiaoxing/article/details/6960990" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6963136" target="_blank" rel="external">下</a>） &nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;克鲁斯卡尔算法（<a href="http://blog.csdn.net/feixiaoxing/article/details/6969776" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6974826" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6978095" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（4）常用算法</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6844723" target="_blank" rel="external">查找</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6847808" target="_blank" rel="external">内存分配</a></p>
+<p>&nbsp;&nbsp; &nbsp;字符串查找（<a href="http://blog.csdn.net/feixiaoxing/article/details/6908453" target="_blank" rel="external">上</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6911730" target="_blank" rel="external">中</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6915588" target="_blank" rel="external">下</a>）</p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6957546" target="_blank" rel="external">通用数据结构</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6953562" target="_blank" rel="external">通用算法</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6838362" target="_blank" rel="external">循环和递归</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6838773" target="_blank" rel="external">递归和堆栈</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6839301" target="_blank" rel="external">内存中的数据</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6982932" target="_blank" rel="external">&nbsp;A*算法</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6989591" target="_blank" rel="external">可变参数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6933416" target="_blank" rel="external">函数堆栈</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6894981" target="_blank" rel="external">递归寻路</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6897095" target="_blank" rel="external">&nbsp;广度遍历</a>、<a href="http://blog.csdn.net/feixiaoxing/article/details/6897644" target="_blank" rel="external">深度遍历</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6889211" target="_blank" rel="external">排序二叉树线索化</a></p>
+<p>&nbsp;&nbsp; &nbsp;<strong>（5）趣味算法题目</strong></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6933416" target="_blank" rel="external">链表逆转</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6856686" target="_blank" rel="external">大数计算</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6856936" target="_blank" rel="external">&nbsp;n！末位0个数计算</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6860339" target="_blank" rel="external">洗牌算法</a></p>
+<p>&nbsp;&nbsp; <a href="http://blog.csdn.net/feixiaoxing/article/details/6917556" target="_blank" rel="external">&nbsp;“数星星”</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6877965" target="_blank" rel="external">八皇后</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6877461" target="_blank" rel="external">数据选择</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871294" target="_blank" rel="external">单词统计</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871148" target="_blank" rel="external">爬楼梯</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6871148" target="_blank" rel="external">回数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6949758" target="_blank" rel="external">链表重合</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6945730" target="_blank" rel="external">寻找丢失的数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6991770" target="_blank" rel="external">最大公约数、最小公倍数</a></p>
+<p>&nbsp;&nbsp; &nbsp;<a href="http://blog.csdn.net/feixiaoxing/article/details/6882510" target="_blank" rel="external">挑选最大的n个数</a></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/03/08/16.2.9_iOS开发之AFNetworking3.0.4使用/" class="prev">&larr; 上一篇 [转]iOS开发之AFNetworking 3.0.4使用</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2016/06/01/16.6.1_IOS用CGContextRef画各种图形/" class="next">下一篇 [转]iOS用CGContextRef画各种图形 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2016/07/13/16.7.13 _一步一步写算法（之算法总结）/" data-title="[转]一步一步写算法（之 算法总结）" data-url="https://github.com/zhoutq/zhoutq.github.io/2016/07/13/16.7.13 _一步一步写算法（之算法总结）/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+
