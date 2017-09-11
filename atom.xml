@@ -69,9 +69,9 @@
       <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
     
     
-      <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
-    
       <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
     
   </entry>
   
@@ -117,9 +117,9 @@
     
       <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
     
-      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
-    
       <category term="性能优化" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
     
   </entry>
   
@@ -282,6 +282,584 @@ switch (status) {
       <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
     
       <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/12/10/16.12.10%20_iOS%20%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F--%E8%A7%A3%E5%AF%86%20MVC%EF%BC%8CMVP%EF%BC%8CMVVM%E4%BB%A5%E5%8F%8AVIPER%E6%9E%B6%E6%9E%84/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/</id>
+    <published>2016-12-10T08:44:53.000Z</published>
+    <updated>2017-09-11T13:53:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.cocoachina.com/ios/20160108/14916.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20160108/14916.html</a></p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452151424659945.png" alt="302.png" title="1452151424659945.png"></p>
+<ul>
+<li><p>本文由<a href="http://www.cocoachina.com/ios/20160107/14916.html" target="_blank" rel="external">CocoaChina</a>译者lynulzy（<a href="http://www.cocoachina.com/bbs/u.php?action=show&amp;uid=308292" target="_blank" rel="external">社区ID</a>）翻译</p>
+</li>
+<li><p>作者：<a href="https://twitter.com/bohdan_orlov" target="_blank" rel="external">Bohdan Orlov</a></p>
+</li>
+<li><p>原文：<a href="https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.vm64nm3ro" target="_blank" rel="external">iOS Architecture Patterns</a></p>
+</li>
+</ul>
+<hr>
+<p>在 iOS 中使用 MVC 架构感觉很奇怪？ 迁移到MVVM架构又怀有疑虑？听说过 VIPER 又不确定是否真的值得切换？</p>
+<p>相信你会找到以上问题的答案，如果没找到请在评论中指出。</p>
+<p>你将要整理出你在 iOS 环境下所有关于架构模式的知识。我们将带领大家简要的回顾一些流行的架构，并且在理论和实践上对它们进行比较，通过一些小的例子深化你的认知。如果对文中提到的一些关键词有兴趣，可以点击连接去查看更详细的内容。</p>
+<p>掌控设计模式可能会使人上瘾，所以要当心，你可能会对一些问题清晰明了，不再像阅读之前那样迷惑，比如下面这些问题：</p>
+<p>谁应该来负责网络请求？Model 还是 Controller ？</p>
+<p>应该怎样向一个新的页面的 ViewModel 传入一个 Model ?</p>
+<p>谁来创建一个 VIPER 模块，是 Router 还是 Presenter ?</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452151474278586.png" alt="10.png" title="1452151474278586.png"></p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>为什么要关注架构设计？</strong></span></p>
+<p>因为假如你不关心架构，那么总有一天，需要在同一个庞大的类中调试若干复杂的事情，你会发现在这样的条件下，根本不可能在这个类中快速的找到以及有效的修改任何bug.当然，把这样的一个类想象为一个整体是困难的，因此，有可能一些重要的细节总会在这个过程中会被忽略。如果现在的你正是处于这样一个开发环境中，很有可能具体的情况就像下面这样：</p>
+<ul>
+<li><p>这个类是一个UIViewController的子类</p>
+</li>
+<li><p>数据直接在UIViewController中存储</p>
+</li>
+<li><p>UIView类几乎不做任何事情</p>
+</li>
+<li><p>Model 仅仅是一个数据结构</p>
+</li>
+<li><p>单元测试覆盖不了任何用例</p>
+</li>
+</ul>
+<p>以上这些情况仍旧会出现，即使是你遵循了Apple的指导原则并且实现了其 <a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/DevPedia-CocoaCore/MVC.html" target="_blank" rel="external">MVC</a>(模式，所以，大可不必惊慌。Apple所提出的 <a href="https://developer.apple.com/library/ios/documentation/General/Conceptual/DevPedia-CocoaCore/MVC.html" target="_blank" rel="external">MVC</a> 模式存在一些问题，我们之后会详述。</p>
+<p>在此，我们可以定义一个好的架构应该具备的特点：</p>
+<ol>
+<li><p>任务均衡分摊给具有清晰角色的实体</p>
+</li>
+<li><p>可测试性通常都来自与上一条（对于一个合适的架构是非常容易）</p>
+</li>
+<li><p>易用性和低成本维护</p>
+</li>
+</ol>
+<p><span style="font-size: 14px;"><strong>为什么采用分布式?</strong></span></p>
+<p>采用分布式可以在我们要弄清楚一些事情的原理时保持一个均衡的负载。如果你认为你的开发工作越多，你的大脑越能习惯复杂的思维，其实这是对的。但是，不能忽略的一个事实是，这种思维能力并不是线性增长的，而且也并不能很快的到达峰值。所以，能够战胜这种复杂性的最简单的方法就是在遵循 <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle" target="_blank" rel="external">单一功能原则</a> 的前提下，将功能划分给不同的实体。</p>
+<p><span style="font-size: 14px;"><strong>为什么需要易测性？</strong></span></p>
+<p>其实这条要求对于哪些习惯了单元测试的人并不是一个问题，因为在添加了新的特性或者要增加一些类的复杂性之后通常会失效。这就意味着，测试可以避免开发者在运行时才发现问题—-当应用到达用户的设备，每一次维护都需要浪费长达至少<a href="http://appreviewtimes.com" target="_blank" rel="external">一周</a>的时间才能再次分发给用户。</p>
+<p><span style="font-size: 14px;"><strong>为什么需要易用性？</strong></span></p>
+<p>这个问题没有固定的答案，但值得一提的是，最好的代码是那些从未写过的代码。因此，代码写的越少，Bug就越少。这意味着希望写更少的代码不应该被单纯的解释为开发者的懒惰，而且也不应该因为偏爱更聪明的解决方案而忽视了它的维护开销。</p>
+<p><span style="color: rgb(0, 176, 80); font-size: 18px;"><strong>MV(X）系列概要</strong></span></p>
+<p>当今我们已经有很架构设计模式方面的选择:</p>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller" target="_blank" rel="external">MVC</a></p>
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter" target="_blank" rel="external">MVP</a></p>
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Model_View_ViewModel" target="_blank" rel="external">MVVM</a></p>
+</li>
+<li><p><a href="https://www.objc.io/issues/13-architecture/viper/" target="_blank" rel="external">VIPER</a></p>
+</li>
+</ul>
+<p>前三种设计模式都把一个应用中的实体分为以下三类：</p>
+<ul>
+<li><p><strong>Models</strong>–负责主要的数据或者操作数据的<a href="https://en.wikipedia.org/wiki/Data_access_layer" target="_blank" rel="external">数据访问层</a>，可以想象 Perspn 和 PersonDataProvider 类。</p>
+</li>
+<li><p><strong>Views</strong>–负责展示层（GUI），对于iOS环境可以联想一下以 UI 开头的所有类。</p>
+</li>
+<li><p><strong>Controller/Presenter/ViewModel</strong>–负责协调 Model 和 View，通常根据用户在View上的动作在Model上作出对应的更改，同时将更改的信息返回到View上。</p>
+</li>
+</ul>
+<p>将实体进行划分给我们带来了以下好处：</p>
+<ul>
+<li><p>更好的理解它们之间的关系</p>
+</li>
+<li><p>复用（尤其是对于View和Model）</p>
+</li>
+<li><p>独立的测试</p>
+</li>
+</ul>
+<p>让我们开始了解MV(X)系列，之后再返回到VIPER模式。</p>
+<p><span style="color: rgb(0, 176, 80); font-size: 18px;"><strong>MVC的</strong></span><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>过去</strong></span></p>
+<p>在我们探讨Apple的MVC模式之前，我们来看下<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller" target="_blank" rel="external">传统的MVC模式</a>。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152223816977.png" alt="1-E9A5fOrSr0yVmc7Kly5C6A.png" title="1452152223816977.png"></p>
+<p>传统的MVC</p>
+<p>在这里，View并没有任何界限，仅仅是简单的在Controller中呈现出Model的变化。想象一下，就像网页一样，在点击了跳转到某个其他页面的连接之后就会完全的重新加载页面。尽管在iOS平台上实现这这种MVC模式是没有任何难度的，但是它并不会为我们解决架构问题带来任何裨益。因为它本身也是，三个实体间相互都有通信，而且是紧密耦合的。这很显然会大大降低了三者的复用性，而这正是我们不愿意看到的。鉴于此我们不再给出例子。</p>
+<p><span style="color: rgb(127, 127, 127); font-size: 16px;"><strong>“传统的MVC架构不适用于当下的iOS开发”</strong></span></p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>苹果推荐的MVC–</strong></span><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>愿景</strong></span></p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152304301101.png" alt="02.png" title="1452152304301101.png"></p>
+<p>Cocoa MVC</p>
+<p>由于Controller是一个介于View 和 Model之间的协调器，所以View和Model之间没有任何直接的联系。Controller是一个最小可重用单元，这对我们来说是一个好消息，因为我们总要找一个地方来写逻辑复杂度较高的代码，而这些代码又不适合放在Model中。</p>
+<p>理论上来讲，这种模式看起来非常直观，但你有没有感到哪里有一丝诡异？你甚至听说过，有人将MVC的缩写展开成（Massive View Controller），更有甚者，<a href="https://www.objc.io/issues/1-view-controllers/lighter-view-controllers/" target="_blank" rel="external">为View controller减负</a>也成为iOS开发者面临的一个重要话题。如果苹果继承并且对MVC模式有一些进展，所有这些为什么还会发生？</p>
+<p><span style="color: rgb(0, 176, 80); font-size: 18px;"><strong>苹果推荐的MVC–</strong></span><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>事实</strong></span></p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152425723031.png" alt="1-PkWjDU0jqGJOB972cMsrnA.png" title="1452152425723031.png"></p>
+<p>Realistic Cocoa MVC</p>
+<p>Cocoa的MVC模式驱使人们写出臃肿的视图控制器，因为它们经常被混杂到View的生命周期中，因此很难说View和ViewController是分离的。尽管仍可以将业务逻辑和数据转换到Model，但是大多数情况下当需要为View减负的时候我们却无能为力了，View的最大的任务就是向Controller传递用户动作事件。ViewController最终会承担一切代理和数据源的职责，还负责一些分发和取消网络请求以及一些其他的任务，因此它的名字的由来…你懂的。</p>
+<p>你可能会看见过很多次这样的代码：</p>
+<pre class="brush:js;toolbar:false">var&nbsp;userCell&nbsp;=&nbsp;tableView.dequeueReusableCellWithIdentifier("identifier")&nbsp;as&nbsp;UserCell
+userCell.configureWithUser(user)</pre>
+
+<p>这个cell,正是由View直接来调用Model，所以事实上MVC的原则已经违背了，但是这种情况是一直发生的甚至于人们不觉得这里有哪些不对。如果严格遵守MVC的话，你会把对cell的设置放在 Controller 中，不向View传递一个Model对象，这样就会大大增加Controller的体积。</p>
+<p><span style="color: rgb(127, 127, 127); font-size: 16px;"><strong>“Cocoa 的MVC被写成Massive View Controller 是不无道理的。”</strong></span></p>
+<p>直到进行<a href="http://nshipster.com/unit-testing/" target="_blank" rel="external">单元测试</a>的时候才会发现问题越来越明显。因为你的ViewController和View是紧密耦合的，对它们进行测试就显得很艰难–你得有足够的创造性来模拟View和它们的生命周期，在以这样的方式来写View Controller的同时，业务逻辑的代码也逐渐被分散到View的布局代码中去。</p>
+<p>我们看下一些简单的例子:</p>
+<pre class="brush:js;toolbar:false">import&nbsp;UIKit
+
+struct&nbsp;Person&nbsp;{&nbsp;//&nbsp;Model
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;firstName:&nbsp;String
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;lastName:&nbsp;String
+}
+
+class&nbsp;GreetingViewController&nbsp;:&nbsp;UIViewController&nbsp;{&nbsp;//&nbsp;View&nbsp;+&nbsp;Controller
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;person:&nbsp;Person!
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;showGreetingButton&nbsp;=&nbsp;UIButton()
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greetingLabel&nbsp;=&nbsp;UILabel()
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;override&nbsp;func&nbsp;viewDidLoad()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super.viewDidLoad()
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.showGreetingButton.addTarget(self,&nbsp;action:&nbsp;"didTapButton:",&nbsp;forControlEvents:&nbsp;.TouchUpInside)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;didTapButton(button:&nbsp;UIButton)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greeting&nbsp;=&nbsp;"Hello"&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.firstName&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.lastName
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingLabel.text&nbsp;=&nbsp;greeting
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;layout&nbsp;code&nbsp;goes&nbsp;here
+}
+//&nbsp;Assembling&nbsp;of&nbsp;MVC
+let&nbsp;model&nbsp;=&nbsp;Person(firstName:&nbsp;"David",&nbsp;lastName:&nbsp;"Blaine")
+let&nbsp;view&nbsp;=&nbsp;GreetingViewController()
+view.person&nbsp;=&nbsp;model;</pre>
+
+<p><span style="font-size: 16px;"><strong><span style="color: rgb(127, 127, 127);">“MVC可以在一个正在显示的ViewController中实现”</span></strong></span></p>
+<p>这段代码看起来可测试性并不强，我们可以把和greeting相关的都放到GreetingModel中然后分开测试，但是这样我们就无法通过直接调用在GreetingViewController中的UIView的方法（viewDidLoad和didTapButton方法）来测试页面的展示逻辑了，因为一旦调用则会使整个页面都变化，这对单元测试来讲并不是什么好消息。</p>
+<p>事实上，在单独一个模拟器中（比如iPhone 4S）加载并测试UIView并不能保证在其他设备中也能正常工作，因此我建议在单元测试的Target的设置下移除”Host Application”项，并且不要在模拟器中测试你的应用。</p>
+<p><span style="color: rgb(127, 127, 127); font-size: 16px;"><strong>“View和Controller的接口**</strong><a href="http://ashfurrow.com/blog/whats-worth-unit-testing-in-objective-c/" target="_blank" rel="external">并不适合单元测试</a>。”**</span></p>
+<p>以上所述，似乎Cocoa MVC 看起来是一个相当差的架构方案。我们来重新评估一下文章开头我们提出的MVC一系列的特征:</p>
+<ul>
+<li><p><strong>任务均摊</strong>–View和Model确实是分开的，但是View和Controller却是紧密耦合的</p>
+</li>
+<li><p><strong>可测试性</strong>–由于糟糕的分散性，只能对Model进行测试</p>
+</li>
+<li><p><strong>易用性</strong>–与其他几种模式相比最小的代码量。熟悉的人很多，因而即使对于经验不那么丰富的开发者来讲维护起来也较为容易。</p>
+</li>
+</ul>
+<p>如果你不想在架构选择上投入更多精力，那么Cocoa MVC无疑是最好的方案，而且你会发现一些其他维护成本较高的模式对于你所开发的小的应用是一个致命的打击。</p>
+<p><span style="color: rgb(127, 127, 127);"><strong><span style="font-size: 16px;">“就开发速度而言，Cocoa MVC是最好的架构选择方案。”</span></strong></span></p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>MVP&nbsp;<span style="font-size: 18px; line-height: 1.8;">实现了Cocoa的MVC的愿景</span></strong></span></p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152673569726.png" alt="021.png" title="1452152673569726.png"></p>
+<p>Passive View variant of MVP</p>
+<p>这看起来不正是苹果所提出的MVC方案吗？确实是的，这种模式的名字叫做MVC，但是，这就是说苹果的MVC实际上就是<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter" target="_blank" rel="external">MVP</a>了？不，并不是这样的。如果你仔细回忆一下，View是和Controller紧密耦合的，但是MVP的协调器Presenter并没有对ViewController的生命周期做任何改变，因此View可以很容易的被模拟出来。在Presenter中根本没有和布局有关的代码，但是它却负责更新View的数据和状态。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152798105670.png" alt="QQ截图20160107154558.png" title="1452152798105670.png"></p>
+<p><strong><span style="font-size: 18px; color: rgb(127, 127, 127);">“假如告诉你UIViewController就是View呢？”</span></strong></p>
+<p>就MVP而言，UIViewController的子类实际上就是Views并不是Presenters。这点区别使得这种模式的可测试性得到了极大的提高，付出的代价是开发速度的一些降低，因为必须要做一些手动的数据和事件绑定，从下例中可以看出：</p>
+<pre class="brush:js;toolbar:false">import&nbsp;UIKit
+
+struct&nbsp;Person&nbsp;{&nbsp;//&nbsp;Model
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;firstName:&nbsp;String
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;lastName:&nbsp;String
+}
+
+protocol&nbsp;GreetingView:&nbsp;class&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;setGreeting(greeting:&nbsp;String)
+}
+
+protocol&nbsp;GreetingViewPresenter&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;init(view:&nbsp;GreetingView,&nbsp;person:&nbsp;Person)
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;showGreeting()
+}
+
+class&nbsp;GreetingPresenter&nbsp;:&nbsp;GreetingViewPresenter&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;unowned&nbsp;let&nbsp;view:&nbsp;GreetingView
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;person:&nbsp;Person
+&nbsp;&nbsp;&nbsp;&nbsp;required&nbsp;init(view:&nbsp;GreetingView,&nbsp;person:&nbsp;Person)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.view&nbsp;=&nbsp;view
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.person&nbsp;=&nbsp;person
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;showGreeting()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greeting&nbsp;=&nbsp;"Hello"&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.firstName&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.lastName
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.view.setGreeting(greeting)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+
+class&nbsp;GreetingViewController&nbsp;:&nbsp;UIViewController,&nbsp;GreetingView&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;presenter:&nbsp;GreetingViewPresenter!
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;showGreetingButton&nbsp;=&nbsp;UIButton()
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greetingLabel&nbsp;=&nbsp;UILabel()
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;override&nbsp;func&nbsp;viewDidLoad()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super.viewDidLoad()
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.showGreetingButton.addTarget(self,&nbsp;action:&nbsp;"didTapButton:",&nbsp;forControlEvents:&nbsp;.TouchUpInside)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;didTapButton(button:&nbsp;UIButton)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.presenter.showGreeting()
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;setGreeting(greeting:&nbsp;String)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingLabel.text&nbsp;=&nbsp;greeting
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;layout&nbsp;code&nbsp;goes&nbsp;here
+}
+//&nbsp;Assembling&nbsp;of&nbsp;MVP
+let&nbsp;model&nbsp;=&nbsp;Person(firstName:&nbsp;"David",&nbsp;lastName:&nbsp;"Blaine")
+let&nbsp;view&nbsp;=&nbsp;GreetingViewController()
+let&nbsp;presenter&nbsp;=&nbsp;GreetingPresenter(view:&nbsp;view,&nbsp;person:&nbsp;model)
+view.presenter&nbsp;=&nbsp;presenter</pre>
+
+<p><strong>关于整合问题的重要说明</strong></p>
+<p>MVP是第一个如何协调整合三个实际上分离的层次的架构模式，既然我们不希望View涉及到Model，那么在显示的View Controller（其实就是View）中处理这种协调的逻辑就是不正确的，因此我们需要在其他地方来做这些事情。例如，我们可以做基于整个App范围内的路由服务，由它来负责执行协调任务，以及View到View的展示。这个出现并且必须处理的问题不仅仅是在MVP模式中，同时也存在于以下集中方案中。</p>
+<p>我们来看下MVP模式下的三个特性的分析：</p>
+<ul>
+<li><p>任务均摊–我们将最主要的任务划分到Presenter和Model，而View的功能较少（虽然上述例子中Model的任务也并不多）。</p>
+</li>
+<li><p>可测试性–非常好，由于一个功能简单的View层，所以测试大多数业务逻辑也变得简单</p>
+</li>
+<li><p>易用性–在我们上边不切实际的简单的例子中，代码量是MVC模式的2倍，但同时MVP的概念却非常清晰</p>
+</li>
+</ul>
+<p><span style="font-size: 18px; color: rgb(127, 127, 127);"><strong>“iOS 中的MVP意味着可测试性强、代码量大。”</strong></span></p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>MVP–<span style="font-size: 18px; line-height: 1.8;">绑定和信号</span></strong></span></p>
+<p>还有一些其他形态的MVP–监控控制器的MVP。</p>
+<p>这个变体包含了View和Model之间的直接绑定，但是Presenter仍然来管理来自View的动作事件，同时也能胜任对View的更新。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452152939657296.png" alt="022.png" title="1452152939657296.png"></p>
+<p>Supervising Presenter variant of the MVP</p>
+<p>但是我们之前就了解到，模糊的职责划分是非常糟糕的，更何况将View和Model紧密的联系起来。这和Cocoa的桌面开发的原理有些相似。</p>
+<p>和传统的MVC一样，写这样的例子没有什么价值，故不再给出。</p>
+<p><span style="color: rgb(0, 176, 80); font-size: 18px;"><strong>MVVM–<span style="color: rgb(0, 176, 80); line-height: 1.8;">最新且是最伟大的MV(X)系列的一员</span></strong></span></p>
+<p><a href="https://en.wikipedia.org/wiki/Model_View_ViewModel" target="_blank" rel="external">MVVM</a>架构是MV(X)系列最新的一员，因此让我们希望它已经考虑到MV(X)系列中之前已经出现的问题。</p>
+<p>从理论层面来讲MVVM看起来不错，我们已经非常熟悉View和Model，以及Meditor，在MVVM中它是View Model。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452153249521047.png" alt="023.png" title="1452153249521047.png"></p>
+<p>MVVM</p>
+<p>它和MVP模式看起来非常像:</p>
+<ul>
+<li><p>MVVM将ViewController视作View</p>
+</li>
+<li><p>在View和Model之间没有紧密的联系</p>
+</li>
+</ul>
+<p>此外，它还有像监管版本的MVP那样的绑定功能，但这个绑定不是在View和Model之间而是在View和ViewModel之间。</p>
+<p>那么问题来了，在iOS中ViewModel实际上代表什么？它基本上就是UIKit下的每个控件以及控件的状态。ViewModel调用会改变Model同时会将Model的改变更新到自身并且因为我们绑定了View和ViewModel，第一步就是相应的更新状态。</p>
+<p><strong>绑定</strong></p>
+<p>我在MVP部分已经提到这点了，但是该部分我们仍会继续讨论。</p>
+<p><span style="line-height: 1.8;">如果我们自己不想自己实现，那么我们有两种选择:</span></p>
+<ul>
+<li><p>基于KVO的绑定库如 <a href="https://github.com/Raizlabs/RZDataBinding">RZDataBinding</a> 和 <a href="https://github.com/SwiftBond/Bond">SwiftBond</a></p>
+</li>
+<li><p>完全的<a href="https://gist.github.com/JaviLorbada/4a7bd6129275ebefd5a6" target="_blank" rel="external">函数响应式编程</a>，比如像<a href="https://github.com/ReactiveCocoa/ReactiveCocoa">ReactiveCocoa</a><span style="line-height: 1.8;">、<a href="https://github.com/ReactiveX/RxSwift/">RxSwift</a>或者 <a href="https://github.com/mxcl/PromiseKit">PromiseKit</a></span></p>
+</li>
+</ul>
+<p><span style="line-height: 1.8;">事实上，尤其是最近，你听到MVVM就会想到ReactiveCoca，反之亦然。尽管通过简单的绑定来使用MVVM是可实现的，但是ReactiveCocoa却能更好的发挥MVVM的特点。</span></p>
+<p>但是关于这个框架有一个不得不说的事实：强大的能力来自于巨大的责任。当你开始使用Reactive的时候有很大的可能就会把事情搞砸。换句话来说就是，如果发现了一些错误，调试出这个bug可能会花费大量的时间，看下函数调用栈：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452153404430638.png" alt="1-WGIs3XQL1MtKiyApr-m9bg.png" title="1452153404430638.png"></p>
+<p>Reactive Debugging</p>
+<p>在我们简单的例子中，FRF框架和KVO被过渡禁用，取而代之地我们直接去调用showGreeting方法更新ViewModel，以及通过greetingDidChange 回调函数使用属性。</p>
+<pre class="brush:js;toolbar:false">import&nbsp;UIKit
+
+struct&nbsp;Person&nbsp;{&nbsp;//&nbsp;Model
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;firstName:&nbsp;String
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;lastName:&nbsp;String
+}
+
+protocol&nbsp;GreetingViewModelProtocol:&nbsp;class&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;greeting:&nbsp;String?&nbsp;{&nbsp;get&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;greetingDidChange:&nbsp;((GreetingViewModelProtocol)&nbsp;->&nbsp;())?&nbsp;{&nbsp;get&nbsp;set&nbsp;}&nbsp;//&nbsp;function&nbsp;to&nbsp;call&nbsp;when&nbsp;greeting&nbsp;did&nbsp;change
+&nbsp;&nbsp;&nbsp;&nbsp;init(person:&nbsp;Person)
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;showGreeting()
+}
+
+class&nbsp;GreetingViewModel&nbsp;:&nbsp;GreetingViewModelProtocol&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;person:&nbsp;Person
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;greeting:&nbsp;String?&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;didSet&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingDidChange?(self)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;greetingDidChange:&nbsp;((GreetingViewModelProtocol)&nbsp;->&nbsp;())?
+&nbsp;&nbsp;&nbsp;&nbsp;required&nbsp;init(person:&nbsp;Person)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.person&nbsp;=&nbsp;person
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;showGreeting()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greeting&nbsp;=&nbsp;"Hello"&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.firstName&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;self.person.lastName
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+
+class&nbsp;GreetingViewController&nbsp;:&nbsp;UIViewController&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;viewModel:&nbsp;GreetingViewModelProtocol!&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;didSet&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.viewModel.greetingDidChange&nbsp;=&nbsp;{&nbsp;[unowned&nbsp;self]&nbsp;viewModel&nbsp;in
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingLabel.text&nbsp;=&nbsp;viewModel.greeting
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;showGreetingButton&nbsp;=&nbsp;UIButton()
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greetingLabel&nbsp;=&nbsp;UILabel()
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;override&nbsp;func&nbsp;viewDidLoad()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super.viewDidLoad()
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.showGreetingButton.addTarget(self.viewModel,&nbsp;action:&nbsp;"showGreeting",&nbsp;forControlEvents:&nbsp;.TouchUpInside)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;layout&nbsp;code&nbsp;goes&nbsp;here
+}
+//&nbsp;Assembling&nbsp;of&nbsp;MVVM
+let&nbsp;model&nbsp;=&nbsp;Person(firstName:&nbsp;"David",&nbsp;lastName:&nbsp;"Blaine")
+let&nbsp;viewModel&nbsp;=&nbsp;GreetingViewModel(person:&nbsp;model)
+let&nbsp;view&nbsp;=&nbsp;GreetingViewController()
+view.viewModel&nbsp;=&nbsp;viewModel</pre>
+
+<p>让我们再来看看关于三个特性的评估：</p>
+<ul>
+<li><p>任务均摊 – 在例子中并不是很清晰，但是事实上，MVVM的View要比MVP中的View承担的责任多。因为前者通过ViewModel的设置绑定来更新状态，而后者只监听Presenter的事件但并不会对自己有什么更新。</p>
+</li>
+<li><p>可测试性 – ViewModel不知道关于View的任何事情，这允许我们可以轻易的测试ViewModel。同时View也可以被测试，但是由于属于UIKit的范畴，对他们的测试通常会被忽略。</p>
+</li>
+<li><p>易用性 – 在我们例子中的代码量和MVP的差不多，但是在实际开发中，我们必须把View中的事件指向Presenter并且手动的来更新View，如果使用绑定的话，MVVM代码量将会小的多。</p>
+</li>
+</ul>
+<p><span style="font-size: 16px; color: rgb(127, 127, 127);"><strong>“MVVM很诱人，因为它集合了上述方法的优点，并且由于在View层的绑定，它并不需要其他附加的代码来更新View，尽管这样，可测试性依然很强。”</strong></span></p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong>VIPER–<span style="font-size: 18px; line-height: 1.8;">把LEGO建筑经验迁移到iOS app的设计</span></strong></span></p>
+<p><a href="https://www.objc.io/issues/13-architecture/viper/" target="_blank" rel="external">VIPER</a>是我们最后要介绍的，由于不是来自于MV(X)系列，它具备一定的趣味性。</p>
+<p>迄今为止，划分责任的粒度是很好的选择。VIPER在责任划分层面进行了迭代，VIPER分为五个层次:</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20160107/1452153564205784.png" alt="024.png" title="1452153564205784.png"></p>
+<p>V<span style="line-height: 1.8;">IPER</span></p>
+<ul>
+<li><p><strong>交互器 </strong>– 包括关于数据和网络请求的业务逻辑，例如创建一个实体（数据），或者从服务器中获取一些数据。为了实现这些功能，需要使用服务、管理器，但是他们并不被认为是VIPER架构内的模块，而是外部依赖。</p>
+</li>
+<li><p><strong>展示器</strong> – 包含UI层面的业务逻辑以及在交互器层面的方法调用。</p>
+</li>
+<li><p><strong>实体</strong> – 普通的数据对象，不属于数据访问层次，因为数据访问属于交互器的职责。</p>
+</li>
+<li><p><strong>路由器</strong> – 用来连接VIPER的各个模块。</p>
+</li>
+</ul>
+<p>基本上，VIPER模块可以是一个屏幕或者用户使用应用的整个过程–想想认证过程，可以由一屏完成或者需要几步才能完成，你的模块期望是多大的，这取决于你。</p>
+<p>当我们把VIPER和MV(X)系列作比较时，我们会在任务均摊性方面发现一些不同:</p>
+<ul>
+<li><p><strong>Model</strong> 逻辑通过把实体作为最小的数据结构转换到交互器中。</p>
+</li>
+<li><p><strong>Controller/Presenter/ViewModel</strong>的UI展示方面的职责移到了Presenter中，但是并没有数据转换相关的操作。</p>
+</li>
+<li><p><strong>VIPER</strong>是第一个通过路由器实现明确的地址导航模式。</p>
+</li>
+</ul>
+<p><span style="font-size: 16px; color: rgb(127, 127, 127);"><strong>“找到一个适合的方法来实现路由对于iOS应用是一个挑战，MV(X)系列避开了这个问题。”</strong></span></p>
+<p>例子中并不包含路由和模块之间的交互，所以和MV(X)系列部分架构一样不再给出例子。</p>
+<p><span style="white-space: nowrap;"></span></p>
+<pre class="brush:js;toolbar:false">import&nbsp;UIKit
+
+struct&nbsp;Person&nbsp;{&nbsp;//&nbsp;Entity&nbsp;(usually&nbsp;more&nbsp;complex&nbsp;e.g.&nbsp;NSManagedObject)
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;firstName:&nbsp;String
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;lastName:&nbsp;String
+}
+
+struct&nbsp;GreetingData&nbsp;{&nbsp;//&nbsp;Transport&nbsp;data&nbsp;structure&nbsp;(not&nbsp;Entity)
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greeting:&nbsp;String
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;subject:&nbsp;String
+}
+
+protocol&nbsp;GreetingProvider&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;provideGreetingData()
+}
+
+protocol&nbsp;GreetingOutput:&nbsp;class&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;receiveGreetingData(greetingData:&nbsp;GreetingData)
+}
+
+class&nbsp;GreetingInteractor&nbsp;:&nbsp;GreetingProvider&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;weak&nbsp;var&nbsp;output:&nbsp;GreetingOutput!
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;provideGreetingData()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;person&nbsp;=&nbsp;Person(firstName:&nbsp;"David",&nbsp;lastName:&nbsp;"Blaine")&nbsp;//&nbsp;usually&nbsp;comes&nbsp;from&nbsp;data&nbsp;access&nbsp;layer
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;subject&nbsp;=&nbsp;person.firstName&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;person.lastName
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greeting&nbsp;=&nbsp;GreetingData(greeting:&nbsp;"Hello",&nbsp;subject:&nbsp;subject)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.output.receiveGreetingData(greeting)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+
+protocol&nbsp;GreetingViewEventHandler&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;didTapShowGreetingButton()
+}
+
+protocol&nbsp;GreetingView:&nbsp;class&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;setGreeting(greeting:&nbsp;String)
+}
+
+class&nbsp;GreetingPresenter&nbsp;:&nbsp;GreetingOutput,&nbsp;GreetingViewEventHandler&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;weak&nbsp;var&nbsp;view:&nbsp;GreetingView!
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;greetingProvider:&nbsp;GreetingProvider!
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;didTapShowGreetingButton()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingProvider.provideGreetingData()
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;receiveGreetingData(greetingData:&nbsp;GreetingData)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greeting&nbsp;=&nbsp;greetingData.greeting&nbsp;+&nbsp;"&nbsp;"&nbsp;+&nbsp;greetingData.subject
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.view.setGreeting(greeting)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}
+
+class&nbsp;GreetingViewController&nbsp;:&nbsp;UIViewController,&nbsp;GreetingView&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;eventHandler:&nbsp;GreetingViewEventHandler!
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;showGreetingButton&nbsp;=&nbsp;UIButton()
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;greetingLabel&nbsp;=&nbsp;UILabel()
+&nbsp;&nbsp;&nbsp;&nbsp;override&nbsp;func&nbsp;viewDidLoad()&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super.viewDidLoad()
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.showGreetingButton.addTarget(self,&nbsp;action:&nbsp;"didTapButton:",&nbsp;forControlEvents:&nbsp;.TouchUpInside)
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;didTapButton(button:&nbsp;UIButton)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.eventHandler.didTapShowGreetingButton()
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;func&nbsp;setGreeting(greeting:&nbsp;String)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.greetingLabel.text&nbsp;=&nbsp;greeting
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;layout&nbsp;code&nbsp;goes&nbsp;here
+}
+//&nbsp;Assembling&nbsp;of&nbsp;VIPER&nbsp;module,&nbsp;without&nbsp;Router
+let&nbsp;view&nbsp;=&nbsp;GreetingViewController()
+let&nbsp;presenter&nbsp;=&nbsp;GreetingPresenter()
+let&nbsp;interactor&nbsp;=&nbsp;GreetingInteractor()
+view.eventHandler&nbsp;=&nbsp;presenter
+presenter.view&nbsp;=&nbsp;view
+presenter.greetingProvider&nbsp;=&nbsp;interactor
+interactor.output&nbsp;=&nbsp;presenter</pre>
+
+<p><span style="line-height: 1.8;">让我们再来评估一下特性:</span></p>
+<ul>
+<li><p>任务均摊 – 毫无疑问，VIPER是任务划分中的佼佼者。</p>
+</li>
+<li><p>可测试性 – 不出意外地，更好的分布性就有更好的可测试性。</p>
+</li>
+<li><p>易用性 – 最后你可能已经猜到了维护成本方面的问题。你必须为很小功能的类写出大量的接口。</p>
+</li>
+</ul>
+<p><strong>什么是LEGO</strong></p>
+<p>当使用VIPER时，你的感觉就像是用乐高积木来搭建一个城堡，这也是一个表明当前存在一些问题的信号。可能现在就应用VIPER架构还为时过早，考虑一些更为简单的模式可能会更好。一些人会忽略这些<a href="https://inessential.com/2014/03/16/smaller_please" target="_blank" rel="external">问题</a>，大材小用。假定他们笃信VIPER架构会在未来给他们的应用带来一些好处，虽然现在维护起来确实是有些不合理。如果你也持这样的观点，我为你推荐 <a href="https://github.com/rambler-ios/Generamba">Generamba</a> 这个用来搭建VIPER架构的工具。虽然我个人感觉，使用起来就像加农炮的自动瞄准系统，而不是简单的像投石器那样的简单的抛掷。</p>
+<p><span style="font-size: 18px; color: rgb(0, 176, 80);"><strong><span style="font-size: 18px; line-height: 1.8;">总结</span></strong></span></p>
+<p>我们了解了集中架构模式，希望你已经找到了到底是什么在困扰你。毫无疑问通过阅读本篇文章，你已经了解到其实并没有完全的银弹。所以选择架构是一个根据实际情况具体分析利弊的过程。</p>
+<p>因此，在同一个应用中包含着多种架构。比如，你开始的时候使用MVC，然后突然意识到一个页面在MVC模式下的变得越来越难以维护，然后就切换到MVVM架构，但是仅仅针对这一个页面。并没有必要对哪些MVC模式下运转良好的页面进行重构，因为二者是可以并存的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.cocoachina.com/ios/20160108/14916.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cocoachina.com/ios/20160108/1491
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="架构模式" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="架构" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+      <category term="MVC" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/MVC/"/>
+    
+      <category term="MVP" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/MVP/"/>
+    
+      <category term="MVVM" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/MVVM/"/>
+    
+      <category term="VIPER" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/VIPER/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]iOS可视化动态绘制八种排序过程</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/10/21/16.10.21_iOS%E5%8F%AF%E8%A7%86%E5%8C%96%E5%8A%A8%E6%80%81%E7%BB%98%E5%88%B6%E5%85%AB%E7%A7%8D%E6%8E%92%E5%BA%8F%E8%BF%87%E7%A8%8B/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/10/21/16.10.21_iOS可视化动态绘制八种排序过程/</id>
+    <published>2016-10-21T02:44:53.000Z</published>
+    <updated>2017-09-11T13:15:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://www.cocoachina.com/ios/20170105/18522.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20170105/18522.html</a></p>
+<p>前面几篇博客都是关于排序的，在之前陆陆续续发布的博客中，我们先后介绍了冒泡排序、选择排序、插入排序、希尔排序、堆排序、归并排序以及快速排序。俗话说的好，做事儿要善始善终，本篇博客就算是对之前那几篇博客的总结了。而本篇博客的示例Demo也是在之前那些博客Demo的基础上做的，也算是集成了各种排序的方法，然后给出了可视化的解决方案。今天博客的内容还是比较有趣的。</p>
+<p>因为本猿是做iOS开发的，所以就使用iOS相关的组件来表示上述各种排序的过程。使用可视化方式来感受一下上述这些排序方法的异同。本篇博客所使用的相关的排序代码都是来自于之前的博客。因为我们在之前实现各种排序Demo时，我们定义了相应的排序接口SortType，所以上述的七种排序对外的调用方式是一致的，所以在此基础上给出相应排序的可视化解决方案并不困难。本篇博客就会给出其相应的扩展过程。</p>
+<p>如果你想对上述7中排序进行详细的了解，请移步与之前的博客《<a href="http://www.cnblogs.com/ludashi/p/6031379.html" target="_blank" rel="external">冒泡排序、插入排序、希尔排序、选择排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6043006.html" target="_blank" rel="external">堆排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6051871.html" target="_blank" rel="external">归并排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6051912.html" target="_blank" rel="external">快速排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6069807.html" target="_blank" rel="external">基数排序</a>》。废话少说，开始今天的博客。</p>
+<p><span style="font-size: 14px;"><strong>一、可视化解决方案综述</strong></span></p>
+<p><strong>1.交互UI综述</strong></p>
+<p>在本篇博客的第一部分我们先来整体的看一下我们Demo的功能。下方就是我们今天博客中的Demo的交互示意图。上方的输入框可以输入要排序元素的个数，下方输入的是300。程序会根据你输入的个数来随机生成数据，你输入300，就会随机生成300个数据提供排序使用。下方的SegmentControl可以选择不同的排序方式，本篇博客给出了7中常用的排序方式，选择完排序方式后可以点击右上方的排序按钮进行相应的排序。</p>
+<p>下方显示的不同颜色的颜色条就是我们要排序的东西，我们会按照从小到大的方式对这些色条进行排序。左图中是未排序的状态，右图中是已经排序的状态。我们上面随机生成的数据反应到色条上就是色条的高度，我们按照色条的高度进行从小到大的排序。下方会给出每种排序的介绍。　</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541042427587.png" alt="5.png" title="1483541042427587.png"></p>
+<p><strong>2、部分核心代码实现</strong></p>
+<p>为了实现今天的Demo，我们需要对之前我们实现的那一些列的排序的方法进行扩展。因为我们之前在实现各种排序时，我们先定义了SortType接口，依据“开放封闭原则”，我们可以为各种排序的类创建一个“简单工厂”以供我们的视图层使用。关于设计模式更多以及更详细的内容，可以移步之前发布的设计模式系列博客《设计模式Swift版》。　　</p>
+<p>上方就是为各种Sort类提供的“简单工厂”。上面这个简单工厂在视图控制器中点击SegmentControl时会使用，因为我们在选择不同排序类的时候需要使用不同的排序对象。下方就是我们视图控制器对“简单工厂”的调用，当然我们所有排序类都有父类，你也可以使用“工厂方法”来创建相应的对象，在此就不做过多赘述了。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541057169487.png" alt="545446-20161115151207185-49120727.png" title="1483541057169487.png"></p>
+<p>下方代码段就是点击SegmentControl要调用的方法，其中从“简单工厂”中获取到相应排序方式的对象后，然后在设置相应的闭包回调。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541089985015.png" alt="545446-20161115163118092-560378900.png" title="1483541089985015.png">　　</p>
+<p><strong>二、冒泡排序</strong></p>
+<p>接下来我们来逐一看一下每种排序的具体效果。下方就是冒泡排序的效果，因为冒泡排序的时间复杂度是O(n^2)的，所以我们先设置元素个数是80， 如果太大的话会比较慢。因为我们在排序步骤结果输出时，每进行一次交换操作或者比较操作让排序线程休眠0.001秒，便于我们观察整个排序过程。</p>
+<p>从下方这个动图上我们不难看出冒泡的整个过程，较小的数据从右往左以此往外冒。下方这个效果还是比较直观的，整个冒泡过程就是从后往前比较，如果后边的数要比前边的小就交换。冒泡过程如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541263890536.gif" alt="202.gif" title="1483541263890536.gif"></p>
+<p><strong>三、选择排序</strong></p>
+<p>选择排序的时间复杂度也是O(n^2)。下方是“选择排序”的可视化过程，选择排序的过程就是从无序序列中找出最小的那个值放到有序序列中最后方。不断执行这个过程，我们的序列就是有序的了。下方就是选择排序的整个过程，元素的个数是80.</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541288284901.gif" alt="303.gif" title="1483541288284901.gif"></p>
+<p><strong><span style="line-height: 1.8;">四、插入排序</span></strong></p>
+<p>插入排序的复杂度与上述选择排序的时间复杂度一样，都是O(n^2)。下方就是插入排序的运行结果。插入排序是从无序序列中取出第一个值，然后插入到前方有序序列中相应的位置。每次插入后，有序序列就会增加1，无序序列就会减少1。下方就是插入排序的过程，如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541303642900.gif" alt="404.gif" title="1483541303642900.gif"></p>
+<p><strong>五、希尔排序</strong></p>
+<p>希尔排序的效率要高一些，其时间复杂度是O(n^(3/2))。下方就是希尔排序的具体执行步骤，希尔排序又称为缩小增量排序。该排序方式是插入排序的升级版，等增量缩小到1时，我们的序列就是有序的了。下方就是希尔排序的具体执行步骤，如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541325818326.gif" alt="505.gif" title="1483541325818326.gif"></p>
+<p><strong>六、堆排序</strong></p>
+<p>堆排序比希尔排序更为高效，其时间复杂度为O(nlog2n)。下方的“堆排序”是根据大顶堆来进行排序的，大顶堆第一个值是序列中最大的，我们可以利用这一点获取无序序列中最大的那个值。首先我们将序列调整为大顶堆，然后把大顶堆的第一个值与最后一个值进行交换，然后再将剩下的序列调整成大顶堆，然后进行下一轮的替换。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541346957748.gif" alt="606.gif" title="1483541346957748.gif"></p>
+<p><strong>七、归并排序</strong></p>
+<p>归并排序的时间复杂度也是O(nlog2n)。归并排序就是将无序数组拆分成多个只有一个元素的数组，然后进行两两合并。在合并的过程中将两个数组中的元素进行比较，将较小的放在前方，两个有序的数组合并后依然是有序的，然后再次进行两两合并，直到合并成一个数组为止。下方就是归并排序的执行顺序，从执行过程中，我们可以清楚的看到在排序过程中被分割的小的有序序列。归并排序的执行过程如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541367382388.gif" alt="707.gif" title="1483541367382388.gif"></p>
+<p><strong>八、快速排序</strong></p>
+<p>快速排序的时间复杂度为O(nlog2n)。下方是快速排序的执行步骤，快速排序是利用里分治法的思想。从无序序列中取出一个值，比该值大的放在前方，比该值小的放在后方。然后递归执行前半部分和后半部分依次递归下去，我们的序列就是有序的了。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541384567939.gif" alt="808.gif" title="1483541384567939.gif"></p>
+<p><strong>九、基数排序</strong></p>
+<p>下方是基数排序的运行效果，我们先输入1000个元素，生成1000个随机数，选择基数排序。如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541403606999.gif" alt="909.gif" title="1483541403606999.gif"></p>
+<p><strong>十、上述排序的比较</strong></p>
+<p>关于上述排序的比较，在此就不做过多赘述了，就引用“维基百科”中的表格来说明吧，如下所示:　　</p>
+<p>今天博客中所涉及的Demo依然会在github上进行分享，分享地址如下。</p>
+<p>github源码分享地址：<a href="https://github.com/lizelu/DataStruct-Swift/tree/master/AllKindsOfSortForiOS">https://github.com/lizelu/DataStruct-Swift/tree/master/AllKindsOfSortForiOS</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://www.cocoachina.com/ios/20170105/18522.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cocoachina.com/ios/20170105/1852
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="swift" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/swift/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="数据结构和算法" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="swift" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/swift/"/>
+    
+      <category term="动画" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%8A%A8%E7%94%BB/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[转]iOS Crash 分析</title>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/09/10/16.9.10_iOS_Crash%E5%88%86%E6%9E%90/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/09/10/16.9.10_iOS_Crash分析/</id>
+    <published>2016-09-10T04:44:53.000Z</published>
+    <updated>2017-09-11T13:11:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文：<a href="http://blog.csdn.net/diyagoanyhacker/article/details/41247367" target="_blank" rel="external">http://blog.csdn.net/diyagoanyhacker/article/details/41247367</a></p>
+<p><a href="http://blog.csdn.net/diyagoanyhacker/article/details/41247367" target="_blank" rel="external">iOS Crash 分析（文一）- 开始</a><br><a href="http://blog.csdn.net/diyagoanyhacker/article/details/41247389" target="_blank" rel="external">iOS Crash 分析（文二）-崩溃日志组成</a><br><a href="http://blog.csdn.net/diyagoanyhacker/article/details/41247411" target="_blank" rel="external">iOS Crash 分析（文三）- 符号化崩溃日志</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文：&lt;a href=&quot;http://blog.csdn.net/diyagoanyhacker/article/details/41247367&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/diyagoanyh
+    
+    </summary>
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
+    
+      <category term="Crash" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/Crash/"/>
+    
+    
+      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
+    
+      <category term="Crash" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/Crash/"/>
     
   </entry>
   
@@ -912,7 +1490,7 @@ AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     <link href="https://github.com/zhoutq/zhoutq.github.io/2015/11/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/"/>
     <id>https://github.com/zhoutq/zhoutq.github.io/2015/11/12/第一篇文章/</id>
     <published>2015-11-12T11:37:40.000Z</published>
-    <updated>2017-09-10T13:26:43.000Z</updated>
+    <updated>2017-09-11T12:45:06.000Z</updated>
     
     <content type="html"><![CDATA[<pre><code>NSLog(@&quot;Hello World&quot;);
 </code></pre><ul>

@@ -1,0 +1,460 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://www.cocoachina.com/ios/20170105/18522.html
+前面几篇博客都是关于排序的，在之前陆陆续续发布的博客中，我们先后介绍了冒泡排序、选择排序、插入排序、希尔排序、堆排序、归并排序以及快速排序。俗话说的好，做事儿要善始善终，本篇博客就算是对之前那几篇博客的总结了。而本篇博客的示例Demo也是在之前那些博客Demo的基础上做的，也算是集成了各...">
+  
+  <title>[转]iOS可视化动态绘制八种排序过程 [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2016/09/10/16.9.10_iOS_Crash分析/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]iOS Crash 分析
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]iOS可视化动态绘制八种排序过程</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2016-10-21</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/swift/">swift</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/数据结构和算法/">数据结构和算法</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/swift/">swift</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/动画/">动画</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://www.cocoachina.com/ios/20170105/18522.html" target="_blank" rel="external">http://www.cocoachina.com/ios/20170105/18522.html</a></p>
+<p>前面几篇博客都是关于排序的，在之前陆陆续续发布的博客中，我们先后介绍了冒泡排序、选择排序、插入排序、希尔排序、堆排序、归并排序以及快速排序。俗话说的好，做事儿要善始善终，本篇博客就算是对之前那几篇博客的总结了。而本篇博客的示例Demo也是在之前那些博客Demo的基础上做的，也算是集成了各种排序的方法，然后给出了可视化的解决方案。今天博客的内容还是比较有趣的。</p>
+<p>因为本猿是做iOS开发的，所以就使用iOS相关的组件来表示上述各种排序的过程。使用可视化方式来感受一下上述这些排序方法的异同。本篇博客所使用的相关的排序代码都是来自于之前的博客。因为我们在之前实现各种排序Demo时，我们定义了相应的排序接口SortType，所以上述的七种排序对外的调用方式是一致的，所以在此基础上给出相应排序的可视化解决方案并不困难。本篇博客就会给出其相应的扩展过程。</p>
+<p>如果你想对上述7中排序进行详细的了解，请移步与之前的博客《<a href="http://www.cnblogs.com/ludashi/p/6031379.html" target="_blank" rel="external">冒泡排序、插入排序、希尔排序、选择排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6043006.html" target="_blank" rel="external">堆排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6051871.html" target="_blank" rel="external">归并排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6051912.html" target="_blank" rel="external">快速排序</a>》、《<a href="http://www.cnblogs.com/ludashi/p/6069807.html" target="_blank" rel="external">基数排序</a>》。废话少说，开始今天的博客。</p>
+<p><span style="font-size: 14px;"><strong>一、可视化解决方案综述</strong></span></p>
+<p><strong>1.交互UI综述</strong></p>
+<p>在本篇博客的第一部分我们先来整体的看一下我们Demo的功能。下方就是我们今天博客中的Demo的交互示意图。上方的输入框可以输入要排序元素的个数，下方输入的是300。程序会根据你输入的个数来随机生成数据，你输入300，就会随机生成300个数据提供排序使用。下方的SegmentControl可以选择不同的排序方式，本篇博客给出了7中常用的排序方式，选择完排序方式后可以点击右上方的排序按钮进行相应的排序。</p>
+<p>下方显示的不同颜色的颜色条就是我们要排序的东西，我们会按照从小到大的方式对这些色条进行排序。左图中是未排序的状态，右图中是已经排序的状态。我们上面随机生成的数据反应到色条上就是色条的高度，我们按照色条的高度进行从小到大的排序。下方会给出每种排序的介绍。　</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541042427587.png" alt="5.png" title="1483541042427587.png"></p>
+<p><strong>2、部分核心代码实现</strong></p>
+<p>为了实现今天的Demo，我们需要对之前我们实现的那一些列的排序的方法进行扩展。因为我们之前在实现各种排序时，我们先定义了SortType接口，依据“开放封闭原则”，我们可以为各种排序的类创建一个“简单工厂”以供我们的视图层使用。关于设计模式更多以及更详细的内容，可以移步之前发布的设计模式系列博客《设计模式Swift版》。　　</p>
+<p>上方就是为各种Sort类提供的“简单工厂”。上面这个简单工厂在视图控制器中点击SegmentControl时会使用，因为我们在选择不同排序类的时候需要使用不同的排序对象。下方就是我们视图控制器对“简单工厂”的调用，当然我们所有排序类都有父类，你也可以使用“工厂方法”来创建相应的对象，在此就不做过多赘述了。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541057169487.png" alt="545446-20161115151207185-49120727.png" title="1483541057169487.png"></p>
+<p>下方代码段就是点击SegmentControl要调用的方法，其中从“简单工厂”中获取到相应排序方式的对象后，然后在设置相应的闭包回调。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541089985015.png" alt="545446-20161115163118092-560378900.png" title="1483541089985015.png">　　</p>
+<p><strong>二、冒泡排序</strong></p>
+<p>接下来我们来逐一看一下每种排序的具体效果。下方就是冒泡排序的效果，因为冒泡排序的时间复杂度是O(n^2)的，所以我们先设置元素个数是80， 如果太大的话会比较慢。因为我们在排序步骤结果输出时，每进行一次交换操作或者比较操作让排序线程休眠0.001秒，便于我们观察整个排序过程。</p>
+<p>从下方这个动图上我们不难看出冒泡的整个过程，较小的数据从右往左以此往外冒。下方这个效果还是比较直观的，整个冒泡过程就是从后往前比较，如果后边的数要比前边的小就交换。冒泡过程如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541263890536.gif" alt="202.gif" title="1483541263890536.gif"></p>
+<p><strong>三、选择排序</strong></p>
+<p>选择排序的时间复杂度也是O(n^2)。下方是“选择排序”的可视化过程，选择排序的过程就是从无序序列中找出最小的那个值放到有序序列中最后方。不断执行这个过程，我们的序列就是有序的了。下方就是选择排序的整个过程，元素的个数是80.</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541288284901.gif" alt="303.gif" title="1483541288284901.gif"></p>
+<p><strong><span style="line-height: 1.8;">四、插入排序</span></strong></p>
+<p>插入排序的复杂度与上述选择排序的时间复杂度一样，都是O(n^2)。下方就是插入排序的运行结果。插入排序是从无序序列中取出第一个值，然后插入到前方有序序列中相应的位置。每次插入后，有序序列就会增加1，无序序列就会减少1。下方就是插入排序的过程，如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541303642900.gif" alt="404.gif" title="1483541303642900.gif"></p>
+<p><strong>五、希尔排序</strong></p>
+<p>希尔排序的效率要高一些，其时间复杂度是O(n^(3/2))。下方就是希尔排序的具体执行步骤，希尔排序又称为缩小增量排序。该排序方式是插入排序的升级版，等增量缩小到1时，我们的序列就是有序的了。下方就是希尔排序的具体执行步骤，如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541325818326.gif" alt="505.gif" title="1483541325818326.gif"></p>
+<p><strong>六、堆排序</strong></p>
+<p>堆排序比希尔排序更为高效，其时间复杂度为O(nlog2n)。下方的“堆排序”是根据大顶堆来进行排序的，大顶堆第一个值是序列中最大的，我们可以利用这一点获取无序序列中最大的那个值。首先我们将序列调整为大顶堆，然后把大顶堆的第一个值与最后一个值进行交换，然后再将剩下的序列调整成大顶堆，然后进行下一轮的替换。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541346957748.gif" alt="606.gif" title="1483541346957748.gif"></p>
+<p><strong>七、归并排序</strong></p>
+<p>归并排序的时间复杂度也是O(nlog2n)。归并排序就是将无序数组拆分成多个只有一个元素的数组，然后进行两两合并。在合并的过程中将两个数组中的元素进行比较，将较小的放在前方，两个有序的数组合并后依然是有序的，然后再次进行两两合并，直到合并成一个数组为止。下方就是归并排序的执行顺序，从执行过程中，我们可以清楚的看到在排序过程中被分割的小的有序序列。归并排序的执行过程如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541367382388.gif" alt="707.gif" title="1483541367382388.gif"></p>
+<p><strong>八、快速排序</strong></p>
+<p>快速排序的时间复杂度为O(nlog2n)。下方是快速排序的执行步骤，快速排序是利用里分治法的思想。从无序序列中取出一个值，比该值大的放在前方，比该值小的放在后方。然后递归执行前半部分和后半部分依次递归下去，我们的序列就是有序的了。</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541384567939.gif" alt="808.gif" title="1483541384567939.gif"></p>
+<p><strong>九、基数排序</strong></p>
+<p>下方是基数排序的运行效果，我们先输入1000个元素，生成1000个随机数，选择基数排序。如下所示：</p>
+<p><img src="http://cc.cocimg.com/api/uploads/20170104/1483541403606999.gif" alt="909.gif" title="1483541403606999.gif"></p>
+<p><strong>十、上述排序的比较</strong></p>
+<p>关于上述排序的比较，在此就不做过多赘述了，就引用“维基百科”中的表格来说明吧，如下所示:　　</p>
+<p>今天博客中所涉及的Demo依然会在github上进行分享，分享地址如下。</p>
+<p>github源码分享地址：<a href="https://github.com/lizelu/DataStruct-Swift/tree/master/AllKindsOfSortForiOS">https://github.com/lizelu/DataStruct-Swift/tree/master/AllKindsOfSortForiOS</a></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2016/12/10/16.12.10 _iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构/" class="prev">&larr; 上一篇 [转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2016/09/10/16.9.10_iOS_Crash分析/" class="next">下一篇 [转]iOS Crash 分析 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      <div class="ds-thread" data-thread-key="2016/10/21/16.10.21_iOS可视化动态绘制八种排序过程/" data-title="[转]iOS可视化动态绘制八种排序过程" data-url="https://github.com/zhoutq/zhoutq.github.io/2016/10/21/16.10.21_iOS可视化动态绘制八种排序过程/"></div>
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <script type="text/javascript">
+var duoshuoQuery = {short_name:"zhoutq"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+   || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+

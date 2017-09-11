@@ -4,6 +4,120 @@
 
     
   <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2016/12/10/16.12.10%20_iOS%20%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F--%E8%A7%A3%E5%AF%86%20MVC%EF%BC%8CMVP%EF%BC%8CMVVM%E4%BB%A5%E5%8F%8AVIPER%E6%9E%B6%E6%9E%84/</loc>
+    <lastmod>2017-09-11T13:53:14.000Z</lastmod>
+    <data>
+        <display>
+        <title>[转]iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构</title>
+        <pubTime>2016-12-10T08:44:53.000Z</pubTime>
+        
+        <tag>iOS</tag>
+         
+        <tag>架构</tag>
+         
+        <tag>MVC</tag>
+         
+        <tag>MVP</tag>
+         
+        <tag>MVVM</tag>
+         
+        <tag>VIPER</tag>
+         
+         
+           
+             
+              <breadCrumb title="iOS" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/"/>
+          
+             
+              <breadCrumb title="架构模式" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2016/10/21/16.10.21_iOS%E5%8F%AF%E8%A7%86%E5%8C%96%E5%8A%A8%E6%80%81%E7%BB%98%E5%88%B6%E5%85%AB%E7%A7%8D%E6%8E%92%E5%BA%8F%E8%BF%87%E7%A8%8B/</loc>
+    <lastmod>2017-09-11T13:15:52.000Z</lastmod>
+    <data>
+        <display>
+        <title>[转]iOS可视化动态绘制八种排序过程</title>
+        <pubTime>2016-10-21T02:44:53.000Z</pubTime>
+        
+        <tag>iOS</tag>
+         
+        <tag>数据结构和算法</tag>
+         
+        <tag>swift</tag>
+         
+        <tag>动画</tag>
+         
+         
+           
+             
+              <breadCrumb title="iOS" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/"/>
+          
+             
+              <breadCrumb title="swift" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/swift/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2016/09/10/16.9.10_iOS_Crash%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2017-09-11T13:11:21.000Z</lastmod>
+    <data>
+        <display>
+        <title>[转]iOS Crash 分析</title>
+        <pubTime>2016-09-10T04:44:53.000Z</pubTime>
+        
+        <tag>iOS</tag>
+         
+        <tag>Crash</tag>
+         
+         
+           
+             
+              <breadCrumb title="iOS" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/"/>
+          
+             
+              <breadCrumb title="Crash" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/iOS/Crash/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2015/11/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/</loc>
+    <lastmod>2017-09-11T12:45:06.000Z</lastmod>
+    <data>
+        <display>
+        <title>第一篇文章</title>
+        <pubTime>2015-11-12T11:37:40.000Z</pubTime>
+        
+        <tag>生活</tag>
+         
+        <tag>杂记</tag>
+         
+        <tag>博客</tag>
+         
+         
+           
+             
+              <breadCrumb title="杂记" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+          
+             
+              <breadCrumb title="生活" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/%E7%94%9F%E6%B4%BB/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking%203.0%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2017-09-11T12:04:09.000Z</lastmod>
     <data>
@@ -247,33 +361,6 @@
 
     
   <url>
-    <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2015/11/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/</loc>
-    <lastmod>2017-09-10T13:26:43.000Z</lastmod>
-    <data>
-        <display>
-        <title>第一篇文章</title>
-        <pubTime>2015-11-12T11:37:40.000Z</pubTime>
-        
-        <tag>生活</tag>
-         
-        <tag>杂记</tag>
-         
-        <tag>博客</tag>
-         
-         
-           
-             
-              <breadCrumb title="杂记" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
-          
-             
-              <breadCrumb title="生活" url="https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/categories/%E6%9D%82%E8%AE%B0/%E7%94%9F%E6%B4%BB/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://github.com/zhoutq/zhoutq.github.io/zhoutq.github.io/2017/08/10/%E6%95%99%E4%BD%A0%E6%90%AD%E5%BB%BAApp%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/</loc>
     <lastmod>2017-09-10T13:06:13.000Z</lastmod>
     <data>
@@ -281,9 +368,9 @@
         <title>[转]教你搭建App内测下载平台</title>
         <pubTime>2017-08-10T03:22:13.000Z</pubTime>
         
-        <tag>App内测下载平台</tag>
-         
         <tag>移动开发</tag>
+         
+        <tag>App内测下载平台</tag>
          
          
            
@@ -308,9 +395,9 @@
         
         <tag>iOS</tag>
          
-        <tag>移动开发</tag>
-         
         <tag>性能优化</tag>
+         
+        <tag>移动开发</tag>
          
          
            
