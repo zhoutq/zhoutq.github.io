@@ -70,8 +70,8 @@
   
   <entry>
     <title>[转]教你搭建App内测下载平台</title>
-    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/08/10/%E6%95%99%E4%BD%A0%E6%90%AD%E5%BB%BAApp%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
-    <id>https://github.com/zhoutq/zhoutq.github.io/2017/08/10/教你搭建App内测下载平台/</id>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/08/10/17.08.10_%E6%95%99%E4%BD%A0%E6%90%AD%E5%BB%BAApp%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2017/08/10/17.08.10_教你搭建App内测下载平台/</id>
     <published>2017-08-10T03:22:13.000Z</published>
     <updated>2017-09-10T13:06:13.000Z</updated>
     
@@ -122,16 +122,16 @@
       <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
     
     
-      <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
-    
       <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="App内测下载平台" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/App%E5%86%85%E6%B5%8B%E4%B8%8B%E8%BD%BD%E5%B9%B3%E5%8F%B0/"/>
     
   </entry>
   
   <entry>
     <title>[转]简单监测iOS卡顿的demo</title>
-    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/06/21/%E7%AE%80%E5%8D%95%E7%9B%91%E6%B5%8BiOS%E5%8D%A1%E9%A1%BF%E7%9A%84demo/"/>
-    <id>https://github.com/zhoutq/zhoutq.github.io/2017/06/21/简单监测iOS卡顿的demo/</id>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2017/06/21/17.06.21_%E7%AE%80%E5%8D%95%E7%9B%91%E6%B5%8BiOS%E5%8D%A1%E9%A1%BF%E7%9A%84demo/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2017/06/21/17.06.21_简单监测iOS卡顿的demo/</id>
     <published>2017-06-21T10:13:24.000Z</published>
     <updated>2017-09-10T13:06:03.000Z</updated>
     
@@ -2029,59 +2029,9 @@ interactor.output&nbsp;=&nbsp;presenter</pre>
   </entry>
   
   <entry>
-    <title>[转]使用AFNetworking 3.0库进行网络请求时，取消单个队列和全部队列的方法(取消网络请求)</title>
-    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/05/11/16.5.11_%E4%BD%BF%E7%94%A8AFNetworking3.0%E5%8F%96%E6%B6%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/"/>
-    <id>https://github.com/zhoutq/zhoutq.github.io/2016/05/11/16.5.11_使用AFNetworking3.0取消网络请求/</id>
-    <published>2016-05-11T02:44:11.000Z</published>
-    <updated>2017-09-11T12:04:01.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>原文：<a href="http://blog.csdn.net/a645258072/article/details/51208360" target="_blank" rel="external">http://blog.csdn.net/a645258072/article/details/51208360</a></p>
-<p>项目中有时会有这种情况，当界面正在请求数据，但数据为返回之前。返回到上一个界面，这种情况下，应取消此界面的网络请求。此篇就是为了处理此种情况下的操作，可        以取消单个请求队列，如果界面接口很多，可以一次性取消所有请求队列。</p>
-<pre><code>AFHTTPSessionManager *manager = [AFHTTPSessionManagermanager];
-
-NSURLSessionDataTask *ljTask = [manager GET:@&quot;url地址&quot;parameters:@&quot;入参&quot;progress:^(NSProgress *_Nonnull downloadProgress) {
-
-    //数据请求进度
-
-} success:^(NSURLSessionDataTask *_Nonnull task,id _Nullable responseObject) {
-
-    //请求成功
-
-
-} failure:^(NSURLSessionDataTask *_Nullable task,NSError *_Nonnull error) {
-
-    //请求失败
-
-}];
-
-//取消单个网络请求
-[ljTask cancel];
-
-//取消所有的网络请求
-[manager.operationQueuecancelAllOperations];
-</code></pre>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;原文：&lt;a href=&quot;http://blog.csdn.net/a645258072/article/details/51208360&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://blog.csdn.net/a645258072/arti
-    
-    </summary>
-    
-      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/"/>
-    
-      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/categories/iOS/AFNetworking/"/>
-    
-    
-      <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
-    
-      <category term="AFNetworking" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/AFNetworking/"/>
-    
-  </entry>
-  
-  <entry>
     <title>[转]让你快速上手Runtime</title>
-    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/03/08/%E8%BD%AC-%E8%AE%A9%E4%BD%A0%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BRuntime/"/>
-    <id>https://github.com/zhoutq/zhoutq.github.io/2016/03/08/转-让你快速上手Runtime/</id>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2016/03/08/16.03.08_%E8%AE%A9%E4%BD%A0%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BRuntime/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2016/03/08/16.03.08_让你快速上手Runtime/</id>
     <published>2016-03-08T08:44:53.000Z</published>
     <updated>2017-09-10T13:29:00.000Z</updated>
     
@@ -2181,11 +2131,11 @@ NSURLSessionDataTask *ljTask = [manager GET:@&quot;url地址&quot;parameters:@&q
     
       <category term="iOS" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/iOS/"/>
     
-      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
-    
       <category term="runtime" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/runtime/"/>
     
       <category term="动态运行时" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E5%8A%A8%E6%80%81%E8%BF%90%E8%A1%8C%E6%97%B6/"/>
+    
+      <category term="移动开发" scheme="https://github.com/zhoutq/zhoutq.github.io/tags/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
     
   </entry>
   
@@ -2194,140 +2144,22 @@ NSURLSessionDataTask *ljTask = [manager GET:@&quot;url地址&quot;parameters:@&q
     <link href="https://github.com/zhoutq/zhoutq.github.io/2016/02/05/16.2.9_iOS%E5%BC%80%E5%8F%91%E4%B9%8BAFNetworking3.0.4%E4%BD%BF%E7%94%A8/"/>
     <id>https://github.com/zhoutq/zhoutq.github.io/2016/02/05/16.2.9_iOS开发之AFNetworking3.0.4使用/</id>
     <published>2016-02-05T08:44:53.000Z</published>
-    <updated>2017-09-11T15:17:13.000Z</updated>
+    <updated>2017-09-12T13:02:18.000Z</updated>
     
     <content type="html"><![CDATA[<p>原文：<a href="http://www.jianshu.com/p/11bb0d4dc649" target="_blank" rel="external">http://www.jianshu.com/p/11bb0d4dc649</a></p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><ul>
-<li>昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSURLConnection了，被弃用了，突然意识到，这个就是AFHTTPRequestOperationManager找不到的原因了，它是基于NSURLConnection封装的！！于是找了一下，现在都用的是NSURLSession了，AFN中用的是AFHTTPSessionManager了~~<p></p><br><p>特地记录下来，以便遇到这个的朋友们看看！</p><br><p>ps:如果想用以前的话，cocoapods 就不要用最新的版本了，2.6的上面有。</p><br><hr><br><h3>GET请求</h3><br><p></p><p>  <code></code></p><br><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager]; </code></pre></li>
-</ul>
-<p>[manager GET:URL parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {  </p>
-<p>}<br> success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {  </p>
-<p> NSLog(@”这里打印请求成功要做的事”);  </p>
-<p>}</p>
-<p>failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull   error) {  </p>
-<p>NSLog(@”%@”,error);  //这里打印错误信息</p>
-<p>}];</p>
-<p></p><h3>POST 请求</h3><p></p>
-<p></p><p></p><p>  <code></code></p><p></p>
-<p><pre><code><br>AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</code></pre></p>
-<p>NSMutableDictionary *parameters = @{@””:@””,@””:@””};</p>
-<p>[manager POST:URL parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {</p>
-<p>} success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
-<p>} failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
-<p>}];</p>
-<p><hr></p>
-<p></p><p>暂时用的比较多的就这两个，用到其他的 再来更新！！</p><p></p>
-<p></p><h2>最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</h2><p></p>
-<p></p><h3>补充试用AFN3.0下载方法</h3><p></p>
-<p><pre><code>/**</code></pre></p>
-<ul>
-<li><p>AFN3.0 下载<br>*/</p>
-<ul>
-<li>(void)downLoad{</li>
-</ul>
-<p>//1.创建管理者对象<br>AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>//2.确定请求的URL地址<br>NSURL </em>url = [NSURL URLWithString:@””];</p>
-<p>//3.创建请求对象<br>NSURLRequest *request = [NSURLRequest requestWithURL:url];</p>
-<p>//下载任务<br>NSURLSessionDownloadTask <em>task = [manager downloadTaskWithRequest:request progress:^(NSProgress </em> _Nonnull downloadProgress) {</p>
-<pre><code>//打印下下载进度
-WKNSLog(@&quot;%lf&quot;,1.0 * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
-</code></pre><p>} destination:^NSURL <em> _Nonnull(NSURL </em> _Nonnull targetPath, NSURLResponse * _Nonnull response) {</p>
-<pre><code>//下载地址
-WKNSLog(@&quot;默认下载地址:%@&quot;,targetPath);
-
-//设置下载路径，通过沙盒获取缓存地址，最后返回NSURL对象
-NSString *filePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)lastObject];
-return [NSURL fileURLWithPath:filePath];
-</code></pre></li>
-</ul>
-<pre><code>} completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-
-    //下载完成调用的方法
-    WKNSLog(@&quot;下载完成：&quot;);
-    WKNSLog(@&quot;%@--%@&quot;,response,filePath);
-
-}];
-
-//开始启动任务
-[task resume];
-</code></pre><p>}</p>
-<p></p><h3>AFN3.0 上传</h3><p></p>
-<p><pre><code>/**</code></pre></p>
-<ul>
-<li>AFN 3.0 上传</li>
-<li>有两种方式</li>
-<li>upLoad1 和 upLoad2<br>*/</li>
-</ul>
-<p>//第一种方法是通过工程中的文件进行上传</p>
-<ul>
-<li><p>(void)upLoad1{</p>
-<p>  //1。创建管理者对象<br>  AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</p>
-<p>  //2.上传文件<br>  NSDictionary *dict = @{@”username”:@”1234”};</p>
-<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
-<pre><code>//上传文件参数
-UIImage *iamge = [UIImage imageNamed:@&quot;123.png&quot;];
-NSData *data = UIImagePNGRepresentation(iamge);
-//这个就是参数
-[formData appendPartWithFileData:data name:@&quot;file&quot; fileName:@&quot;123.png&quot; mimeType:@&quot;image/png&quot;];
-</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
-<pre><code>//打印下上传进度
-WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
-</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
-<pre><code>//请求成功
-WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
-</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
-<pre><code>//请求失败
-WKNSLog(@&quot;请求失败：%@&quot;,error);
-</code></pre><p>  }];</p>
-</li>
-</ul>
-<p>}</p>
-<p>//第二种是通过URL来获取路径，进入沙盒或者系统相册等等</p>
-<ul>
-<li><p>(void)upLoda2{<br>  //1.创建管理者对象<br>  AFHTTPSessionManager <em>manager = [AFHTTPSessionManager manager];<br>  //2.上传文件<br>  NSDictionary </em>dict = @{@”username”:@”1234”};</p>
-<p>  NSString *urlString = @”22222”;<br>  [manager POST:urlString parameters:dict constructingBodyWithBlock:^(id&lt;AFMultipartFormData&gt;  _Nonnull formData) {</p>
-<pre><code>[formData appendPartWithFileURL:[NSURL fileURLWithPath:@&quot;文件地址&quot;] name:@&quot;file&quot; fileName:@&quot;1234.png&quot; mimeType:@&quot;application/octet-stream&quot; error:nil];
-</code></pre><p>  } progress:^(NSProgress * _Nonnull uploadProgress) {</p>
-<pre><code>//打印下上传进度
-WKNSLog(@&quot;%lf&quot;,1.0 *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
-</code></pre><p>  } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {</p>
-<pre><code>//请求成功
-WKNSLog(@&quot;请求成功：%@&quot;,responseObject);
-</code></pre><p>  } failure:^(NSURLSessionDataTask <em> _Nullable task, NSError </em> _Nonnull error) {</p>
-<pre><code>//请求失败
-WKNSLog(@&quot;请求失败：%@&quot;,error);
-</code></pre><p>  }];<br>}<br></p><h3>监测当前网络状态（网络监听）</h3><br><pre><code>- (void)AFNetworkStatus{<p></p>
-<p>  //1.创建网络监测者<br>  AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];</p>
-<p>  /*枚举里面四个状态  分别对应 未知 无网络 数据 WiFi<br>   typedef NS_ENUM(NSInteger, AFNetworkReachabilityStatus) {</p>
-<pre><code>AFNetworkReachabilityStatusUnknown          = -1,      未知
-AFNetworkReachabilityStatusNotReachable     = 0,       无网络
-AFNetworkReachabilityStatusReachableViaWWAN = 1,       蜂窝数据网络
-AFNetworkReachabilityStatusReachableViaWiFi = 2,       WiFi
-</code></pre><p>   };<br>   */</p>
-<p>  [manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {</p>
-<pre><code>//这里是监测到网络改变的block  可以写成switch方便
-//在里面可以随便写事件
-switch (status) {
-    case AFNetworkReachabilityStatusUnknown:
-        WKNSLog(@&quot;未知网络状态&quot;);
-        break;
-    case AFNetworkReachabilityStatusNotReachable:
-        WKNSLog(@&quot;无网络&quot;);
-        break;
-
-    case AFNetworkReachabilityStatusReachableViaWWAN:
-        WKNSLog(@&quot;蜂窝数据网&quot;);
-        break;
-
-    case AFNetworkReachabilityStatusReachableViaWiFi:
-        WKNSLog(@&quot;WiFi网络&quot;);
-        break;
-
-    default:
-        break;
-}
-</code></pre><p>  }] ;<br>}</p></code></pre><br><p>有知道新版本用法的各位大神请不吝赐教，小白再次拜谢了！！</p><br><h5>在使用的过程中遇到了一些问题的 总结，<a href="http://www.jianshu.com/p/95a368c6f7de" target="_blank">在这里</a>，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</h5><br><hr><br><p>多谢各位道友的指正，在下载里面那个地方return [NSURL fileURLWithPath:filePath]; 已经改过来了</p>
-</li>
-</ul>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>昨天使用Cocoapods导入AFN做POST的时候，导入的最新版的3.0.4,突然发现找不到AFHTTPRequestOperationManager了。。。上github上一看，发现没有这个了。刚开始以为是cocoapods没有给我导进去，因为是小demo，就想自己写一个网络请求的，发现也没有这NSURLConnection了，被弃用了，突然意识到，这个就是AFHTTPRequestOperationManager找不到的原因了，它是基于NSURLConnection封装的！！于是找了一下，现在都用的是NSURLSession了，AFN中用的是AFHTTPSessionManager了~~</p>
+<p>特地记录下来，以便遇到这个的朋友们看看！</p>
+<p>ps:如果想用以前的话，cocoapods 就不要用最新的版本了，2.6的上面有。</p>
+<h3 id="GET请求"><a href="#GET请求" class="headerlink" title="GET请求"></a>GET请求</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager]; </div><div class="line"></div><div class="line">[manager GET:URL parameters:<span class="literal">nil</span> progress:^(<span class="built_in">NSProgress</span> * _Nonnull downloadProgress) &#123;  </div><div class="line"></div><div class="line">&#125;     </div><div class="line">success:^(<span class="built_in">NSURLSessionDataTask</span> * _Nonnull task, <span class="keyword">id</span>  _Nullable responseObject) &#123;  </div><div class="line"></div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"这里打印请求成功要做的事"</span>);  </div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">failure:^(<span class="built_in">NSURLSessionDataTask</span> * _Nullable task, <span class="built_in">NSError</span> * _Nonnull   error) &#123;  </div><div class="line"></div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,error);  <span class="comment">//这里打印错误信息</span></div><div class="line"></div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h3 id="POST-请求"><a href="#POST-请求" class="headerlink" title="POST 请求"></a>POST 请求</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line"></div><div class="line"></div><div class="line"><span class="built_in">NSMutableDictionary</span> *parameters = @&#123;<span class="string">@""</span>:<span class="string">@""</span>,<span class="string">@""</span>:<span class="string">@""</span>&#125;;</div><div class="line"></div><div class="line">[manager POST:URL parameters:parameters progress:^(<span class="built_in">NSProgress</span> * _Nonnull uploadProgress) &#123;</div><div class="line"></div><div class="line"></div><div class="line">&#125; success:^(<span class="built_in">NSURLSessionDataTask</span> * _Nonnull task, <span class="keyword">id</span>  _Nullable responseObject) &#123;</div><div class="line"></div><div class="line"></div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> * _Nullable task, <span class="built_in">NSError</span> * _Nonnull error) &#123;</div><div class="line"></div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<p>暂时用的比较多的就这两个，用到其他的 再来更新！！</p>
+<p>最近又用到了下载，索性 上传下载都研究了一下 ，补充进来</p>
+<h3 id="补充试用AFN3-0下载方法"><a href="#补充试用AFN3-0下载方法" class="headerlink" title="补充试用AFN3.0下载方法"></a>补充试用AFN3.0下载方法</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">*  AFN3.0 下载</div><div class="line">*/</div><div class="line">- (<span class="keyword">void</span>)downLoad&#123;</div><div class="line"></div><div class="line"><span class="comment">//1.创建管理者对象</span></div><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line"><span class="comment">//2.确定请求的URL地址</span></div><div class="line"><span class="built_in">NSURL</span> *url = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</div><div class="line"></div><div class="line"><span class="comment">//3.创建请求对象</span></div><div class="line"><span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:url];</div><div class="line"></div><div class="line"><span class="comment">//下载任务</span></div><div class="line"><span class="built_in">NSURLSessionDownloadTask</span> *task = [manager downloadTaskWithRequest:request progress:^(<span class="built_in">NSProgress</span> * _Nonnull downloadProgress) &#123;</div><div class="line"><span class="comment">//打印下下载进度</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"%lf"</span>,<span class="number">1.0</span> * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);</div><div class="line"></div><div class="line">&#125; destination:^<span class="built_in">NSURL</span> * _Nonnull(<span class="built_in">NSURL</span> * _Nonnull targetPath, <span class="built_in">NSURLResponse</span> * _Nonnull response) &#123;</div><div class="line"><span class="comment">//下载地址</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"默认下载地址:%@"</span>,targetPath);</div><div class="line"></div><div class="line"><span class="comment">//设置下载路径，通过沙盒获取缓存地址，最后返回NSURL对象</span></div><div class="line"><span class="built_in">NSString</span> *filePath = [<span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSCachesDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>)lastObject];</div><div class="line"><span class="keyword">return</span> [<span class="built_in">NSURL</span> fileURLWithPath:filePath];</div><div class="line"></div><div class="line"></div><div class="line">&#125; completionHandler:^(<span class="built_in">NSURLResponse</span> * _Nonnull response, <span class="built_in">NSURL</span> * _Nullable filePath, <span class="built_in">NSError</span> * _Nullable error) &#123;</div><div class="line"></div><div class="line"><span class="comment">//下载完成调用的方法</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"下载完成："</span>);</div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"%@--%@"</span>,response,filePath);</div><div class="line"></div><div class="line">&#125;];</div><div class="line"></div><div class="line"><span class="comment">//开始启动任务</span></div><div class="line">[task resume];</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="AFN3-0-上传"><a href="#AFN3-0-上传" class="headerlink" title="AFN3.0 上传"></a>AFN3.0 上传</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">*  AFN 3.0 上传</div><div class="line">*      有两种方式</div><div class="line">*          upLoad1 和 upLoad2</div><div class="line">*/</div><div class="line"></div><div class="line"><span class="comment">//第一种方法是通过工程中的文件进行上传</span></div><div class="line">- (<span class="keyword">void</span>)upLoad1&#123;</div><div class="line"></div><div class="line"><span class="comment">//1。创建管理者对象</span></div><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line"></div><div class="line"><span class="comment">//2.上传文件</span></div><div class="line"><span class="built_in">NSDictionary</span> *dict = @&#123;<span class="string">@"username"</span>:<span class="string">@"1234"</span>&#125;;</div><div class="line"></div><div class="line"><span class="built_in">NSString</span> *urlString = <span class="string">@"22222"</span>;</div><div class="line">[manager POST:urlString parameters:dict constructingBodyWithBlock:^(<span class="keyword">id</span>&lt;AFMultipartFormData&gt;  _Nonnull formData) &#123;</div><div class="line"><span class="comment">//上传文件参数</span></div><div class="line"><span class="built_in">UIImage</span> *iamge = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"123.png"</span>];</div><div class="line"><span class="built_in">NSData</span> *data = <span class="built_in">UIImagePNGRepresentation</span>(iamge);</div><div class="line"><span class="comment">//这个就是参数</span></div><div class="line">[formData appendPartWithFileData:data name:<span class="string">@"file"</span> fileName:<span class="string">@"123.png"</span> mimeType:<span class="string">@"image/png"</span>];</div><div class="line"></div><div class="line">&#125; progress:^(<span class="built_in">NSProgress</span> * _Nonnull uploadProgress) &#123;</div><div class="line"></div><div class="line"><span class="comment">//打印下上传进度</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"%lf"</span>,<span class="number">1.0</span> *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);</div><div class="line">&#125; success:^(<span class="built_in">NSURLSessionDataTask</span> * _Nonnull task, <span class="keyword">id</span>  _Nullable responseObject) &#123;</div><div class="line"></div><div class="line"><span class="comment">//请求成功</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"请求成功：%@"</span>,responseObject);</div><div class="line"></div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> * _Nullable task, <span class="built_in">NSError</span> * _Nonnull error) &#123;</div><div class="line"></div><div class="line"><span class="comment">//请求失败</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"请求失败：%@"</span>,error);</div><div class="line">&#125;];</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//第二种是通过URL来获取路径，进入沙盒或者系统相册等等</span></div><div class="line">- (<span class="keyword">void</span>)upLoda2&#123;</div><div class="line"><span class="comment">//1.创建管理者对象</span></div><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line"><span class="comment">//2.上传文件</span></div><div class="line"><span class="built_in">NSDictionary</span> *dict = @&#123;<span class="string">@"username"</span>:<span class="string">@"1234"</span>&#125;;</div><div class="line"></div><div class="line"><span class="built_in">NSString</span> *urlString = <span class="string">@"22222"</span>;</div><div class="line">[manager POST:urlString parameters:dict constructingBodyWithBlock:^(<span class="keyword">id</span>&lt;AFMultipartFormData&gt;  _Nonnull formData) &#123;</div><div class="line"></div><div class="line">[formData appendPartWithFileURL:[<span class="built_in">NSURL</span> fileURLWithPath:<span class="string">@"文件地址"</span>] name:<span class="string">@"file"</span> fileName:<span class="string">@"1234.png"</span> mimeType:<span class="string">@"application/octet-stream"</span> error:<span class="literal">nil</span>];</div><div class="line">&#125; progress:^(<span class="built_in">NSProgress</span> * _Nonnull uploadProgress) &#123;</div><div class="line"></div><div class="line"><span class="comment">//打印下上传进度</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"%lf"</span>,<span class="number">1.0</span> *uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);</div><div class="line">&#125; success:^(<span class="built_in">NSURLSessionDataTask</span> * _Nonnull task, <span class="keyword">id</span>  _Nullable responseObject) &#123;</div><div class="line"></div><div class="line"><span class="comment">//请求成功</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"请求成功：%@"</span>,responseObject);</div><div class="line"></div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> * _Nullable task, <span class="built_in">NSError</span> * _Nonnull error) &#123;</div><div class="line"></div><div class="line"><span class="comment">//请求失败</span></div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"请求失败：%@"</span>,error);</div><div class="line">&#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="监测当前网络状态（网络监听）"><a href="#监测当前网络状态（网络监听）" class="headerlink" title="监测当前网络状态（网络监听）"></a>监测当前网络状态（网络监听）</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)AFNetworkStatus&#123;</div><div class="line"></div><div class="line"><span class="comment">//1.创建网络监测者</span></div><div class="line">AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];</div><div class="line"></div><div class="line"><span class="comment">/*枚举里面四个状态  分别对应 未知 无网络 数据 WiFi</span></div><div class="line">typedef NS_ENUM(NSInteger, AFNetworkReachabilityStatus) &#123;</div><div class="line">AFNetworkReachabilityStatusUnknown          = -1,      未知</div><div class="line">AFNetworkReachabilityStatusNotReachable     = 0,       无网络</div><div class="line">AFNetworkReachabilityStatusReachableViaWWAN = 1,       蜂窝数据网络</div><div class="line">AFNetworkReachabilityStatusReachableViaWiFi = 2,       WiFi</div><div class="line">&#125;;</div><div class="line">*/</div><div class="line"></div><div class="line">[manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) &#123;</div><div class="line"><span class="comment">//这里是监测到网络改变的block  可以写成switch方便</span></div><div class="line"><span class="comment">//在里面可以随便写事件</span></div><div class="line"><span class="keyword">switch</span> (status) &#123;</div><div class="line"><span class="keyword">case</span> AFNetworkReachabilityStatusUnknown:</div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"未知网络状态"</span>);</div><div class="line"><span class="keyword">break</span>;</div><div class="line"><span class="keyword">case</span> AFNetworkReachabilityStatusNotReachable:</div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"无网络"</span>);</div><div class="line"><span class="keyword">break</span>;</div><div class="line"></div><div class="line"><span class="keyword">case</span> AFNetworkReachabilityStatusReachableViaWWAN:</div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"蜂窝数据网"</span>);</div><div class="line"><span class="keyword">break</span>;</div><div class="line"></div><div class="line"><span class="keyword">case</span> AFNetworkReachabilityStatusReachableViaWiFi:</div><div class="line"><span class="built_in">WKNSLog</span>(<span class="string">@"WiFi网络"</span>);</div><div class="line"></div><div class="line"><span class="keyword">break</span>;</div><div class="line"></div><div class="line"><span class="keyword">default</span>:</div><div class="line"><span class="keyword">break</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#125;] ;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>有知道新版本用法的各位大神请不吝赐教，小白再次拜谢了！！</p>
+<p>在使用的过程中遇到了一些问题的 总结，在这里，有需要的亲们可以去看一下，就不往这里放了，占地方。。。。</p>
+<p>多谢各位道友的指正，在下载里面那个地方return [NSURL fileURLWithPath:filePath]; 已经改过来了</p>
 ]]></content>
     
     <summary type="html">
@@ -2414,7 +2246,7 @@ switch (status) {
     <link href="https://github.com/zhoutq/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking%203.0%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97/"/>
     <id>https://github.com/zhoutq/zhoutq.github.io/2015/12/09/15.12.09_AFNetworking 3.0迁移指南/</id>
     <published>2015-12-09T08:44:53.000Z</published>
-    <updated>2017-09-11T12:04:09.000Z</updated>
+    <updated>2017-09-12T12:44:31.000Z</updated>
     
     <content type="html"><![CDATA[<p>原文：<a href="http://www.jianshu.com/p/047463a7ce9b" target="_blank" rel="external">http://www.jianshu.com/p/047463a7ce9b</a></p>
 <h2 id="AFNetworking-3-0"><a href="#AFNetworking-3-0" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h2><blockquote>
@@ -2444,53 +2276,14 @@ switch (status) {
 <li>responseSerializer</li>
 </ul>
 <p>接下来举一个关于AFHTTPSessionManager的简单例子。<strong>注意</strong>HTTP网络请求返回的不再是AFHTTPRequestOperation, 修改成为了NSURLSessionTask，并且成功和失败的Block块中的参数也变更为了NSURLSessionTask，而不再是AFHTTPRequestOperation。</p>
-<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><pre><code>AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-[manager GET:@&quot;请求的url&quot; parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@&quot;成功&quot;);
-} failure:^(AFHTTPRequestOperation *operation, NSError*error) {
-        NSLog(@&quot;失败&quot;);
-}];`&lt;/pre&gt;
-
-##### AFNetworking 3.0
-
-&lt;pre&gt;`AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
-[session GET:@&quot;请求的url&quot; parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSLog(@&quot;成功&quot;);
-} failure:^(NSURLSessionDataTask *task, NSError *error) {
-        NSLog(@&quot;失败&quot;);        
-}];`&lt;/pre&gt;
-
-#### AFHTTPRequestOperation 核心代码
-
-与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。
-
-在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。
-
-接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。
-
-##### AFNetworking 2.x
-
-&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
-NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-op.responseSerializer = [AFJSONResponseSerializer serializer];
-[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@&quot;JSON: %@&quot;, responseObject);
-} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@&quot;Error: %@&quot;, error);
-}];
-[[NSOperationQueue mainQueue] addOperation:op];`&lt;/pre&gt;
-
-##### AFNetworking 3.0
-
-&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
-AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-[manager GET:URL.absoluteString parameters:nil success:^(NSURLSessionTask *task, id responseObject) {
-        NSLog(@&quot;JSON: %@&quot;, responseObject);
-} failure:^(NSURLSessionTask *operation, NSError *error) {
-        NSLog(@&quot;Error: %@&quot;, error);
-}];
-</code></pre><h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
+<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];</div><div class="line">[manager GET:<span class="string">@"请求的url"</span> parameters:<span class="literal">nil</span> success:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成功"</span>);</div><div class="line">&#125; failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span>*error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"失败"</span>);</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h5 id="AFNetworking-3-0-1"><a href="#AFNetworking-3-0-1" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">AFHTTPSessionManager *session = [AFHTTPSessionManager manager];</div><div class="line">[session GET:<span class="string">@"请求的url"</span> parameters:<span class="literal">nil</span> success:^(<span class="built_in">NSURLSessionDataTask</span> *task, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成功"</span>);</div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> *task, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"失败"</span>);        </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h4 id="AFHTTPRequestOperation-核心代码"><a href="#AFHTTPRequestOperation-核心代码" class="headerlink" title="AFHTTPRequestOperation 核心代码"></a>AFHTTPRequestOperation 核心代码</h4><p>与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。</p>
+<p>在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。</p>
+<p>接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。</p>
+<h5 id="AFNetworking-2-x-1"><a href="#AFNetworking-2-x-1" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</div><div class="line"><span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:URL];</div><div class="line">AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">op.responseSerializer = [AFJSONResponseSerializer serializer];</div><div class="line">[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"JSON: %@"</span>, responseObject);</div><div class="line">&#125; failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: %@"</span>, error);</div><div class="line">&#125;];</div><div class="line">[[<span class="built_in">NSOperationQueue</span> mainQueue] addOperation:op];</div></pre></td></tr></table></figure>
+<h5 id="AFNetworking-3-0-2"><a href="#AFNetworking-3-0-2" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</div><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line">[manager GET:URL.absoluteString parameters:<span class="literal">nil</span> success:^(<span class="built_in">NSURLSessionTask</span> *task, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"JSON: %@"</span>, responseObject);</div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionTask</span> *operation, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: %@"</span>, error);</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
 <p>UIWebView的类目被重构为使用AFHTTPSessionManager作为其网络请求。</p>
 <h4 id="UIAlertView的类目被废弃"><a href="#UIAlertView的类目被废弃" class="headerlink" title="UIAlertView的类目被废弃"></a>UIAlertView的类目被废弃</h4><p>从AFNetworking 3.0后UIAlertView的类目因过时而被废弃。并没有提供UIAlertController类目的计划，因为这是应用程序应处理的逻辑，而不是这个库。</p>
 <p>原文链接: <a href="https://github.com/AFNetworking/AFNetworking/wiki/AFNetworking-3.0-Migration-Guide#new-requirements-ios-7-mac-os-x-109-watchos-2-tvos-9--xcode-7">AFNetworking 3.0</a><br>纯属个人翻译，如有错误，还请纠正。</p>
@@ -2648,8 +2441,8 @@ AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
   
   <entry>
     <title>第一篇文章</title>
-    <link href="https://github.com/zhoutq/zhoutq.github.io/2015/11/12/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/"/>
-    <id>https://github.com/zhoutq/zhoutq.github.io/2015/11/12/第一篇文章/</id>
+    <link href="https://github.com/zhoutq/zhoutq.github.io/2015/11/12/15.11.12_%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/"/>
+    <id>https://github.com/zhoutq/zhoutq.github.io/2015/11/12/15.11.12_第一篇文章/</id>
     <published>2015-11-12T11:37:40.000Z</published>
     <updated>2017-09-11T12:45:06.000Z</updated>
     

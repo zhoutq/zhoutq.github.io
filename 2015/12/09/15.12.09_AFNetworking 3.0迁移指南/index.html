@@ -200,53 +200,14 @@ AFNetworking是一款在OS X和iOS下都令人喜爱的网络库。为了迎合i
 <li>responseSerializer</li>
 </ul>
 <p>接下来举一个关于AFHTTPSessionManager的简单例子。<strong>注意</strong>HTTP网络请求返回的不再是AFHTTPRequestOperation, 修改成为了NSURLSessionTask，并且成功和失败的Block块中的参数也变更为了NSURLSessionTask，而不再是AFHTTPRequestOperation。</p>
-<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><pre><code>AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-[manager GET:@&quot;请求的url&quot; parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@&quot;成功&quot;);
-} failure:^(AFHTTPRequestOperation *operation, NSError*error) {
-        NSLog(@&quot;失败&quot;);
-}];`&lt;/pre&gt;
-
-##### AFNetworking 3.0
-
-&lt;pre&gt;`AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
-[session GET:@&quot;请求的url&quot; parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        NSLog(@&quot;成功&quot;);
-} failure:^(NSURLSessionDataTask *task, NSError *error) {
-        NSLog(@&quot;失败&quot;);        
-}];`&lt;/pre&gt;
-
-#### AFHTTPRequestOperation 核心代码
-
-与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。
-
-在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。
-
-接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。
-
-##### AFNetworking 2.x
-
-&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
-NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-op.responseSerializer = [AFJSONResponseSerializer serializer];
-[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@&quot;JSON: %@&quot;, responseObject);
-} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@&quot;Error: %@&quot;, error);
-}];
-[[NSOperationQueue mainQueue] addOperation:op];`&lt;/pre&gt;
-
-##### AFNetworking 3.0
-
-&lt;pre&gt;`NSURL *URL = [NSURL URLWithString:@&quot;&quot;];
-AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-[manager GET:URL.absoluteString parameters:nil success:^(NSURLSessionTask *task, id responseObject) {
-        NSLog(@&quot;JSON: %@&quot;, responseObject);
-} failure:^(NSURLSessionTask *operation, NSError *error) {
-        NSLog(@&quot;Error: %@&quot;, error);
-}];
-</code></pre><h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
+<h5 id="AFNetworking-2-x"><a href="#AFNetworking-2-x" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];</div><div class="line">[manager GET:<span class="string">@"请求的url"</span> parameters:<span class="literal">nil</span> success:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成功"</span>);</div><div class="line">&#125; failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span>*error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"失败"</span>);</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h5 id="AFNetworking-3-0-1"><a href="#AFNetworking-3-0-1" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">AFHTTPSessionManager *session = [AFHTTPSessionManager manager];</div><div class="line">[session GET:<span class="string">@"请求的url"</span> parameters:<span class="literal">nil</span> success:^(<span class="built_in">NSURLSessionDataTask</span> *task, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成功"</span>);</div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionDataTask</span> *task, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"失败"</span>);        </div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h4 id="AFHTTPRequestOperation-核心代码"><a href="#AFHTTPRequestOperation-核心代码" class="headerlink" title="AFHTTPRequestOperation 核心代码"></a>AFHTTPRequestOperation 核心代码</h4><p>与NSURLConnection对象不同，每个共享应用范围的设置如会话管理、缓存策略、Cookie存储以及URL协议等，这些NSURLSession对象都可以单独进行配置。使用特定的配置来初始化会话，它可以发送任务来获取数据，并上传或下载文件。</p>
+<p>在AFNetworking 2.0中，使用AFHTTPRequestOperation，有可能创建一个没有额外开销的独立的网络请求来获取数据。NSURLSession则需要更多的开销，为了获得所要请求的数据。</p>
+<p>接下来，将要通过AFHTTPSessionManager创建一个对象，并创建一个任务和启动它。</p>
+<h5 id="AFNetworking-2-x-1"><a href="#AFNetworking-2-x-1" class="headerlink" title="AFNetworking 2.x"></a>AFNetworking 2.x</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</div><div class="line"><span class="built_in">NSURLRequest</span> *request = [<span class="built_in">NSURLRequest</span> requestWithURL:URL];</div><div class="line">AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];</div><div class="line">op.responseSerializer = [AFJSONResponseSerializer serializer];</div><div class="line">[op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"JSON: %@"</span>, responseObject);</div><div class="line">&#125; failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: %@"</span>, error);</div><div class="line">&#125;];</div><div class="line">[[<span class="built_in">NSOperationQueue</span> mainQueue] addOperation:op];</div></pre></td></tr></table></figure>
+<h5 id="AFNetworking-3-0-2"><a href="#AFNetworking-3-0-2" class="headerlink" title="AFNetworking 3.0"></a>AFNetworking 3.0</h5><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURL</span> *URL = [<span class="built_in">NSURL</span> URLWithString:<span class="string">@""</span>];</div><div class="line">AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];</div><div class="line">[manager GET:URL.absoluteString parameters:<span class="literal">nil</span> success:^(<span class="built_in">NSURLSessionTask</span> *task, <span class="keyword">id</span> responseObject) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"JSON: %@"</span>, responseObject);</div><div class="line">&#125; failure:^(<span class="built_in">NSURLSessionTask</span> *operation, <span class="built_in">NSError</span> *error) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"Error: %@"</span>, error);</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<h4 id="UIKit的迁移"><a href="#UIKit的迁移" class="headerlink" title="UIKit的迁移"></a>UIKit的迁移</h4><p>图片下载已经被重构，以遵循AlamofireImage架构与新的AFImageDownloader类。这个类的图片下载职责的代理人是UIButton与UIImageView的类目，并且提供了一些方法，在必要时可以自定义。类别中，下载远程图片的实际方法没有改变。</p>
 <p>UIWebView的类目被重构为使用AFHTTPSessionManager作为其网络请求。</p>
 <h4 id="UIAlertView的类目被废弃"><a href="#UIAlertView的类目被废弃" class="headerlink" title="UIAlertView的类目被废弃"></a>UIAlertView的类目被废弃</h4><p>从AFNetworking 3.0后UIAlertView的类目因过时而被废弃。并没有提供UIAlertController类目的计划，因为这是应用程序应处理的逻辑，而不是这个库。</p>
 <p>原文链接: <a href="https://github.com/AFNetworking/AFNetworking/wiki/AFNetworking-3.0-Migration-Guide#new-requirements-ios-7-mac-os-x-109-watchos-2-tvos-9--xcode-7">AFNetworking 3.0</a><br>纯属个人翻译，如有错误，还请纠正。</p>
@@ -257,7 +218,7 @@ AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
   <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
   <div class="random-toc">
     <h2>目录</h2>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking-3-0"><span class="toc-text">AFNetworking 3.0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7"><span class="toc-text">新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, & Xcode 7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSURLConnection的API已废弃"><span class="toc-text">NSURLConnection的API已废弃</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#弃用的类"><span class="toc-text">弃用的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改的类"><span class="toc-text">修改的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迁移"><span class="toc-text">迁移</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AFHTTPRequestOperationManager-核心代码"><span class="toc-text">AFHTTPRequestOperationManager 核心代码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-2-x"><span class="toc-text">AFNetworking 2.x</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIKit的迁移"><span class="toc-text">UIKit的迁移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIAlertView的类目被废弃"><span class="toc-text">UIAlertView的类目被废弃</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AFNetworking-3-0"><span class="toc-text">AFNetworking 3.0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新设备要求-iOS-7-Mac-OS-X-10-9-watchOS-2-tvOS-9-amp-Xcode-7"><span class="toc-text">新设备要求: iOS 7, Mac OS X 10.9, watchOS 2, tvOS 9, & Xcode 7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSURLConnection的API已废弃"><span class="toc-text">NSURLConnection的API已废弃</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#弃用的类"><span class="toc-text">弃用的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改的类"><span class="toc-text">修改的类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迁移"><span class="toc-text">迁移</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AFHTTPRequestOperationManager-核心代码"><span class="toc-text">AFHTTPRequestOperationManager 核心代码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-2-x"><span class="toc-text">AFNetworking 2.x</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-3-0-1"><span class="toc-text">AFNetworking 3.0</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AFHTTPRequestOperation-核心代码"><span class="toc-text">AFHTTPRequestOperation 核心代码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-2-x-1"><span class="toc-text">AFNetworking 2.x</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#AFNetworking-3-0-2"><span class="toc-text">AFNetworking 3.0</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIKit的迁移"><span class="toc-text">UIKit的迁移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UIAlertView的类目被废弃"><span class="toc-text">UIAlertView的类目被废弃</span></a></li></ol></li></ol></li></ol>
   </div>
 </div>
 
