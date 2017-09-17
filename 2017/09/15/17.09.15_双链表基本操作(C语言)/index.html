@@ -1,0 +1,423 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="前言项目Git地址：DLinkListTest。
+基本用法：
+
+创建双链表
+打印双链表
+双链表指定节点数之前插入新的元素
+双链表删除元素
+
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768...">
+  
+  <title>双链表基本操作(C语言) [ 统乾 ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="统乾">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/09/16/17.09.16_二叉树基本操作(C语言)/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        二叉树基本操作(C语言)
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2017/09/14/17.09.14_单链表基本操作(C语言)/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        单链表基本操作(C语言)
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">统乾</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>双链表基本操作(C语言)</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-09-15</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/c-c/">c/c++</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/c-c/双链表/">双链表</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/数据结构和算法/">数据结构和算法</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/c-c/">c/c++</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/双链表/">双链表</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>项目Git地址：<a href="https://github.com/zhoutq/DLinkListTest">DLinkListTest</a>。</p>
+<p>基本用法：</p>
+<ul>
+<li>创建双链表</li>
+<li>打印双链表</li>
+<li>双链表指定节点数之前插入新的元素</li>
+<li>双链表删除元素</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//  main.c</span></div><div class="line"><span class="comment">//  DLinkList</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//  Created by zhoutq on 2017/9/15.</span></div><div class="line"><span class="comment">//  Copyright © 2017年 zhoutq. All rights reserved.</span></div><div class="line"><span class="comment">//</span></div><div class="line"></div><div class="line"><span class="meta">#include <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#include <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#include <span class="meta-string">&lt;malloc/malloc.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">定义双链表节点类型</div><div class="line">*/</div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> DNode &#123;</div><div class="line">    <span class="keyword">char</span> data;</div><div class="line">    <span class="keyword">struct</span> DNode *pre;</div><div class="line">    <span class="keyword">struct</span> DNode *next;</div><div class="line">&#125;DLinkList;</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">创建双链表</div><div class="line">*/</div><div class="line">DLinkList* CreateDLinkList(<span class="keyword">char</span> a[], <span class="keyword">int</span> n) &#123;</div><div class="line"></div><div class="line">    <span class="comment">// 创建头结点</span></div><div class="line">    DLinkList *head = (DLinkList *)malloc(<span class="keyword">sizeof</span>(DLinkList));</div><div class="line">    head-&gt;pre = <span class="literal">NULL</span>;</div><div class="line">    head-&gt;next = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">    DLinkList *p, *q;</div><div class="line">    p = head; <span class="comment">// p 指向头结点</span></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</div><div class="line"></div><div class="line">        q = (DLinkList *)malloc(<span class="keyword">sizeof</span>(DLinkList));</div><div class="line">        q-&gt;data = a[i];</div><div class="line">        q-&gt;pre = p; <span class="comment">// 新创建节点的pre指向p</span></div><div class="line">        q-&gt;next = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">        p-&gt;next = q; <span class="comment">// p的next指向q</span></div><div class="line">        p = q; <span class="comment">// p 后移</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> head;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">打印双链表</div><div class="line">*/</div><div class="line"><span class="keyword">void</span> PrintfDLinkList(DLinkList *head) &#123;</div><div class="line"></div><div class="line">    DLinkList *p = head-&gt;next;</div><div class="line">    <span class="keyword">while</span> (p) &#123;</div><div class="line">        printf(<span class="string">"%c,"</span>,p-&gt;data);</div><div class="line">        p = p-&gt;next;</div><div class="line">    &#125;</div><div class="line">    printf(<span class="string">"\n"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">双链表指定节点数之前插入新的元素: a前面插入c</div><div class="line">*/</div><div class="line"><span class="keyword">void</span> InsterDLinkList(DLinkList *head, <span class="keyword">char</span> a, <span class="keyword">char</span> c) &#123;</div><div class="line"></div><div class="line">    DLinkList *p = head;</div><div class="line">    DLinkList *q = <span class="literal">NULL</span>;</div><div class="line"></div><div class="line">    <span class="keyword">while</span> (p-&gt;next) &#123;</div><div class="line"></div><div class="line">        <span class="comment">// 判断 p 下一个节点数据是否为 a 数据</span></div><div class="line">        <span class="keyword">if</span> (p-&gt;next-&gt;data == a) &#123;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">    p = p-&gt;next;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// break 后 创建新节点 q</span></div><div class="line">    q = (DLinkList *)malloc(<span class="keyword">sizeof</span>(DLinkList));</div><div class="line">    q-&gt;data = c;</div><div class="line">    q-&gt;pre = p;</div><div class="line">    q-&gt;next = p-&gt;next;  <span class="comment">// 将 q-&gt;next 为原先 p-&gt;next</span></div><div class="line"></div><div class="line">    p-&gt;next-&gt;pre = q; <span class="comment">// p-&gt;next 即data == a的节点的pre指向q</span></div><div class="line">    p-&gt;next = q; <span class="comment">// 然后 p-&gt;next 指向 q</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line">双链表删除元素</div><div class="line">*/</div><div class="line"><span class="keyword">void</span> DeleteDLinkList(DLinkList *head, <span class="keyword">char</span> a) &#123;</div><div class="line"></div><div class="line">    DLinkList *p = head-&gt;next;</div><div class="line">    <span class="keyword">while</span> (p) &#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (p-&gt;data == a) &#123;</div><div class="line"></div><div class="line">            p-&gt;pre-&gt;next = p-&gt;next;</div><div class="line">            p-&gt;next-&gt;pre = p-&gt;pre;</div><div class="line">            free(p);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    p = p-&gt;next;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line"></div><div class="line">    <span class="keyword">char</span> a[<span class="number">5</span>] = &#123;<span class="string">'a'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>&#125;;</div><div class="line">    DLinkList *dlist = CreateDLinkList(a, <span class="number">5</span>);</div><div class="line">    PrintfDLinkList(dlist);</div><div class="line">    InsterDLinkList(dlist, <span class="string">'c'</span>, <span class="string">'b'</span>);</div><div class="line">    PrintfDLinkList(dlist);</div><div class="line">    DeleteDLinkList(dlist, <span class="string">'c'</span>);</div><div class="line">    PrintfDLinkList(dlist);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/09/16/17.09.16_二叉树基本操作(C语言)/" class="prev">&larr; 上一篇 二叉树基本操作(C语言)</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2017/09/14/17.09.14_单链表基本操作(C语言)/" class="next">下一篇 单链表基本操作(C语言) &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+  <script type="text/javascript">
+    var jiathis_config = {"data_track_clickback":true,"summary":"","showClose":true,"shortUrl":false,"hideMore":false};
+  </script>
+  <script type="text/javascript" src="//v3.jiathis.com/code/jiathis_r.js?uid=2144742&btn=r2.gif&move=0" charset="utf-8"></script>
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      <div id="uyan_frame"></div>
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+  <!-- UY BEGIN -->
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144742"></script>
+<!-- UY END -->
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+
