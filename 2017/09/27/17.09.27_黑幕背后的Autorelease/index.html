@@ -1,0 +1,457 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="zhoutq">
+  
+  
+  
+  
+    <meta name="description" content="原文：http://blog.sunnyxx.com/2014/10/15/behind-autorelease/
+前言Autorelease机制是iOS开发者管理对象内存的好伙伴，MRC中，调用[obj autorelease]来延迟内存的释放是一件简单自然的事，ARC下，我们甚至可以完全不知道Autorelease就能管理好内存。而在这背后，objc和编译器都帮我们做了哪些事呢，它们是如...">
+  
+  <title>[转]黑幕背后的Autorelease [ zhoutq ]</title>
+  
+    <link rel="alternate" href="/zhoutq.github.io/atom.xml" title="zhoutq">
+  
+  
+    <link rel="shortcut icon" href="/zhoutq.github.io/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/zhoutq.github.io/css/random.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/vegas.min.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/zhoutq.github.io/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/zhoutq.github.io/2017/09/28/17.09.28_深入理解RunLoop/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]深入理解RunLoop
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/zhoutq.github.io/2017/09/26/17.09.26_Objective-C_Runtime详解/">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        [转]Objective-C Runtime 详解
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg"/>
+          <div id="homelink">zhoutq</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/index.html">首页</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/archives">文章</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/categories">分类</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/tags">标签</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/about">关于</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/zhoutq.github.io/guestbook">留言板</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>[转]黑幕背后的Autorelease</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-09-27</span>
+      
+
+      
+      
+      <span id = "post-title-categories">分类
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/categories/iOS/Autorelease/">Autorelease</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/zhoutq.github.io/tags/iOS/">iOS</a>
+      
+        
+          /
+        
+        
+        <a href="/zhoutq.github.io/tags/Autorelease/">Autorelease</a>
+      
+      </span>
+      
+    </p>
+    
+    <p>原文：<a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">http://blog.sunnyxx.com/2014/10/15/behind-autorelease/</a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><a href="#前言" title="前言"></a>前言</h1><p>Autorelease机制是iOS开发者管理对象内存的好伙伴，MRC中，调用<code>[obj autorelease]</code>来延迟内存的释放是一件简单自然的事，ARC下，我们甚至可以完全不知道Autorelease就能管理好内存。而在这背后，objc和编译器都帮我们做了哪些事呢，它们是如何协作来正确管理内存的呢？刨根问底，一起来探究下黑幕背后的Autorelease机制。</p>
+<h1 id="Autorelease对象什么时候释放？"><a href="#Autorelease对象什么时候释放？" class="headerlink" title="Autorelease对象什么时候释放？"></a><a href="#Autorelease对象什么时候释放？" title="Autorelease对象什么时候释放？"></a>Autorelease对象什么时候释放？</h1><p>这个问题拿来做面试题，问过很多人，没有几个能答对的。很多答案都是“当前作用域大括号结束时释放”，显然木有正确理解Autorelease机制。<br>在没有手加Autorelease Pool的情况下，Autorelease对象是在当前的<code>runloop</code>迭代结束时释放的，而它能够释放的原因是<strong>系统在每个runloop迭代中都加入了自动释放池Push和Pop</strong>  </p>
+<h2 id="小实验"><a href="#小实验" class="headerlink" title="小实验"></a><a href="#小实验" title="小实验"></a>小实验</h2><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">__<span class="keyword">weak</span> <span class="keyword">id</span> reference = <span class="literal">nil</span>;</div><div class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    <span class="built_in">NSString</span> *str = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"sunnyxx"</span>];</div><div class="line">    <span class="comment">// str是一个autorelease对象，设置一个weak的引用来观察它</span></div><div class="line">    reference = str;</div><div class="line">&#125;</div><div class="line">- (<span class="keyword">void</span>)viewWillAppear:(<span class="built_in">BOOL</span>)animated &#123;</div><div class="line">    [<span class="keyword">super</span> viewWillAppear:animated];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, reference); <span class="comment">// Console: sunnyxx</span></div><div class="line">&#125;</div><div class="line">- (<span class="keyword">void</span>)viewDidAppear:(<span class="built_in">BOOL</span>)animated &#123;</div><div class="line">    [<span class="keyword">super</span> viewDidAppear:animated];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, reference); <span class="comment">// Console: (null)</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><del>这个实验同时也证明了<code>viewDidLoad</code>和<code>viewWillAppear</code>是在同一个runloop调用的，而<code>viewDidAppear</code>是在之后的某个runloop调用的。</del><br>由于这个vc在loadView之后便add到了window层级上，所以<code>viewDidLoad</code>和<code>viewWillAppear</code>是在同一个runloop调用的，因此在<code>viewWillAppear</code>中，这个autorelease的变量依然有值。  </p>
+<p>当然，我们也可以手动干预Autorelease对象的释放时机：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</div><div class="line">    [<span class="keyword">super</span> viewDidLoad];</div><div class="line">    <span class="keyword">@autoreleasepool</span> &#123;</div><div class="line">        <span class="built_in">NSString</span> *str = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"sunnyxx"</span>];</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, str); <span class="comment">// Console: (null)</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="Autorelease原理"><a href="#Autorelease原理" class="headerlink" title="Autorelease原理"></a><a href="#Autorelease原理" title="Autorelease原理"></a>Autorelease原理</h1><h2 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a><a href="#AutoreleasePoolPage" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h2><p>ARC下，我们使用<code>@autoreleasepool{}</code>来使用一个AutoreleasePool，随后编译器将其改写成下面的样子：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> *context = objc_autoreleasePoolPush();</div><div class="line"><span class="comment">// &#123;&#125;中的代码</span></div><div class="line">objc_autoreleasePoolPop(context);</div></pre></td></tr></table></figure></p>
+<p>而这两个函数都是对<code>AutoreleasePoolPage</code>的简单封装，所以自动释放机制的核心就在于这个类。  </p>
+<p>AutoreleasePoolPage是一个C++实现的类</p>
+<p><img src="http://ww2.sinaimg.cn/mw690/51530583gw1elj2ugt21wj20f109m3zl.jpg" alt=""></p>
+<ul>
+<li>AutoreleasePool并没有单独的结构，而是由若干个AutoreleasePoolPage以<code>双向链表</code>的形式组合而成（分别对应结构中的parent指针和child指针）</li>
+<li>AutoreleasePool是按线程一一对应的（结构中的thread指针指向当前线程）</li>
+<li>AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址</li>
+<li>上面的<code>id *next</code>指针作为游标指向栈顶最新add进来的autorelease对象的下一个位置</li>
+<li>一个AutoreleasePoolPage的空间被占满时，会新建一个AutoreleasePoolPage对象，连接链表，后来的autorelease对象在新的page加入</li>
+</ul>
+<p>所以，若当前线程中只有一个AutoreleasePoolPage对象，并记录了很多autorelease对象地址时内存如下图：</p>
+<p><img src="http://ww2.sinaimg.cn/mw690/51530583gw1elj5gvphtqj20dy0cx756.jpg" alt=""></p>
+<p>图中的情况，这一页再加入一个autorelease对象就要满了（也就是next指针马上指向栈顶），这时就要执行上面说的操作，建立下一页page对象，与这一页链表连接完成后，新page的<code>next</code>指针被初始化在栈底（begin的位置），然后继续向栈顶添加新对象。</p>
+<p><strong>所以，向一个对象发送<code>- autorelease</code>消息，就是将这个对象加入到当前AutoreleasePoolPage的栈顶next指针指向的位置</strong></p>
+<h2 id="释放时刻"><a href="#释放时刻" class="headerlink" title="释放时刻"></a><a href="#释放时刻" title="释放时刻"></a>释放时刻</h2><p>每当进行一次<code>objc_autoreleasePoolPush</code>调用时，runtime向当前的AutoreleasePoolPage中add进一个<code>哨兵对象</code>，值为0（也就是个nil），那么这一个page就变成了下面的样子：  </p>
+<p><img src="http://ww2.sinaimg.cn/large/51530583gw1elj5z7hawej20ji0dewff.jpg" alt=""></p>
+<p><code>objc_autoreleasePoolPush</code>的返回值正是这个哨兵对象的地址，被<code>objc_autoreleasePoolPop(哨兵对象)</code>作为入参，于是：</p>
+<ol>
+<li>根据传入的哨兵对象地址找到哨兵对象所处的page</li>
+<li>在当前page中，将晚于哨兵对象插入的所有autorelease对象都发送一次<code>- release</code>消息，并向回移动<code>next</code>指针到正确位置</li>
+<li>补充2：从最新加入的对象一直向前清理，可以向前跨越若干个page，直到哨兵所在的page</li>
+</ol>
+<p>刚才的objc_autoreleasePoolPop执行后，最终变成了下面的样子：  </p>
+<p><img src="http://ww3.sinaimg.cn/mw690/51530583gw1elj6u2i3fyj20dz0bqdgi.jpg" alt=""></p>
+<h2 id="嵌套的AutoreleasePool"><a href="#嵌套的AutoreleasePool" class="headerlink" title="嵌套的AutoreleasePool"></a><a href="#嵌套的AutoreleasePool" title="嵌套的AutoreleasePool"></a>嵌套的AutoreleasePool</h2><p>知道了上面的原理，嵌套的AutoreleasePool就非常简单了，pop的时候总会释放到上次push的位置为止，多层的pool就是多个哨兵对象而已，就像剥洋葱一样，每次一层，互不影响。</p>
+<hr>
+<p>【附加内容】</p>
+<h1 id="Autorelease返回值的快速释放机制"><a href="#Autorelease返回值的快速释放机制" class="headerlink" title="Autorelease返回值的快速释放机制"></a><a href="#Autorelease返回值的快速释放机制" title="Autorelease返回值的快速释放机制"></a>Autorelease返回值的快速释放机制</h1><p>值得一提的是，ARC下，runtime有一套对autorelease返回值的优化策略。<br>比如一个工厂方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">+ (<span class="keyword">instancetype</span>)createSark &#123;</div><div class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> new];</div><div class="line">&#125;</div><div class="line"><span class="comment">// caller</span></div><div class="line">Sark *sark = [Sark createSark];</div></pre></td></tr></table></figure>
+<p>秉着谁创建谁释放的原则，返回值需要是一个autorelease对象才能配合调用方正确管理内存，于是乎编译器改写成了形如下面的代码：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">+ (<span class="keyword">instancetype</span>)createSark &#123;</div><div class="line">    <span class="keyword">id</span> tmp = [<span class="keyword">self</span> new];</div><div class="line">    <span class="keyword">return</span> objc_autoreleaseReturnValue(tmp); <span class="comment">// 代替我们调用autorelease</span></div><div class="line">&#125;</div><div class="line"><span class="comment">// caller</span></div><div class="line"><span class="keyword">id</span> tmp = objc_retainAutoreleasedReturnValue([Sark createSark]) <span class="comment">// 代替我们调用retain</span></div><div class="line">Sark *sark = tmp;</div><div class="line">objc_storeStrong(&amp;sark, <span class="literal">nil</span>); <span class="comment">// 相当于代替我们调用了release</span></div></pre></td></tr></table></figure>
+<p>一切看上去都很好，不过既然编译器知道了这么多信息，干嘛还要劳烦autorelease这个开销不小的机制呢？于是乎，runtime使用了一些黑魔法将这个问题解决了。</p>
+<h2 id="黑魔法之Thread-Local-Storage"><a href="#黑魔法之Thread-Local-Storage" class="headerlink" title="黑魔法之Thread Local Storage"></a><a href="#黑魔法之Thread-Local-Storage" title="黑魔法之Thread Local Storage"></a>黑魔法之Thread Local Storage</h2><p>Thread Local Storage（TLS）线程局部存储，目的很简单，将一块内存作为某个线程专有的存储，以key-value的形式进行读写，比如在非arm架构下，使用pthread提供的方法实现：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> pthread_getspecific(pthread_key_t);</div><div class="line"><span class="keyword">int</span> pthread_setspecific(pthread_key_t , <span class="keyword">const</span> <span class="keyword">void</span> );</div></pre></td></tr></table></figure>
+<p>说它是黑魔法可能被懂pthread的笑话- -  </p>
+<p>在返回值身上调用<code>objc_autoreleaseReturnValue</code>方法时，runtime将这个返回值object储存在TLS中，然后直接返回这个object（不调用autorelease）；同时，在外部接收这个返回值的<code>objc_retainAutoreleasedReturnValue</code>里，发现TLS中正好存了这个对象，那么直接返回这个object（不调用retain）。<br>于是乎，调用方和被调方利用TLS做中转，很有默契的免去了对返回值的内存管理。  </p>
+<p>于是问题又来了，假如被调方和主调方只有一边是ARC环境编译的该咋办？（比如我们在ARC环境下用了非ARC编译的第三方库，或者反之）<br>只能动用更高级的黑魔法。  </p>
+<h2 id="黑魔法之-builtin-return-address"><a href="#黑魔法之-builtin-return-address" class="headerlink" title="黑魔法之__builtin_return_address"></a><a href="#黑魔法之-builtin-return-address" title="黑魔法之__builtin_return_address"></a>黑魔法之__builtin_return_address</h2><p>这个内建函数原型是<code>char *__builtin_return_address(int level)</code>，作用是得到函数的返回地址，参数表示层数，如__builtin_return_address(0)表示当前函数体返回地址，传1是调用这个函数的外层函数的返回值地址，以此类推。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">int</span>)foo &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%p"</span>, __builtin_return_address(<span class="number">0</span>)); <span class="comment">// 根据这个地址能找到下面ret的地址</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">&#125;</div><div class="line"><span class="comment">// caller</span></div><div class="line"><span class="keyword">int</span> ret = [sark foo];</div></pre></td></tr></table></figure>
+<p>看上去也没啥厉害的，不过要知道，函数的返回值地址，也就对应着调用者结束这次调用的地址（或者相差某个固定的偏移量，根据编译器决定）<br>也就是说，被调用的函数也有翻身做地主的机会了，可以反过来对主调方干点坏事。<br>回到上面的问题，<strong>如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对于不同情况做不同的处理</strong></p>
+<h2 id="黑魔法之反查汇编指令"><a href="#黑魔法之反查汇编指令" class="headerlink" title="黑魔法之反查汇编指令"></a><a href="#黑魔法之反查汇编指令" title="黑魔法之反查汇编指令"></a>黑魔法之反查汇编指令</h2><p>通过上面的__builtin_return_address加某些偏移量，被调方可以定位到主调方在返回值后面的<code>汇编指令</code>：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// caller</span></div><div class="line"><span class="keyword">int</span> ret = [sark foo];</div><div class="line"><span class="comment">// 内存中接下来的汇编指令（x86，我不懂汇编，瞎写的）</span></div><div class="line">movq ??? ???</div><div class="line">callq ???</div></pre></td></tr></table></figure>
+<p>而这些汇编指令在内存中的值是固定的，比如movq对应着0x48。<br>于是乎，就有了下面的这个函数，入参是调用方__builtin_return_address传入值</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">bool</span> callerAcceptsFastAutorelease(<span class="keyword">const</span> <span class="keyword">void</span>  <span class="keyword">const</span> ra0) &#123;</div><div class="line">    <span class="keyword">const</span> uint8_t ra1 = (<span class="keyword">const</span> uint8_t )ra0;</div><div class="line">    <span class="keyword">const</span> uint16_t ra2;</div><div class="line">    <span class="keyword">const</span> uint32_t ra4 = (<span class="keyword">const</span> uint32_t )ra1;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">void</span> sym;</div><div class="line">    <span class="comment">// 48 89 c7    movq  %rax,%rdi</span></div><div class="line">    <span class="comment">// e8          callq symbol</span></div><div class="line">    <span class="keyword">if</span> (ra4 != <span class="number">0xe8c78948</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line">    ra1 += (<span class="keyword">long</span>)(<span class="keyword">const</span> int32_t )(ra1 + <span class="number">4</span>) + <span class="number">8</span>l;</div><div class="line">    ra2 = (<span class="keyword">const</span> uint16_t )ra1;</div><div class="line">    <span class="comment">// ff 25       jmpq symbol@DYLDMAGIC(%rip)</span></div><div class="line">    <span class="keyword">if</span> (ra2 != <span class="number">0x25ff</span>) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line">    ra1 += <span class="number">6</span>l + (<span class="keyword">long</span>)(<span class="keyword">const</span> int32_t )(ra1 + <span class="number">2</span>);</div><div class="line">    sym = (<span class="keyword">const</span> <span class="keyword">void</span> )ra1;</div><div class="line">    <span class="keyword">if</span> (*sym != objc_retainAutoreleasedReturnValue)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>它检验了主调方在返回值之后是否紧接着调用了<code>objc_retainAutoreleasedReturnValue</code>，如果是，就知道了外部是ARC环境，反之就走没被优化的老逻辑。</p>
+<h1 id="其他Autorelease相关知识点"><a href="#其他Autorelease相关知识点" class="headerlink" title="其他Autorelease相关知识点"></a><a href="#其他Autorelease相关知识点" title="其他Autorelease相关知识点"></a>其他Autorelease相关知识点</h1><p>使用容器的block版本的枚举器时，内部会自动添加一个AutoreleasePool：  </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[array enumerateObjectsUsingBlock:^(<span class="keyword">id</span> obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> *stop) &#123;</div><div class="line">    <span class="comment">// 这里被一个局部@autoreleasepool包围着</span></div><div class="line">&#125;];</div></pre></td></tr></table></figure>
+<p>当然，在普通for循环和for in循环中没有，所以，还是新版的block版本枚举器更加方便。for循环中遍历产生大量autorelease变量时，就需要手加局部AutoreleasePool咯。</p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autorelease对象什么时候释放？"><span class="toc-text">Autorelease对象什么时候释放？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#小实验"><span class="toc-text">小实验</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autorelease原理"><span class="toc-text">Autorelease原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AutoreleasePoolPage"><span class="toc-text">AutoreleasePoolPage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#释放时刻"><span class="toc-text">释放时刻</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#嵌套的AutoreleasePool"><span class="toc-text">嵌套的AutoreleasePool</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autorelease返回值的快速释放机制"><span class="toc-text">Autorelease返回值的快速释放机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#黑魔法之Thread-Local-Storage"><span class="toc-text">黑魔法之Thread Local Storage</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#黑魔法之-builtin-return-address"><span class="toc-text">黑魔法之__builtin_return_address</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#黑魔法之反查汇编指令"><span class="toc-text">黑魔法之反查汇编指令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#其他Autorelease相关知识点"><span class="toc-text">其他Autorelease相关知识点</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/zhoutq.github.io/2017/09/28/17.09.28_深入理解RunLoop/" class="prev">&larr; 上一篇 [转]深入理解RunLoop</a>
+  
+
+  
+
+  
+    <a href="/zhoutq.github.io/2017/09/26/17.09.26_Objective-C_Runtime详解/" class="next">下一篇 [转]Objective-C Runtime 详解 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+  <script type="text/javascript">
+    var jiathis_config = {"data_track_clickback":true,"summary":"","showClose":true,"shortUrl":false,"hideMore":false};
+  </script>
+  <script type="text/javascript" src="//v3.jiathis.com/code/jiathis_r.js?uid=2144742&btn=r2.gif&move=0" charset="utf-8"></script>
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      <div id="uyan_frame"></div>
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by zhoutq using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+  <!-- UY BEGIN -->
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2144742"></script>
+<!-- UY END -->
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omqe23mns.bkt.clouddn.com/default_avatar.jpg">
+    <p id="description">大家好，我是一名iOS开发者！</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com/zhoutq">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/u/zhoutq">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/1824147230/profile?rightmod=1&wvr=6&mod=personnumber&is_all=1">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.csdn.net/zttqq">
+        
+          csdn
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://blog.cocoachina.com/334660">
+        
+          CocoaChina
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.jianshu.com/users/e8b17ec56b45/timeline">
+        
+          <i class="icon iconfont jian">&#xe614;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/zhoutq.github.io/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/vegas.min.js"></script>
+  
+    <script src="/zhoutq.github.io/js/random.js"></script>
+  
+    <script src="/zhoutq.github.io/js/highlight.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/zhoutq.github.io/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/zhoutq.github.io/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/zhoutq.github.io/css/sprite.svg'});
+</script>
+</body>
+</html>
+
